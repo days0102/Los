@@ -1,0 +1,53 @@
+[
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-Wall",
+            "-o",
+            "init/start.o",
+            "init/start.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "init/start.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-Wall",
+            "-o",
+            "kernel/uart.o",
+            "kernel/uart.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/uart.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-Wall",
+            "-o",
+            "init/entry.o",
+            "init/entry.S"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "init/entry.S"
+    }
+]

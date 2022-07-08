@@ -15,6 +15,7 @@ SRCS_ASM = \
 
 SRCS_C = \
 	init/start.c \
+	kernel/uart.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
@@ -27,6 +28,10 @@ kernel.elf: ${OBJS}
 	${CC} ${CFLAGS} -Ttext=0x80000000 -o kernel.elf $^
 	${OBJCOPY} -O binary kernel.elf kernel.bin
 
+# $@  表示目标文件
+# $^  表示所有的依赖文件
+# $<  表示第一个依赖文件
+# $?  表示比目标还要新的依赖文件列表
 %.o : %.c
 	${CC} ${CFLAGS} -c -o $@ $<
 
@@ -36,11 +41,11 @@ kernel.elf: ${OBJS}
 debug:kernel.elf
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
 	@echo "-------------------------------------------------------"
-	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S &
-	@${GDB} kernel.elf -q -x gdbinit
+	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S 
+	# @${GDB} kernel.elf -q -x gdbinit
 
 clean:
-	rm -rf *.o *.bin *.elf
+	rm -rf *.o *.bin *.elf */*.o
 
 code: kernel.elf
 	@${OBJDUMP} -S kernel.elf | less
