@@ -2,7 +2,8 @@ QEMU = qemu-system-riscv32
 QFLAGS = -nographic -smp 1 -machine virt -bios none
 
 CROSS_COMPILE = riscv64-unknown-elf-
-CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall
+CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall	
+CFLAGS += -I. # 包含当前目录
 
 GDB = gdb-multiarch
 CC = ${CROSS_COMPILE}gcc
@@ -20,12 +21,16 @@ SRCS_C = \
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
 
+all:kernel.elf
+	@echo "make all successful"
+
 run:kernel.elf
 	@echo "Press Ctrl-A and then X to exit QEMU"
 	@${QEMU} ${QFLAGS} -kernel kernel.elf
 	
 kernel.elf: ${OBJS}
-	${CC} ${CFLAGS} -Ttext=0x80000000 -o kernel.elf $^
+	@# ${CC} ${CFLAGS} -Ttext=0x80000000 -o kernel.elf $^
+	${CC} ${CFLAGS} -T kernel.ld -o kernel.elf $^
 	${OBJCOPY} -O binary kernel.elf kernel.bin
 
 # $@  表示目标文件

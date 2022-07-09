@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 18:04:42
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-08 18:45:12
+ * @LastEditTime: 2022-07-08 20:27:16
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/uart.c
  */
