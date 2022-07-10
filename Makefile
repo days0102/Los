@@ -1,9 +1,11 @@
-QEMU = qemu-system-riscv32
+QEMU = qemu-system-riscv32 # 32bit
+# QEMU = qemu-system-riscv64	#64bit
 QFLAGS = -nographic -smp 1 -machine virt -bios none
 
 CROSS_COMPILE = riscv64-unknown-elf-
-CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall	
-CFLAGS += -I. # 包含当前目录
+CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall# 32bit
+# CFLAGS = -nostdlib -fno-builtin -march=rv64ima -mabi=lp64 -g -Wall -mcmodel=medany # 64bit
+CFLAGS += -I.# 包含当前目录
 
 GDB = gdb-multiarch
 CC = ${CROSS_COMPILE}gcc
@@ -13,6 +15,7 @@ OBJDUMP = ${CROSS_COMPILE}objdump
 
 SRCS_ASM = \
 	init/entry.S \
+	kernel/swtch.S \
 
 SRCS_C = \
 	init/start.c \
@@ -50,7 +53,7 @@ debug:kernel.elf
 	# @${GDB} kernel.elf -q -x gdbinit
 
 clean:
-	rm -rf *.o *.bin *.elf */*.o
+	rm -rf *.o *.bin *.elf */*.o */*.d
 
 code: kernel.elf
 	@${OBJDUMP} -S kernel.elf | less

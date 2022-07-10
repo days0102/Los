@@ -68,6 +68,7 @@ SECTIONS
     PROVIDE(memend = ORIGIN(ram)+LENGTH(ram));
 
     PROVIDE(end = .);
-    PROVIDE(heapstart = .);
+    PROVIDE(heapstart = .);         /* 堆的起始位置 */
     PROVIDE(heapsize = memend-heapstart);
+    PROVIDE(heapend = memend);
 }
