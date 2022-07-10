@@ -2,29 +2,25 @@
  * @Author: Outsider
  * @Date: 2022-07-08 10:52:32
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-10 19:26:01
+ * @LastEditTime: 2022-07-10 23:14:37
  * @Description: In User Settings Edit
  * @FilePath: /los/init/start.c
  */
 #include "kernel/uart.h"
 #include "kernel/riscv.h"
-#include "kernel/swtch.h"
 
 extern uint32* heapstart[]; 
 extern uint32* heapend[]; 
-extern void swtch(struct context*,struct context*);
+extern void main();
 
 void start(){
     uartinit();
-    uartputs("Hello Los!\n");
 
-    struct context old;
-    struct context new;
-    swtch(&old,&new);
+    uartputs("Hello Los!\n");
 
     uint32 x=r_mstatus();   // 读取mstatus 寄存器
     s_mstatus_xpp(RISCV_S); // 设置特权模式为 S-mode
-    x=r_mstatus();          
-    asm volatile("mret");
-    while(1);
+
+    w_mepc((uint32)main);    
+    asm volatile("mret");   // 改变特权级，跳转至 mepc 寄存器地址处
 }

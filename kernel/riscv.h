@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-10 16:29:07
+ * @LastEditTime: 2022-07-10 23:14:00
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -35,7 +35,6 @@ static inline uint32 r_mstatus(){
     asm volatile("csrr %0, mstatus" : "=r" (x) );
     return x;
 }
-
 // 将 x 写入 mstatus 寄存器
 static inline void w_mstatus(uint32 x){
     asm volatile("csrw mstatus, %0" : : "r" (x) );
@@ -50,9 +49,9 @@ static inline void w_mstatus(uint32 x){
  * 11  -- 机器模式 M-mode
  */
 #define XPP_MASK (3L<<11)   // 用于设置11~12bit
-#define MPP_SET (3<<11)  // 11~12bit为11
-#define SPP_SET (1<<11)  // 11~12bit为01
-
+#define MPP_SET (3<<11)     // 11~12bit为11
+#define SPP_SET (1<<11)     // 11~12bit为01
+// 获取 XPP 特权模式
 static inline uint8 a_mstatus_xpp(){
     uint32 x=r_mstatus();
     x &= XPP_MASK;
@@ -72,7 +71,6 @@ static inline uint8 a_mstatus_xpp(){
     }
     return x;
 }
-
 // 设置特权模式
 static inline void s_mstatus_xpp(uint8 m){
     uint32 x=r_mstatus();
@@ -93,4 +91,32 @@ static inline void s_mstatus_xpp(uint8 m){
         break;
     }
     w_mstatus(x);
+}
+
+/**
+ * @description: 读取 mepc 寄存器
+ * M-mode 返回时跳转到 pc=mepc指向的地址
+ */
+static inline uint32 r_mepc(){
+    uint32 x;
+    asm volatile("csrr %0, mepc" : "=r" (x) );
+    return x;
+}
+// 写mepc寄存器
+static inline void w_mepc(uint32 x){
+    asm volatile("csrw mepc, %0" : : "r" (x) );
+}
+
+/**
+ * @description: 读取 sepc 寄存器
+ * S-mode 返回时跳转到 pc = sepc指向的地址
+ */
+static inline uint32 r_sepc(){
+    uint32 x;
+    asm volatile("csrr %0, sepc" : "=r" (x) );
+    return x;
+}
+// 写 sepc寄存器
+static inline void w_sepc(uint32 x){
+    asm volatile("csrw sepc, %0" : : "r" (x) );
 }

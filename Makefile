@@ -3,7 +3,7 @@ QEMU = qemu-system-riscv32 # 32bit
 QFLAGS = -nographic -smp 1 -machine virt -bios none
 
 CROSS_COMPILE = riscv64-unknown-elf-
-CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -Wall# 32bit
+CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g# 32bit -Wall显示警告
 # CFLAGS = -nostdlib -fno-builtin -march=rv64ima -mabi=lp64 -g -Wall -mcmodel=medany # 64bit
 CFLAGS += -I.# 包含当前目录
 
@@ -15,11 +15,12 @@ OBJDUMP = ${CROSS_COMPILE}objdump
 
 SRCS_ASM = \
 	init/entry.S \
-	kernel/swtch.S \
 
 SRCS_C = \
 	init/start.c \
 	kernel/uart.c \
+	kernel/swtch.c \
+	kernel/main.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
