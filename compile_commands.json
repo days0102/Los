@@ -10,6 +10,23 @@
             "-g",
             "-I.",
             "-o",
+            "init/start.o",
+            "init/start.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "init/start.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
             "kernel/uart.o",
             "kernel/uart.c"
         ],
@@ -44,23 +61,6 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/main.o",
-            "kernel/main.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/main.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
             "init/entry.o",
             "init/entry.S"
         ],
@@ -78,10 +78,44 @@
             "-g",
             "-I.",
             "-o",
-            "init/start.o",
-            "init/start.c"
+            "kernel/main.o",
+            "kernel/main.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "init/start.c"
+        "file": "kernel/main.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/trap.o",
+            "kernel/trap.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/trap.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/printf.o",
+            "kernel/printf.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/printf.c"
     }
 ]

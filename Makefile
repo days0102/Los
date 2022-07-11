@@ -1,6 +1,8 @@
+CPUS = 1
+
 QEMU = qemu-system-riscv32 # 32bit
 # QEMU = qemu-system-riscv64	#64bit
-QFLAGS = -nographic -smp 1 -machine virt -bios none
+QFLAGS = -nographic -smp $(CPUS) -machine virt -bios none
 
 CROSS_COMPILE = riscv64-unknown-elf-
 CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g# 32bit -Wall显示警告
@@ -21,6 +23,8 @@ SRCS_C = \
 	kernel/uart.c \
 	kernel/swtch.c \
 	kernel/main.c \
+	kernel/trap.c \
+	kernel/printf.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
@@ -30,7 +34,7 @@ all:kernel.elf
 
 run:kernel.elf
 	@echo "Press Ctrl-A and then X to exit QEMU"
-	@${QEMU} ${QFLAGS} -kernel kernel.elf
+	${QEMU} ${QFLAGS} -kernel kernel.elf
 	
 kernel.elf: ${OBJS}
 	@# ${CC} ${CFLAGS} -Ttext=0x80000000 -o kernel.elf $^
@@ -51,10 +55,11 @@ debug:kernel.elf
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
 	@echo "-------------------------------------------------------"
 	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S 
-	# @${GDB} kernel.elf -q -x gdbinit
+	@ # ${GDB} kernel.elf -q -x gdbinit
 
 clean:
 	rm -rf *.o *.bin *.elf */*.o */*.d
 
 code: kernel.elf
-	@${OBJDUMP} -S kernel.elf | less
+	@ # ${OBJDUMP} -S kernel.elf | less
+	@${OBJDUMP} -S kernel.elf > kernel.asm # -M no-aliases,numeric显示原始信息

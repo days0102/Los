@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 15:25:13
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-08 19:48:56
+ * @LastEditTime: 2022-07-11 10:43:28
  * @Description: RISC-V vir uart通信
  * @FilePath: /los/kernel/uart.h
  */
@@ -38,3 +38,5 @@
 void uartinit();
 char uartputc(char c);
 void uartputs(char* s);
+
+void panic(char*);

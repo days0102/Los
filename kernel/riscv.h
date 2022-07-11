@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-11 09:09:34
+ * @LastEditTime: 2022-07-11 20:35:13
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -93,6 +93,58 @@ static inline void s_mstatus_xpp(uint8 m){
     w_mstatus(x);
 }
 
+/* sstatus 寄存器与mstatus相仿*/
+static inline uint32 r_sstatus(){
+    uint32 x;
+    asm volatile("csrr %0, sstatus" : "=r" (x) );
+    return x;
+}
+// 将 x 写入 mstatus 寄存器
+static inline void w_sstatus(uint32 x){
+    asm volatile("csrw sstatus, %0" : : "r" (x) );
+}
+// 获取 XPP 特权模式
+static inline uint8 a_sstatus_xpp(){
+    uint32 x=r_sstatus();
+    x &= XPP_MASK;
+    switch (x)
+    {
+    case 0x1800:
+        x=RISCV_M;
+        break;
+    case 0x0800:
+        x=RISCV_S;
+        break;
+    case 0x0000:
+        x=RISCV_U;
+        break;
+    default:
+        break;
+    }
+    return x;
+}
+// 设置特权模式
+static inline void s_sstatus_xpp(uint8 m){
+    uint32 x=r_sstatus();
+    switch (m)
+    {
+    case RISCV_U:
+        x &= ~XPP_MASK;
+        break;
+    case RISCV_S:
+        x &= ~XPP_MASK;
+        x |= SPP_SET;
+        break;
+    case RISCV_M:
+        x &= ~XPP_MASK;
+        x |= MPP_SET;
+        break;
+    default:
+        break;
+    }
+    w_sstatus(x);
+}
+
 /**
  * @description: 读取 mepc 寄存器
  * M-mode 返回时跳转到 pc=mepc指向的地址
@@ -135,4 +187,52 @@ static inline uint32 r_misa(){
 }
 static inline void w_misa(uint32 x){
     asm volatile("csrw misa , %0" : : "r" (x));
+}
+
+/**
+ * @description: 获取机器trap向量表
+ * mtvec 寄存器保存 trap 处理函数地址
+ */
+static inline uint32 r_mtvec(){
+    uint32 x;
+    asm volatile("csrr %0 , mtvec" : "=r" (x));
+    return x;
+}
+static inline void w_mtvec(uint32 x){
+    asm volatile("csrw mtvec , %0" : : "r"(x));
+}
+// 操作stvec寄存器
+static inline uint32 r_stvec(){
+    uint32 x;
+    asm volatile("csrr %0 , stvec" : "=r" (x));
+    return x;
+}
+static inline void w_stvec(uint32 x){
+    asm volatile("csrw stvec , %0" : : "r"(x));
+}
+
+/**
+ * @description: mideleg 中断委托寄存器
+ * 将相应的中断委托给低特权模式处理
+ * RV32 每位对应一种中断，前16位包含了16种中断
+ */
+static inline uint32 r_mideleg(){
+    uint32 x;
+    asm volatile("csrr %0 , mideleg" : "=r"(x));
+    return x;
+}
+static inline void w_mideleg(uint32 x){
+    asm volatile("csrw mideleg , %0 " : : "r"(x));
+}
+/**
+ * @description: medeleg 异常委托寄存器
+ * 异常委托 RV32前16为包含了RV32下的16种异常
+ */
+static inline uint32 r_medeleg(){
+    uint32 x;
+    asm volatile("csrr %0 , medeleg" : "=r"(x));
+    return x;
+}
+static inline void w_medeleg(uint32 x){
+    asm volatile("csrw medeleg , %0 " : : "r"(x));
 }

@@ -3,6 +3,7 @@
         "*.m": "matlab",
         "*.pdf": "tex",
         "*.tcc": "c",
-        "swtch.h": "c"
+        "swtch.h": "c",
+        "uart.h": "c"
     }
 }
