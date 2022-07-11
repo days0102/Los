@@ -1,8 +1,16 @@
+/*
+ * @Author: Outsider
+ * @Date: 2022-07-10 20:54:23
+ * @LastEditors: Outsider
+ * @LastEditTime: 2022-07-11 09:46:00
+ * @Description: 上下文切换
+ * @FilePath: /los/kernel/swtch.c
+ */
 
 #include "kernel/swtch.h"
 
 void swtch(struct context* old,struct context* new){
-
+    // 将当前context 保存到 old context 中
     asm volatile("sw ra,0(a0)");
     asm volatile("sw sp,4(a0)");
     asm volatile("sw gp,8(a0)");
@@ -35,6 +43,7 @@ void swtch(struct context* old,struct context* new){
     asm volatile("sw t5,116(a0)");
     asm volatile("sw t6,120(a0)");
 
+    // 将 new context 加载到寄存器中
     // asm volatile("lw ra,0(a1)");
     // asm volatile("lw sp,4(a1)");
     asm volatile("lw gp,8(a1)");
@@ -66,5 +75,5 @@ void swtch(struct context* old,struct context* new){
     asm volatile("lw t4,112(a1)");
     asm volatile("lw t5,116(a1)");
     asm volatile("lw t6,120(a1)");
-
+    
 }

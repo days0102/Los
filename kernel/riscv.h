@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-10 23:14:00
+ * @LastEditTime: 2022-07-11 09:09:34
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -42,12 +42,12 @@ static inline void w_mstatus(uint32 x){
 
 /**
  * @description: 获取 mstatus 寄存器[12:11]bit
- * mstatus [12:11] 描述当前的特权模式
  * 00  -- 用户模式 U-mode
  * 01  -- 管理模式 S-mode
  * 10  -- Hypervisor H-mode
  * 11  -- 机器模式 M-mode
  */
+// Upon reset, a hart’s privilege mode is set to M
 #define XPP_MASK (3L<<11)   // 用于设置11~12bit
 #define MPP_SET (3<<11)     // 11~12bit为11
 #define SPP_SET (1<<11)     // 11~12bit为01
@@ -119,4 +119,20 @@ static inline uint32 r_sepc(){
 // 写 sepc寄存器
 static inline void w_sepc(uint32 x){
     asm volatile("csrw sepc, %0" : : "r" (x) );
+}
+
+/**
+ * @description: 获取机器位宽
+ * misa[31~30]
+ * 1 = 32bit
+ * 2 = 64bit
+ * 3 =128bit
+ */
+static inline uint32 r_misa(){
+    uint32 x;
+    asm volatile("csrr %0,misa" : "=r" (x));
+    return x;
+}
+static inline void w_misa(uint32 x){
+    asm volatile("csrw misa , %0" : : "r" (x));
 }
