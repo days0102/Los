@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-11 20:35:13
+ * @LastEditTime: 2022-07-12 07:51:55
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -235,4 +235,21 @@ static inline uint32 r_medeleg(){
 }
 static inline void w_medeleg(uint32 x){
     asm volatile("csrw medeleg , %0 " : : "r"(x));
+}
+
+/**
+ * @description: Supervisor Address Translation and Protection (satp) Register
+ *     32       30~22      21~0
+ * MODE(WARL) ASID(WARL) PPN(WARL)
+ * mode = 地址转换方案
+ * asid = 地址空间标识
+ * ppn  = 根页表物理页码(物理地址/4Kb)
+ */
+static inline uint32 r_satp(){
+    uint32 x;
+    asm volatile("asm %0,satp":"=r"(x));
+    return x;
+}
+static inline void w_satp(uint32 x){
+    asm volatile("asm satp,%0"::"r"(x));
 }

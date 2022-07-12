@@ -2,11 +2,11 @@
  * @Author: Outsider
  * @Date: 2022-07-08 10:52:32
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-11 20:36:39
+ * @LastEditTime: 2022-07-12 09:23:45
  * @Description: In User Settings Edit
  * @FilePath: /los/init/start.c
  */
-#include "kernel/uart.h"
+#include "kernel/defs.h"
 #include "kernel/riscv.h"
 
 extern void main();

@@ -4,6 +4,7 @@
         "*.pdf": "tex",
         "*.tcc": "c",
         "swtch.h": "c",
-        "uart.h": "c"
+        "uart.h": "c",
+        "defs.h": "c"
     }
 }

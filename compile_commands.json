@@ -10,28 +10,11 @@
             "-g",
             "-I.",
             "-o",
-            "init/start.o",
-            "init/start.c"
+            "kernel/trap.o",
+            "kernel/trap.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "init/start.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/uart.o",
-            "kernel/uart.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/uart.c"
+        "file": "kernel/trap.c"
     },
     {
         "arguments": [
@@ -61,11 +44,11 @@
             "-g",
             "-I.",
             "-o",
-            "init/entry.o",
-            "init/entry.S"
+            "kernel/uart.o",
+            "kernel/uart.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "init/entry.S"
+        "file": "kernel/uart.c"
     },
     {
         "arguments": [
@@ -95,11 +78,11 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/trap.o",
-            "kernel/trap.c"
+            "init/entry.o",
+            "init/entry.S"
         ],
         "directory": "/home/lwz/los",
-        "file": "kernel/trap.c"
+        "file": "init/entry.S"
     },
     {
         "arguments": [
@@ -117,5 +100,39 @@
         ],
         "directory": "/home/lwz/los",
         "file": "kernel/printf.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "init/start.o",
+            "init/start.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "init/start.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/pmm.o",
+            "kernel/pmm.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/pmm.c"
     }
 ]

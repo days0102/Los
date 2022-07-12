@@ -2,12 +2,12 @@
  * @Author: Outsider
  * @Date: 2022-07-10 20:54:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-11 09:46:00
+ * @LastEditTime: 2022-07-12 09:25:18
  * @Description: 上下文切换
  * @FilePath: /los/kernel/swtch.c
  */
 
-#include "kernel/swtch.h"
+#include "defs.h"
 
 void swtch(struct context* old,struct context* new){
     // 将当前context 保存到 old context 中

@@ -113,7 +113,7 @@ static inline void s_mstatus_xpp(uint8 m){
         x &= ~XPP_MASK;
 800080b8:	fec42703          	lw	a4,-20(s0)
 800080bc:	ffffe7b7          	lui	a5,0xffffe
-800080c0:	7ff78793          	addi	a5,a5,2047 # ffffe7ff <panic+0x7fff62df>
+800080c0:	7ff78793          	addi	a5,a5,2047 # ffffe7ff <end+0x7fff47ff>
 800080c4:	00f777b3          	and	a5,a4,a5
 800080c8:	fef42623          	sw	a5,-20(s0)
         break;
@@ -121,7 +121,7 @@ static inline void s_mstatus_xpp(uint8 m){
         x &= ~XPP_MASK;
 800080d0:	fec42703          	lw	a4,-20(s0)
 800080d4:	ffffe7b7          	lui	a5,0xffffe
-800080d8:	7ff78793          	addi	a5,a5,2047 # ffffe7ff <panic+0x7fff62df>
+800080d8:	7ff78793          	addi	a5,a5,2047 # ffffe7ff <end+0x7fff47ff>
 800080dc:	00f777b3          	and	a5,a4,a5
 800080e0:	fef42623          	sw	a5,-20(s0)
         x |= SPP_SET;
@@ -135,7 +135,7 @@ static inline void s_mstatus_xpp(uint8 m){
         x &= ~XPP_MASK;
 800080fc:	fec42703          	lw	a4,-20(s0)
 80008100:	ffffe7b7          	lui	a5,0xffffe
-80008104:	7ff78793          	addi	a5,a5,2047 # ffffe7ff <panic+0x7fff62df>
+80008104:	7ff78793          	addi	a5,a5,2047 # ffffe7ff <end+0x7fff47ff>
 80008108:	00f777b3          	and	a5,a4,a5
 8000810c:	fef42623          	sw	a5,-20(s0)
         x |= MPP_SET;
@@ -213,6 +213,7 @@ static inline void w_medeleg(uint32 x){
     asm volatile("csrw medeleg , %0 " : : "r"(x));
 800081a8:	fec42783          	lw	a5,-20(s0)
 800081ac:	30279073          	csrw	medeleg,a5
+}
 800081b0:	00000013          	nop
 800081b4:	01c12403          	lw	s0,28(sp)
 800081b8:	02010113          	addi	sp,sp,32
@@ -233,12 +234,12 @@ void start(){
 800081d0:	064000ef          	jal	ra,80008234 <uartinit>
 
     uartputs("Hello Los!\n");
-800081d4:	800087b7          	lui	a5,0x80008
-800081d8:	54c78513          	addi	a0,a5,1356 # 8000854c <panic+0x2c>
+800081d4:	800097b7          	lui	a5,0x80009
+800081d8:	00078513          	mv	a0,a5
 800081dc:	128000ef          	jal	ra,80008304 <uartputs>
     uartputs((char*)stacks);
 800081e0:	800007b7          	lui	a5,0x80000
-800081e4:	02478513          	addi	a0,a5,36 # 80000024 <panic+0xffff7b04>
+800081e4:	02478513          	addi	a0,a5,36 # 80000024 <end+0xffff6024>
 800081e8:	11c000ef          	jal	ra,80008304 <uartputs>
 
     s_mstatus_xpp(RISCV_S); // 设置特权模式为 S-mode
@@ -257,7 +258,7 @@ void start(){
 
     w_mepc((uint32)main);   // 设置 mepc 为 main 地址
 8000820c:	800087b7          	lui	a5,0x80008
-80008210:	49078793          	addi	a5,a5,1168 # 80008490 <panic+0xffffff70>
+80008210:	49078793          	addi	a5,a5,1168 # 80008490 <end+0xffffe490>
 80008214:	00078513          	mv	a0,a5
 80008218:	f31ff0ef          	jal	ra,80008148 <w_mepc>
     // Upon reset, a hart’s privilege mode is set to M
@@ -548,10 +549,10 @@ static inline void w_stvec(uint32 x){
 8000848c:	00008067          	ret
 
 80008490 <main>:
-#include "swtch.h"
 #include "riscv.h"
 
 extern void tvec();
+extern uint8 end[];
 
 void main(){
 80008490:	ef010113          	addi	sp,sp,-272
@@ -559,76 +560,80 @@ void main(){
 80008498:	10812423          	sw	s0,264(sp)
 8000849c:	11010413          	addi	s0,sp,272
     uartputs("start run main()\n");
-800084a0:	800087b7          	lui	a5,0x80008
-800084a4:	55878513          	addi	a0,a5,1368 # 80008558 <panic+0x38>
+800084a0:	800097b7          	lui	a5,0x80009
+800084a4:	00c78513          	addi	a0,a5,12 # 8000900c <end+0xfffff00c>
 800084a8:	e5dff0ef          	jal	ra,80008304 <uartputs>
     struct context old;
     struct context new;
     swtch(&old,&new);
-800084ac:	ef840713          	addi	a4,s0,-264
-800084b0:	f7440793          	addi	a5,s0,-140
+800084ac:	ef440713          	addi	a4,s0,-268
+800084b0:	f7040793          	addi	a5,s0,-144
 800084b4:	00070593          	mv	a1,a4
 800084b8:	00078513          	mv	a0,a5
 800084bc:	e9dff0ef          	jal	ra,80008358 <swtch>
     w_stvec((uint32)tvec);
 800084c0:	800087b7          	lui	a5,0x80008
-800084c4:	4e878793          	addi	a5,a5,1256 # 800084e8 <panic+0xffffffc8>
+800084c4:	4f478793          	addi	a5,a5,1268 # 800084f4 <end+0xffffe4f4>
 800084c8:	00078513          	mv	a0,a5
 800084cc:	f9dff0ef          	jal	ra,80008468 <w_stvec>
+    uint8* e=end;
+800084d0:	8000a7b7          	lui	a5,0x8000a
+800084d4:	00078793          	mv	a5,a5
+800084d8:	fef42623          	sw	a5,-20(s0)
     // uint32 x=r_mstatus();
 
     swtch(&new,&old);
-800084d0:	f7440713          	addi	a4,s0,-140
-800084d4:	ef840793          	addi	a5,s0,-264
-800084d8:	00070593          	mv	a1,a4
-800084dc:	00078513          	mv	a0,a5
-800084e0:	e79ff0ef          	jal	ra,80008358 <swtch>
+800084dc:	f7040713          	addi	a4,s0,-144
+800084e0:	ef440793          	addi	a5,s0,-268
+800084e4:	00070593          	mv	a1,a4
+800084e8:	00078513          	mv	a0,a5
+800084ec:	e6dff0ef          	jal	ra,80008358 <swtch>
     while(1);
-800084e4:	0000006f          	j	800084e4 <main+0x54>
+800084f0:	0000006f          	j	800084f0 <main+0x60>
 
-800084e8 <tvec>:
+800084f4 <tvec>:
  * @FilePath: /los/kernel/trap.c
  */
 #include "types.h"
 #include "uart.h"
 
 void tvec(){
-800084e8:	ff010113          	addi	sp,sp,-16
-800084ec:	00112623          	sw	ra,12(sp)
-800084f0:	00812423          	sw	s0,8(sp)
-800084f4:	01010413          	addi	s0,sp,16
+800084f4:	ff010113          	addi	sp,sp,-16
+800084f8:	00112623          	sw	ra,12(sp)
+800084fc:	00812423          	sw	s0,8(sp)
+80008500:	01010413          	addi	s0,sp,16
     uartputs("exception or interrupt\n");
-800084f8:	800087b7          	lui	a5,0x80008
-800084fc:	56c78513          	addi	a0,a5,1388 # 8000856c <panic+0x4c>
-80008500:	e05ff0ef          	jal	ra,80008304 <uartputs>
+80008504:	800097b7          	lui	a5,0x80009
+80008508:	02078513          	addi	a0,a5,32 # 80009020 <end+0xfffff020>
+8000850c:	df9ff0ef          	jal	ra,80008304 <uartputs>
     panic(0);
-80008504:	00000513          	li	a0,0
-80008508:	018000ef          	jal	ra,80008520 <panic>
+80008510:	00000513          	li	a0,0
+80008514:	018000ef          	jal	ra,8000852c <panic>
 }
-8000850c:	00000013          	nop
-80008510:	00c12083          	lw	ra,12(sp)
-80008514:	00812403          	lw	s0,8(sp)
-80008518:	01010113          	addi	sp,sp,16
-8000851c:	00008067          	ret
+80008518:	00000013          	nop
+8000851c:	00c12083          	lw	ra,12(sp)
+80008520:	00812403          	lw	s0,8(sp)
+80008524:	01010113          	addi	sp,sp,16
+80008528:	00008067          	ret
 
-80008520 <panic>:
+8000852c <panic>:
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
 #include "uart.h"
 
 void panic(char* s){
-80008520:	fe010113          	addi	sp,sp,-32
-80008524:	00112e23          	sw	ra,28(sp)
-80008528:	00812c23          	sw	s0,24(sp)
-8000852c:	02010413          	addi	s0,sp,32
-80008530:	fea42623          	sw	a0,-20(s0)
+8000852c:	fe010113          	addi	sp,sp,-32
+80008530:	00112e23          	sw	ra,28(sp)
+80008534:	00812c23          	sw	s0,24(sp)
+80008538:	02010413          	addi	s0,sp,32
+8000853c:	fea42623          	sw	a0,-20(s0)
     uartputs("panic: ");
-80008534:	800087b7          	lui	a5,0x80008
-80008538:	58478513          	addi	a0,a5,1412 # 80008584 <panic+0x64>
-8000853c:	dc9ff0ef          	jal	ra,80008304 <uartputs>
+80008540:	800097b7          	lui	a5,0x80009
+80008544:	03878513          	addi	a0,a5,56 # 80009038 <end+0xfffff038>
+80008548:	dbdff0ef          	jal	ra,80008304 <uartputs>
     uartputs(s);
-80008540:	fec42503          	lw	a0,-20(s0)
-80008544:	dc1ff0ef          	jal	ra,80008304 <uartputs>
+8000854c:	fec42503          	lw	a0,-20(s0)
+80008550:	db5ff0ef          	jal	ra,80008304 <uartputs>
     while(1);
-80008548:	0000006f          	j	80008548 <panic+0x28>
+80008554:	0000006f          	j	80008554 <panic+0x28>

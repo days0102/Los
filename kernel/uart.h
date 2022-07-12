@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 15:25:13
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-11 10:43:28
+ * @LastEditTime: 2022-07-12 09:23:31
  * @Description: RISC-V vir uart通信
  * @FilePath: /los/kernel/uart.h
  */
@@ -34,9 +34,3 @@
 
 #define uart_read(reg)  (*(UART_REG(reg)))
 #define uart_write(reg,val)  ((*(UART_REG(reg)))=(val))
-
-void uartinit();
-char uartputc(char c);
-void uartputs(char* s);
-
-void panic(char*);

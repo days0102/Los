@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 17:55:14
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-10 23:15:35
+ * @LastEditTime: 2022-07-12 09:24:52
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/swtch.h
  */
@@ -44,5 +44,3 @@ struct context
 	regt t5;
 	regt t6;
 };
-
-void swtch(struct context*,struct context*);

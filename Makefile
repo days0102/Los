@@ -25,15 +25,16 @@ SRCS_C = \
 	kernel/main.c \
 	kernel/trap.c \
 	kernel/printf.c \
+	kernel/pmm.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
 
 all:kernel.elf
-	@echo "make all successful"
+	@echo "	Make OK! "
 
 run:kernel.elf
-	@echo "Press Ctrl-A and then X to exit QEMU"
+	@ # echo "Press Ctrl-A and then X to exit QEMU"
 	${QEMU} ${QFLAGS} -kernel kernel.elf
 	
 kernel.elf: ${OBJS}
@@ -63,3 +64,4 @@ clean:
 code: kernel.elf
 	@ # ${OBJDUMP} -S kernel.elf | less
 	@${OBJDUMP} -S kernel.elf > kernel.asm # -M no-aliases,numeric显示原始信息
+	

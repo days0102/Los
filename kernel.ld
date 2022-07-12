@@ -43,6 +43,7 @@ SECTIONS
     }>ram
 
     .rodata : {
+        . = ALIGN(4096);        /*保证位1个页偏移*/
 		PROVIDE(rodatastart = .);
 		*(.rodata .rodata.*)
 		PROVIDE(rodataend = .);
@@ -57,6 +58,7 @@ SECTIONS
     }>ram
 
     .bss : {
+        . = ALIGN(4096);
         PROVIDE(bssstart = .);
 		*(.sbss .sbss.*)
 		*(.bss .bss.*)
@@ -67,6 +69,7 @@ SECTIONS
     PROVIDE(memstart = ORIGIN(ram));
     PROVIDE(memend = ORIGIN(ram)+LENGTH(ram));
 
+    . = ALIGN(4096);
     PROVIDE(end = .);
     PROVIDE(heapstart = .);         /* 堆的起始位置 */
     PROVIDE(heapsize = memend-heapstart);
