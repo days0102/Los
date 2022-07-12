@@ -71,7 +71,6 @@ SECTIONS
 
     . = ALIGN(4096);
     PROVIDE(end = .);
-    PROVIDE(heapstart = .);         /* 堆的起始位置 */
-    PROVIDE(heapsize = memend-heapstart);
-    PROVIDE(heapend = memend);
+    PROVIDE(pstart = .);         /* 堆的起始位置 */
+    PROVIDE(pend = memend);
 }

@@ -2,34 +2,61 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 09:15:54
+ * @LastEditTime: 2022-07-12 11:35:13
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
 #include "types.h"
 
-extern uint32 textstart[];
-extern uint32 textend[];
-extern uint32 rodatastart[];
-extern uint32 rodataend[];
-extern uint32 datastart[];
-extern uint32 dataend[];
-extern uint32 bssstart[];
-extern uint32 bssend[];
-extern uint32 end[];
-extern uint32 heapstart[];
-extern uint32 heapend[];
+#define PGSIZE 4096
+
+// 指向物理内存的指针
+struct pmp
+{
+    struct pmp* next;
+};
+// mem 空闲空间链表，存储再kernel.data
+struct
+{
+    struct pmp* freelist;
+}mem;
+
+extern uint8 textstart[];
+extern uint8 textend[];
+extern uint8 rodatastart[];
+extern uint8 rodataend[];
+extern uint8 datastart[];
+extern uint8 dataend[];
+extern uint8 bssstart[];
+extern uint8 bssend[];
+extern uint8 end[];
+extern uint8 pstart[];
+extern uint8 pend[];
+
+void* memset(void* addr,int c,uint32 n){
+    char* maddr=(char*)addr;
+    for(uint32 i=0;i<n;i++){
+        maddr[i]=c;
+    }
+    return addr;
+}
+
+void mfree(){
+
+}
+
 
 void minit(){
-    uint32* ts=textstart;
-    uint32* te=textend;
-    uint32* rs=rodatastart;
-    uint32* re=rodataend;
-    uint32* ds=datastart;
-    uint32* de=dataend;
-    uint32* bs=bssstart;
-    uint32* be=bssend;
-    uint32* e=end;
-    uint32* hs=heapstart;
-    uint32* he=heapend;
+    // uint32* te=textend;
+    // uint32* re=rodataend;
+    // uint32* de=dataend;
+    // uint32* be=bssend;
+    char* p=(char*)pstart;
+    struct pmp* m;
+    for( ; p + PGSIZE <= (char*)pend ; p+=PGSIZE){
+        m=(struct pmp*)p;
+        m->next=mem.freelist;
+        mem.freelist=m;
+    }
+    
 }
