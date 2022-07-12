@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 11:35:13
+ * @LastEditTime: 2022-07-12 11:57:44
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
@@ -41,11 +41,6 @@ void* memset(void* addr,int c,uint32 n){
     return addr;
 }
 
-void mfree(){
-
-}
-
-
 void minit(){
     // uint32* te=textend;
     // uint32* re=rodataend;
@@ -58,5 +53,19 @@ void minit(){
         m->next=mem.freelist;
         mem.freelist=m;
     }
-    
+}
+
+void* palloc(){
+    struct pmp* p=(struct pmp*)mem.freelist;
+    if(p)
+        mem.freelist=mem.freelist->next;
+    if(p)
+        memset(p,0,PGSIZE);
+    return (void*)p;
+}
+
+void pfree(void* addr){
+    struct pmp* p=(struct pmp*)addr;
+    p->next=mem.freelist;
+    mem.freelist=p;
 }

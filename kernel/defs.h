@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 09:27:05
+ * @LastEditTime: 2022-07-12 12:01:29
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -23,3 +23,5 @@ void tvec();
 
 // pmm.c
 void minit();
+void* palloc();
+void pfree(void*);
