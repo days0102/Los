@@ -10,40 +10,6 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/trap.o",
-            "kernel/trap.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/trap.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/swtch.o",
-            "kernel/swtch.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/swtch.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
             "kernel/uart.o",
             "kernel/uart.c"
         ],
@@ -78,11 +44,28 @@
             "-g",
             "-I.",
             "-o",
-            "init/entry.o",
-            "init/entry.S"
+            "init/start.o",
+            "init/start.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "init/entry.S"
+        "file": "init/start.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/trap.o",
+            "kernel/trap.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/trap.c"
     },
     {
         "arguments": [
@@ -112,11 +95,28 @@
             "-g",
             "-I.",
             "-o",
-            "init/start.o",
-            "init/start.c"
+            "init/entry.o",
+            "init/entry.S"
         ],
         "directory": "/home/lwz/los",
-        "file": "init/start.c"
+        "file": "init/entry.S"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/swtch.o",
+            "kernel/swtch.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/swtch.c"
     },
     {
         "arguments": [

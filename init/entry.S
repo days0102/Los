@@ -1,5 +1,5 @@
 .equ harts,8        # hart 数量
-.equ ssize,4096    # 每个 hart 的栈大小
+.equ sz,4096    # 每个 hart 的栈大小
 
 .global _start
 .section .text
@@ -16,12 +16,14 @@ _start:
     # mhartid 寄存器存放hart的id(只读寄存器)
     csrr t0,mhartid     # 读 mhartid 寄存器
     addi t0,t0,1
+    mv tp,t0            # 保存为线程id
     # bnez t0,empty       # 不为0则空转，只使用一个hart
 
     # 初始化栈
-    li t1,ssize
+    la sp,stacks
+    li t1,sz
     mul t1,t1,t0
-    la sp,stacks+ssize # 栈指针指向栈底
+    add sp,sp,t1 # 栈指针指向栈顶
     
     # 跳转到start()
     j start
@@ -31,6 +33,7 @@ empty:
     j empty
 
 .global stacks
+# .balign 4096 # n字节对齐
 stacks:
-    .skip ssize*harts  # 分配栈空间
+    .skip sz*harts  # 分配栈空间
     .end

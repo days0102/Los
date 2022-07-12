@@ -5,6 +5,9 @@
         "*.tcc": "c",
         "swtch.h": "c",
         "uart.h": "c",
-        "defs.h": "c"
+        "defs.h": "c",
+        "stddef.h": "c",
+        "stdarg.h": "c",
+        "types.h": "c"
     }
 }

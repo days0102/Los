@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 11:57:44
+ * @LastEditTime: 2022-07-12 21:50:06
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
@@ -32,11 +32,13 @@ extern uint8 bssend[];
 extern uint8 end[];
 extern uint8 pstart[];
 extern uint8 pend[];
+extern uint8 memstart[];
+extern uint8 memend[];
 
-void* memset(void* addr,int c,uint32 n){
+void* memset(void* addr,int c,uint n){
     char* maddr=(char*)addr;
-    for(uint32 i=0;i<n;i++){
-        maddr[i]=c;
+    for(uint i=0;i<n;i++){
+        maddr[i]=(char)c;
     }
     return addr;
 }
@@ -46,6 +48,7 @@ void minit(){
     // uint32* re=rodataend;
     // uint32* de=dataend;
     // uint32* be=bssend;
+    // uint8* me=memend;
     char* p=(char*)pstart;
     struct pmp* m;
     for( ; p + PGSIZE <= (char*)pend ; p+=PGSIZE){
