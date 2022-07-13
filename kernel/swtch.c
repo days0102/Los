@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 20:54:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 09:25:18
+ * @LastEditTime: 2022-07-13 18:48:00
  * @Description: 上下文切换
  * @FilePath: /los/kernel/swtch.c
  */
@@ -11,6 +11,7 @@
 
 void swtch(struct context* old,struct context* new){
     // 将当前context 保存到 old context 中
+    asm volatile("addi	sp,sp,32");
     asm volatile("sw ra,0(a0)");
     asm volatile("sw sp,4(a0)");
     asm volatile("sw gp,8(a0)");

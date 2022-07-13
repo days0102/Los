@@ -1,7 +1,6 @@
-.text
-.global swtch
-swtch:
 
+.global cswap
+cswap:
     sw ra,0(a1)
     sw sp,4(a1)
     sw gp,8(a1)
@@ -68,5 +67,3 @@ swtch:
     lw t6,120(a0)
 
     ret
-
-.end

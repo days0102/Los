@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-13 10:14:33
+ * @LastEditTime: 2022-07-13 15:50:35
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -273,4 +273,21 @@ static inline uint32 r_tp(){
 }
 static inline void w_tp(uint32 x){
     asm volatile("mv tp , %0": : "r"(x));
+}
+
+/**
+ * @description: 
+ * 当一个trap进入s模式时，scause会被
+ * 写入一个代码，表明导致该trap的事件。
+ *     1bit         31bit
+ * type | Exception Code (WLRL)
+ * type 1=中断 2=异常 
+ */
+static inline uint32 r_scause(){
+    uint32 x;
+    asm volatile("csrr %0,scause":"=r"(x));
+    return x;
+}
+static inline void w_scause(uint32 x){
+    asm volatile("csrw scause,%0"::"r"(x));
 }

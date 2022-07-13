@@ -17,6 +17,8 @@ OBJDUMP = ${CROSS_COMPILE}objdump
 
 SRCS_ASM = \
 	init/entry.S \
+	kernel/switch.S \
+	kernel/kvec.S \
 
 SRCS_C = \
 	init/start.c \
@@ -34,7 +36,7 @@ all:kernel.elf
 	@echo "	Make OK! "
 
 run:kernel.elf
-	@ # echo "Press Ctrl-A and then X to exit QEMU"
+	@echo "Press Ctrl-A and then X to exit QEMU"
 	${QEMU} ${QFLAGS} -kernel kernel.elf
 	
 kernel.elf: ${OBJS}
@@ -57,6 +59,12 @@ debug:kernel.elf
 	@echo "-------------------------------------------------------"
 	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S 
 	@ # ${GDB} kernel.elf -q -x gdbinit
+
+local:
+	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
+	@echo "-------------------------------------------------------"
+	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S &
+	@${GDB} kernel.elf -q -x localgdbinit
 
 clean:
 	rm -rf *.o *.bin *.elf */*.o */*.d
