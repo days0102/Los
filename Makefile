@@ -5,7 +5,7 @@ QEMU = qemu-system-riscv32 # 32bit
 QFLAGS = -nographic -smp $(CPUS) -machine virt -bios none
 
 CROSS_COMPILE = riscv64-unknown-elf-
-CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g# 32bit -Wall显示警告
+CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit -Wall显示警告
 # CFLAGS = -nostdlib -fno-builtin -march=rv64ima -mabi=lp64 -g -Wall -mcmodel=medany # 64bit
 CFLAGS += -I.# 包含当前目录
 
