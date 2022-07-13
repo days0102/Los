@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 17:05:38
+ * @LastEditTime: 2022-07-13 10:14:33
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -192,6 +192,10 @@ static inline void w_misa(uint32 x){
 /**
  * @description: 获取机器trap向量表
  * mtvec 寄存器保存 trap 处理函数地址
+ * 31~2    1~0
+ * addr | mode
+ * addr 30bit 4字节对齐
+ * mode 1=所有处理在addr处处理 2=在addr+4*cause处处理
  */
 static inline uint32 r_mtvec(){
     uint32 x;

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 23:02:38
+ * @LastEditTime: 2022-07-13 08:16:20
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -13,19 +13,19 @@
 void panic(char* s){
     uartputs("panic: ");
     uartputs(s);
+	uartputs("\n");
     while(1);
 }
 
 static char outbuf[1024];
+// # 简易版 printf
+// ! 未处理异常
 int printf(const char* fmt,...){
-	
-    va_list vl;
-	va_start(vl,fmt);
+    va_list vl;			// 保存参数的地址，定义在stdarg.h
+	va_start(vl,fmt);	// 将vl指向fmt后面的参数
 	char ch;
 	const char* s = fmt;
 	int tt=0;
-	int bb=0;
-	int ll=0;
 	int idx=0;
 	while(ch=*(s)){
 		if(ch=='%'){
@@ -36,25 +36,24 @@ int printf(const char* fmt,...){
 				tt=1;
 			}
 			s++;
-			continue;
 		}else{
 			if(tt==1){
 				switch (ch)
 				{
-				case 'l':
-					ll=1;
-					break;
+				// case 'l':
+				// 	ll=1;
+				// 	break;
 				case 'd':
 				{
-					long x=ll?va_arg(vl,long):va_arg(vl,int);
+					// 获取参数，将指针指向下一个参数
+					int x=va_arg(vl,int);
 					int len=0;
-					for(long n=x;n/=10;len++);
+					for(int n=x;n/=10;len++);
 					for(int i=len;i>=0;i--){
 						outbuf[idx+i]='0'+(x%10);
 						x/=10;
 					}
 					idx+=(len+1);
-					ll=0;
 					tt=0;
 					break;
 				}
@@ -66,11 +65,11 @@ int printf(const char* fmt,...){
 				case 'x':
 				case 'X':	// 大小写一致
 				{
-					unsigned long x=ll?va_arg(vl,long):va_arg(vl,int);
+					uint x=va_arg(vl,uint);
 					int len=0;
-					for(long n=x;n/=16;len++);
+					for(unsigned int n=x;n/=16;len++);
 					for(int i=len;i>=0;i--){
-						char c=(x%16)>10?'a'+(x%16)-10:'0'+(x%16);
+						char c=(x%16)>=10?'a'+((x%16)-10):'0'+(x%16);
 						outbuf[idx+i]=c;
 						x/=16;
 					}
@@ -79,6 +78,8 @@ int printf(const char* fmt,...){
 					break;
 				}
 				case 'c':
+					// 'char' is promoted to 'int' when passed through '...'
+					ch=va_arg(vl,int);
 					outbuf[idx++]=ch;
 					tt=0;
 					break;
@@ -102,6 +103,7 @@ int printf(const char* fmt,...){
 			}
 		}
 	}
-	va_end(vl);
+	va_end(vl);	// 释法参数
+	outbuf[idx]='\0';
 	uartputs(outbuf);
 }

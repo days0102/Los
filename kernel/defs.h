@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 19:32:56
+ * @LastEditTime: 2022-07-13 14:12:02
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -23,7 +23,7 @@ void panic(char*);
 int printf(const char*,...);
 
 // trap.c
-void tvec();
+void trapvec();
 
 // pmm.c
 void minit();
