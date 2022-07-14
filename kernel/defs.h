@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-13 20:31:24
+ * @LastEditTime: 2022-07-14 15:46:44
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -19,9 +19,10 @@ void uartputs(char*);
 struct context;
 void swtch(struct context*,struct context*);
 
+// kvec.S
 void kvec();
 
-// 
+// switch.c
 void cswap(struct context*,struct context* );
 
 // printf.c
@@ -36,3 +37,6 @@ void minit();
 void* memset(void*,int,uint);
 void* palloc();
 void pfree(void*);
+
+// plic.c
+void plicinit();

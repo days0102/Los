@@ -15,11 +15,11 @@ _start:
 
     # mhartid 寄存器存放hart的id(只读寄存器)
     csrr t0,mhartid     # 读 mhartid 寄存器
-    addi t0,t0,1
     mv tp,t0            # 保存为线程id
     # bnez t0,empty       # 不为0则空转，只使用一个hart
 
     # 初始化栈
+    addi t0,t0,1
     la sp,stacks
     li t1,sz
     mul t1,t1,t0

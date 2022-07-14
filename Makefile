@@ -28,6 +28,7 @@ SRCS_C = \
 	kernel/trap.c \
 	kernel/printf.c \
 	kernel/pmm.c \
+	kernel/plic.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)

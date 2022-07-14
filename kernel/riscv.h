@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-13 15:50:35
+ * @LastEditTime: 2022-07-14 16:19:06
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -290,4 +290,115 @@ static inline uint32 r_scause(){
 }
 static inline void w_scause(uint32 x){
     asm volatile("csrw scause,%0"::"r"(x));
+}
+
+/**
+ * @description: 读取全局中断使能
+ */
+#define INTR_MPIE (1<<7)
+#define INTR_SPIE (1<<5)
+#define INTR_MIE  (1<<3)
+#define INTR_SIE  (1<<1)
+static inline uint32 a_mstatus_intr(uint32 m){
+    uint32 x=r_mstatus();
+    switch (m)
+    {
+    case INTR_MPIE:
+        x &= INTR_MPIE;
+        break;
+    case INTR_SPIE:
+        x &= INTR_SPIE;
+        break;
+    case INTR_MIE:
+        x &= INTR_MIE;
+        break;
+    case INTR_SIE:
+        x &= INTR_SIE;
+        break;
+    default:
+        break;
+    }
+    return x;
+}
+
+static inline void s_mstatus_intr(uint32 m){
+    uint32 x=r_mstatus();
+    switch (m)
+    {
+    case INTR_MPIE:
+        x &= ~INTR_MPIE;
+        x |= INTR_MPIE;
+        break;
+    case INTR_SPIE:
+        x &= ~INTR_SPIE;
+        x |= INTR_SPIE;
+        break;
+    case INTR_MIE:
+        x &= ~INTR_MIE;
+        x |= INTR_MIE;
+        break;
+    case INTR_SIE:
+        x &= ~INTR_SIE;
+        x |= INTR_SIE;
+        break;
+    default:
+        break;
+    }
+    w_mstatus(x);
+}
+
+/**
+ * @description: S-mode 全局中断
+ * SPIE = 进入S-mode前中断使能
+ * SIE = 进入S-mode SPIE=SIE,SIE=0  sret时 SIE=SPIE,SPIE=0
+ */
+static inline uint32 a_sstatus_intr(uint32 m){
+    uint32 x=r_sstatus();
+    switch (m)
+    {
+    case INTR_SPIE:
+        x &= INTR_SPIE;    
+        break;
+    case INTR_SIE:
+        x &= INTR_SIE;     
+        break;
+    default:
+        break;
+    }
+    return x;
+}
+static inline void s_sstatus_intr(uint32 m){
+    uint32 x=r_sstatus();
+    switch (m)
+    {
+    case INTR_SPIE:
+        x |= INTR_SPIE;    // 开
+        break;
+    case ~INTR_SPIE:
+        x &= ~INTR_SPIE;   // 关
+        break;
+    case INTR_SIE:
+        x |= INTR_SIE;     // 开
+        break;
+    case ~INTR_SIE:
+        x &= INTR_SIE;     // 关
+    default:
+        break;   
+    }
+    w_sstatus(x);
+}
+
+/**
+ * @description: S-mode 中断使能
+ */
+#define SEIE (1<<9)
+#define STIE (1<<5)
+#define SSIE (1<<1)
+static inline uint32 r_sie(){
+    uint32 x;
+    asm volatile("csrr %0,sie " : "=r"(x));
+    return x;
+}
+static inline void w_sie(uint32 x){
+    asm volatile("csrw sie,%0"::"r"(x));
 }

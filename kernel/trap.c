@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-13 22:52:58
+ * @LastEditTime: 2022-07-13 22:59:53
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -80,6 +80,6 @@ void trapvec(){
             printf("Other\n");
             break;
         }
-        // panic("Trap Exception");
+        panic("Trap Exception");
     }
 }

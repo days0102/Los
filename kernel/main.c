@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-13 20:18:40
+ * @LastEditTime: 2022-07-14 15:46:29
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -13,9 +13,9 @@ void main(){
     printf("start run main()\n");
     
     minit();
+    plicinit();
 
-    *(int *)0x00000000 = 100;
-
+    printf("%d",a_sstatus_intr(INTR_SIE));
     printf("~\n");
     while(1);
 }
