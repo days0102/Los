@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-14 16:19:06
+ * @LastEditTime: 2022-07-14 21:38:40
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -401,4 +401,15 @@ static inline uint32 r_sie(){
 }
 static inline void w_sie(uint32 x){
     asm volatile("csrw sie,%0"::"r"(x));
+}
+#define MEIE (1<<11)
+#define MTIE (1<<7)
+#define MSIE (1<<3)
+static inline uint32 r_mie(){
+    uint32 x;
+    asm volatile("csrr %0,mie " : "=r"(x));
+    return x;
+}
+static inline void w_mie(uint32 x){
+    asm volatile("csrw mie,%0"::"r"(x));
 }

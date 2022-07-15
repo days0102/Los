@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-14 15:46:44
+ * @LastEditTime: 2022-07-15 10:05:33
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -14,6 +14,8 @@
 void uartinit();
 char uartputc(char c);
 void uartputs(char*);
+void uartgetc();
+char uartintr();
 
 // swtch.c
 struct context;
@@ -40,3 +42,5 @@ void pfree(void*);
 
 // plic.c
 void plicinit();
+uint32 r_plicclaim();
+void w_pliccomplete(uint32);

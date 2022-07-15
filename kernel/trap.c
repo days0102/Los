@@ -2,12 +2,30 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-13 22:59:53
+ * @LastEditTime: 2022-07-15 11:12:40
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
 #include "defs.h"
 #include "riscv.h"
+#include "plic.h"
+
+/**
+ * @description: 处理外部中断
+ */
+void externinterrupt(){
+    uint32 irq=r_plicclaim();
+    printf("irq : %d\n",irq);
+    switch (irq)
+    {
+    case UART_IRQ:  // uart 中断(键盘输入)
+        printf("recived : %c\n",uartintr());
+        break;
+    default:
+        break;
+    }
+    w_pliccomplete(irq);
+}
 
 void trapvec(){
     uint32 scause=r_scause();
@@ -26,6 +44,7 @@ void trapvec(){
             break;
         case 9:
             printf("Supervisor external interrupt\n");
+            externinterrupt();
             break;
         default:
             printf("Other interrupt\n");

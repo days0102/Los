@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 18:04:42
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-08 20:27:16
+ * @LastEditTime: 2022-07-15 10:12:05
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/uart.c
  */
@@ -23,6 +23,9 @@ void uartinit(){
     // 设置校验位
     lcr=0;
     uart_write(UART_LCR,lcr|(3<<0));
+
+    // 开中断
+    uart_write(UART_IER,uart_read(UART_IER)|(1<<0));
 }
 
 // 轮询处理数据
@@ -40,4 +43,18 @@ void uartputs(char* s){
         uartputc(*s++);
     }
     
+}
+
+// 接收输入
+int uartgetc(){
+    if(uart_read(UART_LSR)&(1<<0)){
+        return uart_read(UART_RHR);
+    }else{
+        return -1;
+    }
+}
+
+// 键盘输入中断
+char uartintr(){
+    return uartgetc();
 }

@@ -69,4 +69,4 @@ kvec:
 
     addi sp,sp,128
     
-    ret
+    sret
