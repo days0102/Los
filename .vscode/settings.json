@@ -8,6 +8,8 @@
         "defs.h": "c",
         "stddef.h": "c",
         "stdarg.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "plic.h": "c",
+        "vm.h": "c"
     }
 }

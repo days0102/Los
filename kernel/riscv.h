@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-14 21:38:40
+ * @LastEditTime: 2022-07-15 20:20:36
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -243,12 +243,13 @@ static inline void w_medeleg(uint32 x){
 
 /**
  * @description: Supervisor Address Translation and Protection (satp) Register
- *     32       30~22      21~0
+ *     31       30~22      21~0
  * MODE(WARL) ASID(WARL) PPN(WARL)
- * mode = 地址转换方案
+ * mode = 地址转换方案 0=bare 1=SV32
  * asid = 地址空间标识
  * ppn  = 根页表物理页码(物理地址/4Kb)
  */
+#define SATP_SV32 (1<<31)    
 static inline uint32 r_satp(){
     uint32 x;
     asm volatile("csrr %0,satp":"=r"(x));
@@ -256,6 +257,10 @@ static inline uint32 r_satp(){
 }
 static inline void w_satp(uint32 x){
     asm volatile("csrw satp,%0"::"r"(x));
+}
+
+static inline void sfence_vma(){
+    asm volatile("sfence.vma zero,zero");
 }
 
 // 获取 hart id

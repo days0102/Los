@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 15:25:13
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 09:23:31
+ * @LastEditTime: 2022-07-16 09:21:57
  * @Description: RISC-V vir uart通信
  * @FilePath: /los/kernel/uart.h
  */
@@ -14,7 +14,7 @@
     Address 0x10000000~0x10000100
 */
 
-#define UART_ADDR 0x10000000
+#define UART_BASE 0x10000000
 #define UART_SIZE 0x100
 
 #define UART_RHR 0	// Receive Holding Register (read mode)
@@ -30,7 +30,7 @@
 #define UART_MSR 6	// Modem Status Register
 #define UART_SPR 7	// ScratchPad Register
 
-#define UART_REG(reg) ((volatile uint8 *)(UART_ADDR + reg)) // 一个寄存器8bit
+#define UART_REG(reg) ((volatile uint8 *)(UART_BASE + reg)) // 一个寄存器8bit
 
 #define uart_read(reg)  (*(UART_REG(reg)))
 #define uart_write(reg,val)  ((*(UART_REG(reg)))=(val))
