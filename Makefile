@@ -44,7 +44,8 @@ run:kernel.elf
 kernel.elf: ${OBJS}
 	@# ${CC} ${CFLAGS} -Ttext=0x80000000 -o kernel.elf $^
 	${CC} ${CFLAGS} -T kernel.ld -o kernel.elf $^
-	${OBJCOPY} -O binary kernel.elf kernel.bin
+	@${OBJCOPY} -O binary kernel.elf kernel.bin
+	@${OBJDUMP} -S kernel.elf > kernel.asm
 
 # $@  表示目标文件
 # $^  表示所有的依赖文件
