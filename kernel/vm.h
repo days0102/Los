@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 16:35:56
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-16 22:43:42
+ * @LastEditTime: 2022-07-17 14:38:03
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.h
  */
@@ -11,6 +11,8 @@
 #ifndef PGSIZE
 #define PGSIZE 4096
 #endif
+
+#define VMMAX 0xffffffff
 
 #define BASE_ADDR 0x80000000
 
