@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-15 20:20:36
+ * @LastEditTime: 2022-07-16 14:43:34
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -259,6 +259,7 @@ static inline void w_satp(uint32 x){
     asm volatile("csrw satp,%0"::"r"(x));
 }
 
+// 刷新整个页表
 static inline void sfence_vma(){
     asm volatile("sfence.vma zero,zero");
 }

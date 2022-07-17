@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 16:35:56
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-15 22:23:26
+ * @LastEditTime: 2022-07-16 22:43:42
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.h
  */
@@ -27,8 +27,8 @@
 #define VPN_MASK    (0x3ff) // 10bit
 #define OFFSET_MASK (0xfff) // 12bit
 
-#define PA2PTE(pa)  ((((uint32)pa)>>12)<<10)
-#define PTE2PA(pte) ((((uint32)pte)>>10)<<12)
+#define PA2PTE(pa)  ((((addr_t)pa)>>12)<<10)
+#define PTE2PA(pte) ((((addr_t)pte)>>10)<<12)
 
-#define VPN(level,va)  ((va>>(12+(level)*10))&VPN_MASK)
+#define VPN(level,va)  (((addr_t)va>>(12+(level)*10))&VPN_MASK)
 #define PPN(level,pa)  ((pa>>(12+(level)*10))&VPN_MASK)

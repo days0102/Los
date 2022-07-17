@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-15 13:08:51
+ * @LastEditTime: 2022-07-17 11:06:50
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -39,6 +39,23 @@ void    minit();
 void*   memset(void*,int,uint);
 void*   palloc();
 void    pfree(void*);
+
+// kernel.ld
+extern uint8 textstart[];
+extern uint8 textend[];
+extern uint8 rodatastart[];
+extern uint8 rodataend[];
+extern uint8 datastart[];
+extern uint8 dataend[];
+extern uint8 bssstart[];
+extern uint8 bssend[];
+extern uint8 mstart[];
+extern uint8 mend[];
+extern uint8 memstart[];
+extern uint8 memend[];
+
+// entry.S
+extern uint stacks[];
 
 // plic.c
 void    plicinit();

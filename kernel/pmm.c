@@ -2,11 +2,12 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 21:50:06
+ * @LastEditTime: 2022-07-17 11:17:15
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
 #include "types.h"
+#include "defs.h"
 
 #define PGSIZE 4096
 
@@ -21,20 +22,6 @@ struct
     struct pmp* freelist;
 }mem;
 
-extern uint8 textstart[];
-extern uint8 textend[];
-extern uint8 rodatastart[];
-extern uint8 rodataend[];
-extern uint8 datastart[];
-extern uint8 dataend[];
-extern uint8 bssstart[];
-extern uint8 bssend[];
-extern uint8 end[];
-extern uint8 pstart[];
-extern uint8 pend[];
-extern uint8 memstart[];
-extern uint8 memend[];
-
 void* memset(void* addr,int c,uint n){
     char* maddr=(char*)addr;
     for(uint i=0;i<n;i++){
@@ -44,14 +31,21 @@ void* memset(void* addr,int c,uint n){
 }
 
 void minit(){
-    // uint32* te=textend;
-    // uint32* re=rodataend;
-    // uint32* de=dataend;
-    // uint32* be=bssend;
-    // uint8* me=memend;
-    char* p=(char*)pstart;
+    printf("textstart:%p    ",textstart);
+    printf("textend:%p\n",textend);
+    printf("rodatastart:%p  ",rodatastart);
+    printf("rodataend:%p\n",rodataend);
+    printf("datastart:%p    ",datastart);
+    printf("dataend:%p\n",dataend);
+    printf("bssstart:%p     ",bssstart);
+    printf("bssend:%p\n",bssend);
+    printf("mstart:%p   ",mstart);
+    printf("mend:%p\n",mend);
+    printf("stack:%p\n",stacks);
+
+    char* p=(char*)mstart;
     struct pmp* m;
-    for( ; p + PGSIZE <= (char*)pend ; p+=PGSIZE){
+    for( ; p + PGSIZE <= (char*)mend ; p+=PGSIZE){
         m=(struct pmp*)p;
         m->next=mem.freelist;
         mem.freelist=m;

@@ -32,6 +32,7 @@ empty:
     wfi       # 休眠指令 wait for interrupt 直至收到中断
     j empty
 
+.section .data  // 将栈放到可读写数据区
 .global stacks
 # .balign 4096 # n字节对齐
 stacks:

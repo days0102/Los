@@ -66,11 +66,11 @@ SECTIONS
 		PROVIDE(bssend = .);
     }>ram
 
+    . = ALIGN(4096);
+
     PROVIDE(memstart = ORIGIN(ram));
     PROVIDE(memend = ORIGIN(ram)+LENGTH(ram));
 
-    . = ALIGN(4096);
-    PROVIDE(end = .);
-    PROVIDE(pstart = .);         /* 堆的起始位置 */
-    PROVIDE(pend = memend);
+    PROVIDE(mstart = .);         /* 堆的起始位置 */
+    PROVIDE(mend = memend);
 }
