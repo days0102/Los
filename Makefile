@@ -16,12 +16,12 @@ OBJDUMP = ${CROSS_COMPILE}objdump
 
 
 SRCS_ASM = \
-	init/entry.S \
+	initos/entry.S \
 	kernel/switch.S \
 	kernel/kvec.S \
 
 SRCS_C = \
-	init/start.c \
+	initos/start.c \
 	kernel/uart.c \
 	kernel/swtch.c \
 	kernel/main.c \
@@ -67,7 +67,7 @@ local:
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
 	@echo "-------------------------------------------------------"
 	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S &
-	@${GDB} kernel.elf -q -x localgdbinit
+	@${GDB} kernel.elf -q -x other/localgdbinit
 
 clean:
 	rm -rf *.o *.bin *.elf */*.o */*.d

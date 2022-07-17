@@ -1,5 +1,5 @@
 .equ harts,8        # hart 数量
-.equ sz,4096    # 每个 hart 的栈大小
+.equ sz,4096        # 每个 hart 的栈大小
 
 .global _start
 .section .text

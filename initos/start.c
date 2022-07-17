@@ -2,14 +2,14 @@
  * @Author: Outsider
  * @Date: 2022-07-08 10:52:32
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-15 08:54:31
+ * @LastEditTime: 2022-07-17 21:28:47
  * @Description: In User Settings Edit
- * @FilePath: /los/init/start.c
+ * @FilePath: /los/initos/start.c
  */
 #include "kernel/defs.h"
 #include "kernel/riscv.h"
 
-extern void main();
+extern void main();     // 定义在main.c
 
 void start(){
     uartinit();

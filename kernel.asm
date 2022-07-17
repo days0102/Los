@@ -741,7 +741,7 @@ static inline void s_sstatus_intr(uint32 m){
 #include "kernel/defs.h"
 #include "kernel/riscv.h"
 
-extern void main();
+extern void main();     // 定义在main.c
 
 void start(){
 80000624:	ff010113          	addi	sp,sp,-16
