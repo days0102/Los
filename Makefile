@@ -17,19 +17,18 @@ OBJDUMP = ${CROSS_COMPILE}objdump
 
 SRCS_ASM = \
 	initos/entry.S \
-	kernel/switch.S \
 	kernel/kvec.S \
 
 SRCS_C = \
 	initos/start.c \
 	kernel/uart.c \
-	kernel/swtch.c \
 	kernel/main.c \
 	kernel/trap.c \
 	kernel/printf.c \
 	kernel/pmm.c \
 	kernel/plic.c \
 	kernel/vm.c \
+	kernel/proc.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)

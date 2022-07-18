@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-17 11:29:25
+ * @LastEditTime: 2022-07-18 18:25:49
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.c
  */
@@ -12,6 +12,7 @@
 #include "vm.h"
 #include "uart.h"
 #include "plic.h"
+#include "proc.h"
 
 addr_t* pgt;
 
@@ -47,7 +48,7 @@ void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
     
     // PPN
     addr_t start = ((va>>12)<<12);   
-    addr_t end = (((va + size - 1) >>12)<<12);
+    addr_t end =(((va + (size - 1)) >>12)<<12);
 
     while(1){
         pte=acquriepte(pgt,start);
@@ -76,6 +77,16 @@ void printpgt(addr_t* pgt){
     }
 }
 
+void mkstack(addr_t* pgt){
+
+    for(int i=0;i<NPROC;i++){
+        addr_t va=(addr_t)(KSPACE+PGSIZE+(i)*2*PGSIZE);
+        addr_t pa=(addr_t)palloc();
+        // printf("%p %p\n",va,pa);
+        vmmap(pgt,va,pa,PGSIZE,PTE_R|PTE_W);
+    }
+}
+
 // 初始化虚拟内存
 void vminit(){
     pgt=(addr_t*)palloc();
@@ -99,9 +110,10 @@ void vminit(){
     // 映射空闲内存区
     vmmap(pgt,(addr_t)mstart,(addr_t)mstart,mend-mstart,PTE_W|PTE_R);
 
+    mkstack(pgt);
+
     // printpgt(pgt);
     w_satp(SATP_SV32|(((uint32)pgt)>>12)); // 页表 PPN 写入Satp
     sfence_vma();       // 刷新页表
-
 }
 

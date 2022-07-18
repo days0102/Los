@@ -10,62 +10,11 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/swtch.o",
-            "kernel/swtch.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/swtch.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
             "kernel/pmm.o",
             "kernel/pmm.c"
         ],
         "directory": "/home/lwz/los",
         "file": "kernel/pmm.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/trap.o",
-            "kernel/trap.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/trap.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/printf.o",
-            "kernel/printf.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/printf.c"
     },
     {
         "arguments": [
@@ -95,11 +44,11 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/switch.o",
-            "kernel/switch.S"
+            "kernel/trap.o",
+            "kernel/trap.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "kernel/switch.S"
+        "file": "kernel/trap.c"
     },
     {
         "arguments": [
@@ -129,11 +78,11 @@
             "-g",
             "-I.",
             "-o",
-            "initos/entry.o",
-            "initos/entry.S"
+            "kernel/switch.o",
+            "kernel/switch.S"
         ],
         "directory": "/home/lwz/los",
-        "file": "initos/entry.S"
+        "file": "kernel/switch.S"
     },
     {
         "arguments": [
@@ -146,28 +95,11 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/main.o",
-            "kernel/main.c"
+            "kernel/uart.o",
+            "kernel/uart.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "kernel/main.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/kvec.o",
-            "kernel/kvec.S"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/kvec.S"
+        "file": "kernel/uart.c"
     },
     {
         "arguments": [
@@ -197,10 +129,95 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/uart.o",
-            "kernel/uart.c"
+            "initos/entry.o",
+            "initos/entry.S"
         ],
         "directory": "/home/lwz/los",
-        "file": "kernel/uart.c"
+        "file": "initos/entry.S"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/proc.o",
+            "kernel/proc.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/proc.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/swtch.o",
+            "kernel/swtch.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/swtch.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/kvec.o",
+            "kernel/kvec.S"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/kvec.S"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/main.o",
+            "kernel/main.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/main.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/printf.o",
+            "kernel/printf.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/printf.c"
     }
 ]

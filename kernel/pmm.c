@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-17 11:17:15
+ * @LastEditTime: 2022-07-18 08:57:14
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
@@ -31,17 +31,19 @@ void* memset(void* addr,int c,uint n){
 }
 
 void minit(){
-    printf("textstart:%p    ",textstart);
-    printf("textend:%p\n",textend);
-    printf("rodatastart:%p  ",rodatastart);
-    printf("rodataend:%p\n",rodataend);
-    printf("datastart:%p    ",datastart);
-    printf("dataend:%p\n",dataend);
-    printf("bssstart:%p     ",bssstart);
-    printf("bssend:%p\n",bssend);
-    printf("mstart:%p   ",mstart);
-    printf("mend:%p\n",mend);
-    printf("stack:%p\n",stacks);
+    #ifdef _DEBUG
+        printf("textstart:%p    ",textstart);
+        printf("textend:%p\n",textend);
+        printf("rodatastart:%p  ",rodatastart);
+        printf("rodataend:%p\n",rodataend);
+        printf("datastart:%p    ",datastart);
+        printf("dataend:%p\n",dataend);
+        printf("bssstart:%p     ",bssstart);
+        printf("bssend:%p\n",bssend);
+        printf("mstart:%p   ",mstart);
+        printf("mend:%p\n",mend);
+        printf("stack:%p\n",stacks);
+    #endif
 
     char* p=(char*)mstart;
     struct pmp* m;

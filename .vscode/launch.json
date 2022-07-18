@@ -29,7 +29,7 @@
             }
         ],
         "logging": {
-            "engineLogging": true,
+            "engineLogging": false,
             "programOutput": true
         },
         // "preLaunchTask": "make debug"
