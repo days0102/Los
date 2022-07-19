@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-18 18:25:49
+ * @LastEditTime: 2022-07-18 20:41:07
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.c
  */
@@ -14,7 +14,7 @@
 #include "plic.h"
 #include "proc.h"
 
-addr_t* pgt;
+addr_t* kpgt;
 
 /**
  * @description:  获取 PTE
@@ -77,8 +77,10 @@ void printpgt(addr_t* pgt){
     }
 }
 
+// 进程内核栈初始化
+// 所有进程共享一个内核空间
+// 每个进程在内核中有独立的内核栈
 void mkstack(addr_t* pgt){
-
     for(int i=0;i<NPROC;i++){
         addr_t va=(addr_t)(KSPACE+PGSIZE+(i)*2*PGSIZE);
         addr_t pa=(addr_t)palloc();
@@ -89,31 +91,31 @@ void mkstack(addr_t* pgt){
 
 // 初始化虚拟内存
 void vminit(){
-    pgt=(addr_t*)palloc();
-    memset(pgt,0,PGSIZE);
+    kpgt=(addr_t*)palloc();
+    memset(kpgt,0,PGSIZE);
 
     // 映射 PLIC 寄存器
-    vmmap(pgt,PLIC_BASE,PLIC_BASE,0x400000,PTE_R|PTE_W);
+    vmmap(kpgt,PLIC_BASE,PLIC_BASE,0x400000,PTE_R|PTE_W);
 
     // 映射 UART 寄存器
-    vmmap(pgt,UART_BASE,UART_BASE,PGSIZE,PTE_R|PTE_W);
+    vmmap(kpgt,UART_BASE,UART_BASE,PGSIZE,PTE_R|PTE_W);
     
     // 映射 内核 指令区
-    vmmap(pgt,(addr_t)textstart,(addr_t)textstart,(textend-textstart),PTE_R|PTE_X);
+    vmmap(kpgt,(addr_t)textstart,(addr_t)textstart,(textend-textstart),PTE_R|PTE_X);
     // 映射 内核 只读区
-    vmmap(pgt,(addr_t)rodatastart,(addr_t)rodatastart,(rodataend-rodatastart),PTE_R);
+    vmmap(kpgt,(addr_t)rodatastart,(addr_t)rodatastart,(rodataend-rodatastart),PTE_R);
     // 映射 数据区
-    vmmap(pgt,(addr_t)datastart,(addr_t)datastart,dataend-datastart,PTE_R|PTE_W);
+    vmmap(kpgt,(addr_t)datastart,(addr_t)datastart,dataend-datastart,PTE_R|PTE_W);
     // 映射 内核 全局数据区
-    vmmap(pgt,(addr_t)bssstart,(addr_t)bssstart,bssend-bssstart,PTE_R|PTE_W);
+    vmmap(kpgt,(addr_t)bssstart,(addr_t)bssstart,bssend-bssstart,PTE_R|PTE_W);
     
     // 映射空闲内存区
-    vmmap(pgt,(addr_t)mstart,(addr_t)mstart,mend-mstart,PTE_W|PTE_R);
+    vmmap(kpgt,(addr_t)mstart,(addr_t)mstart,mend-mstart,PTE_W|PTE_R);
 
-    mkstack(pgt);
+    mkstack(kpgt);
 
     // printpgt(pgt);
-    w_satp(SATP_SV32|(((uint32)pgt)>>12)); // 页表 PPN 写入Satp
+    w_satp(SATP_SV32|(((uint32)kpgt)>>12)); // 页表 PPN 写入Satp
     sfence_vma();       // 刷新页表
 }
 

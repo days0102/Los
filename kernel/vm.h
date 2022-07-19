@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 16:35:56
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-18 18:24:22
+ * @LastEditTime: 2022-07-19 16:04:23
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.h
  */
@@ -14,7 +14,7 @@
 
 #define MAXVM 0xffffffff        // 虚拟内存
 #define KSPACE 0xc0000000       // 内核空间起始地址
-#define KSTACK 0xc0001fff
+#define KSTACK 0xc0002000
 
 #define BASE_ADDR 0x80000000
 
