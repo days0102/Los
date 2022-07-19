@@ -10,45 +10,11 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/pmm.o",
-            "kernel/pmm.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/pmm.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
             "kernel/plic.o",
             "kernel/plic.c"
         ],
         "directory": "/home/lwz/los",
         "file": "kernel/plic.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/trap.o",
-            "kernel/trap.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/trap.c"
     },
     {
         "arguments": [
@@ -78,11 +44,11 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/switch.o",
-            "kernel/switch.S"
+            "kernel/main.o",
+            "kernel/main.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "kernel/switch.S"
+        "file": "kernel/main.c"
     },
     {
         "arguments": [
@@ -95,11 +61,11 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/uart.o",
-            "kernel/uart.c"
+            "kernel/trap.o",
+            "kernel/trap.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "kernel/uart.c"
+        "file": "kernel/trap.c"
     },
     {
         "arguments": [
@@ -112,62 +78,11 @@
             "-g",
             "-I.",
             "-o",
-            "initos/start.o",
-            "initos/start.c"
+            "kernel/pmm.o",
+            "kernel/pmm.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "initos/start.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "initos/entry.o",
-            "initos/entry.S"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "initos/entry.S"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/proc.o",
-            "kernel/proc.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/proc.c"
-    },
-    {
-        "arguments": [
-            "riscv64-unknown-elf-gcc",
-            "-c",
-            "-nostdlib",
-            "-fno-builtin",
-            "-march=rv32ima",
-            "-mabi=ilp32",
-            "-g",
-            "-I.",
-            "-o",
-            "kernel/swtch.o",
-            "kernel/swtch.c"
-        ],
-        "directory": "/home/lwz/los",
-        "file": "kernel/swtch.c"
+        "file": "kernel/pmm.c"
     },
     {
         "arguments": [
@@ -197,11 +112,45 @@
             "-g",
             "-I.",
             "-o",
-            "kernel/main.o",
-            "kernel/main.c"
+            "kernel/proc.o",
+            "kernel/proc.c"
         ],
         "directory": "/home/lwz/los",
-        "file": "kernel/main.c"
+        "file": "kernel/proc.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "initos/entry.o",
+            "initos/entry.S"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "initos/entry.S"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "initos/start.o",
+            "initos/start.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "initos/start.c"
     },
     {
         "arguments": [
@@ -219,5 +168,39 @@
         ],
         "directory": "/home/lwz/los",
         "file": "kernel/printf.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/uart.o",
+            "kernel/uart.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/uart.c"
+    },
+    {
+        "arguments": [
+            "riscv64-unknown-elf-gcc",
+            "-c",
+            "-nostdlib",
+            "-fno-builtin",
+            "-march=rv32ima",
+            "-mabi=ilp32",
+            "-g",
+            "-I.",
+            "-o",
+            "kernel/string.o",
+            "kernel/string.c"
+        ],
+        "directory": "/home/lwz/los",
+        "file": "kernel/string.c"
     }
 ]

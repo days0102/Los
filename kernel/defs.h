@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-18 14:26:10
+ * @LastEditTime: 2022-07-19 16:54:00
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -28,7 +28,6 @@ void    trapvec();
 
 // pmm.c
 void    minit();
-void*   memset(void*,int,uint);
 void*   palloc();
 void    pfree(void*);
 
@@ -59,3 +58,8 @@ void    vminit();
 
 // proc.c
 void    procinit();
+
+// string.c
+void*   memset(void*,int,uint);
+void*   memmove(void* dst,const void* src,size_t n);
+size_t  strlen(const char* s);

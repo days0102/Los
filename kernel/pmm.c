@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-18 08:57:14
+ * @LastEditTime: 2022-07-19 16:43:31
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
@@ -21,14 +21,6 @@ struct
 {
     struct pmp* freelist;
 }mem;
-
-void* memset(void* addr,int c,uint n){
-    char* maddr=(char*)addr;
-    for(uint i=0;i<n;i++){
-        maddr[i]=(char)c;
-    }
-    return addr;
-}
 
 void minit(){
     #ifdef _DEBUG
