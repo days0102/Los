@@ -5,9 +5,10 @@ QEMU = qemu-system-riscv32 # 32bit
 QFLAGS = -nographic -smp $(CPUS) -machine virt -bios none
 
 CROSS_COMPILE = riscv64-unknown-elf-
-CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit -Wall显示警告
+CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit 
 # CFLAGS = -nostdlib -fno-builtin -march=rv64ima -mabi=lp64 -g -Wall -mcmodel=medany # 64bit
 CFLAGS += -I.# 包含当前目录
+CFLAGS += -Wall -Wno-main# 显示警告
 
 GDB = gdb-multiarch
 CC = ${CROSS_COMPILE}gcc
@@ -19,6 +20,7 @@ OBJDUMP = ${CROSS_COMPILE}objdump
 SRCS_ASM = \
 	initos/entry.S \
 	kernel/kvec.S \
+	kernel/swtch.S \
 
 SRCS_C = \
 	initos/start.c \

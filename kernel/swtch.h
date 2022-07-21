@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 17:55:14
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-12 09:24:52
+ * @LastEditTime: 2022-07-21 22:50:24
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/swtch.h
  */
@@ -12,14 +12,14 @@
 struct context
 {
     /* data */
-    reg_t ra;
-	reg_t sp;
-	reg_t gp;
-	reg_t tp;
-	reg_t a0;
-	reg_t a1;
-	reg_t a2;
-	reg_t a3;
+    reg_t ra; 	// 0
+	reg_t sp;	// 4
+	reg_t gp;	// 8
+	reg_t tp;	// 12
+	reg_t a0;	// 16
+	reg_t a1;	// 20
+	reg_t a2;	// 24
+	reg_t a3;	// 28
 	reg_t a4;
 	reg_t a5;
 	reg_t a6;

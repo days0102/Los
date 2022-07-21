@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-21 11:51:25
+ * @LastEditTime: 2022-07-22 07:47:54
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -27,7 +27,7 @@ int printf(const char* fmt,...){
 	const char* s = fmt;
 	int tt=0;
 	int idx=0;
-	while(ch=*(s)){
+	while((ch=*(s))){
 		if(ch=='%'){
 			if(tt==1){
 				outbuf[idx++]='%';
@@ -106,4 +106,5 @@ int printf(const char* fmt,...){
 	va_end(vl);	// 释法参数
 	outbuf[idx]='\0';
 	uartputs(outbuf);
+	return idx;
 }

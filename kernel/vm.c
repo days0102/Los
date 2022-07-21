@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-21 09:27:15
+ * @LastEditTime: 2022-07-22 07:21:46
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.c
  */
@@ -121,7 +121,7 @@ void vminit(){
 
 addr_t* pgtcreate(){
     // 分配页表
-    addr_t* pgt=palloc();
+    addr_t* pgt=(addr_t*)palloc();
 
     return pgt;
 }

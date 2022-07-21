@@ -2,12 +2,11 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-20 20:20:03
+ * @LastEditTime: 2022-07-21 23:01:35
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
 #include "types.h"
-#include "defs.h"
 #include "swtch.h"
 
 #define NPROC 4

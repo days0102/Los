@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-21 09:29:30
+ * @LastEditTime: 2022-07-22 07:17:35
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -65,3 +65,7 @@ void    procinit();
 void*   memset(void*,int,uint);
 void*   memmove(void* dst,const void* src,size_t n);
 size_t  strlen(const char* s);
+
+// swtch.S
+struct context;
+void    swtch(struct context* old,struct context* new);
