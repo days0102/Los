@@ -11,6 +11,7 @@ CFLAGS += -I.# 包含当前目录
 
 GDB = gdb-multiarch
 CC = ${CROSS_COMPILE}gcc
+LD = ${CROSS_COMPILE}ld
 OBJCOPY = ${CROSS_COMPILE}objcopy
 OBJDUMP = ${CROSS_COMPILE}objdump
 
@@ -30,6 +31,9 @@ SRCS_C = \
 	kernel/vm.c \
 	kernel/proc.c \
 	kernel/string.c \
+
+SRCS_USER = \
+	user/zeroproc.S \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
@@ -56,6 +60,11 @@ kernel.elf: ${OBJS}
 
 %.o : %.S
 	${CC} ${CFLAGS} -c -o $@ $<
+
+zeroproc : user/zeroproc.S
+	$(CC) $(CFLAGS) -c user/zeroproc.S -o user/zeroproc.o
+	$(OBJCOPY) -S -O binary user/zeroproc.o user/zeroproc.bin
+	$(OBJDUMP) -S user/zeroproc.o > user/zeroproc.asm
 
 debug:kernel.elf
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"

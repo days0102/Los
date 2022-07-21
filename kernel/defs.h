@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-19 16:54:00
+ * @LastEditTime: 2022-07-21 09:29:30
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -55,6 +55,8 @@ void    w_pliccomplete(uint32);
 
 // vm.c 
 void    vminit();
+addr_t* pgtcreate();
+void    vmmap(addr_t* pgt,addr_t va,addr_t pa,uint sz,uint mode);
 
 // proc.c
 void    procinit();

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-18 20:41:07
+ * @LastEditTime: 2022-07-21 09:27:15
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.c
  */
@@ -117,5 +117,12 @@ void vminit(){
     // printpgt(pgt);
     w_satp(SATP_SV32|(((uint32)kpgt)>>12)); // 页表 PPN 写入Satp
     sfence_vma();       // 刷新页表
+}
+
+addr_t* pgtcreate(){
+    // 分配页表
+    addr_t* pgt=palloc();
+
+    return pgt;
 }
 

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-18 17:11:59
+ * @LastEditTime: 2022-07-20 20:20:03
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
@@ -12,7 +12,7 @@
 
 #define NPROC 4
 
-enum procstatus {UNUSED,RUNABLE,RUNNING,BLOCKED,SLEEPING};
+enum procstatus {UNUSED,USED,RUNABLE,RUNNING,BLOCKED,SLEEPING};
 
 struct pcb
 {
@@ -20,7 +20,7 @@ struct pcb
     enum procstatus status;
     struct context context;
     addr_t* pagetable;
-    addr_t kstack;
+    addr_t kernelstack;
 };
 
 struct pcb proc[NPROC];

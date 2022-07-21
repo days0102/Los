@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-13 08:16:20
+ * @LastEditTime: 2022-07-21 11:51:25
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -18,8 +18,8 @@ void panic(char* s){
 }
 
 static char outbuf[1024];
-// # 简易版 printf
-// ! 未处理异常
+// 简易版 printf
+// 未处理异常
 int printf(const char* fmt,...){
     va_list vl;			// 保存参数的地址，定义在stdarg.h
 	va_start(vl,fmt);	// 将vl指向fmt后面的参数
