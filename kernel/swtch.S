@@ -37,8 +37,8 @@ swtch:
     sw t6,120(a0)
 
 
-    # lw ra,0(a1)
-    # lw sp,4(a1)
+    lw ra,0(a1)
+    lw sp,4(a1)
     lw gp,8(a1)
     lw tp,12(a1)
     lw a0,16(a1)

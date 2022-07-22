@@ -2,14 +2,20 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 07:51:32
+ * @LastEditTime: 2022-07-22 08:06:16
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
 #include "riscv.h"
 #include "defs.h"
 #include "swtch.h"
-
+void task(){
+    while(1){
+        int i=100000000;
+        while(i--);
+        printf("tesk\n");
+    }
+}
 void main(){
     printf("start run main()\n");
 
@@ -26,9 +32,11 @@ void main(){
    
     struct context old;
     struct context new;
+    new.ra=(reg_t)task;
     swtch(&old,&new);
 
     printf("----------------------\n");
 
     while(1);
 }
+

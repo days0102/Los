@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-21 23:01:35
+ * @LastEditTime: 2022-07-22 08:11:18
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
@@ -23,3 +23,12 @@ struct pcb
 };
 
 struct pcb proc[NPROC];
+
+struct cpu{
+    struct pcb* proc;           // CPU 持有的进程
+    struct context* context;    // CPU 上下文(正在执行的上下文)
+};
+
+#define NCPUS 8
+
+struct cpu cpu[NCPUS];
