@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 07:49:54
+ * @LastEditTime: 2022-07-22 17:46:37
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -32,6 +32,10 @@ struct pcb* procalloc(){
             p->status=USED;
 
             p->pagetable=pgtcreate();
+            
+            p->trapframe.epc=0;
+            p->trapframe.sp=KSPACE;
+
             return p;
         }
     }

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 08:06:16
+ * @LastEditTime: 2022-07-22 22:15:51
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -10,7 +10,8 @@
 #include "defs.h"
 #include "swtch.h"
 void task(){
-    while(1){
+    int  j=5;
+    while(j--){
         int i=100000000;
         while(i--);
         printf("tesk\n");
@@ -33,10 +34,12 @@ void main(){
     struct context old;
     struct context new;
     new.ra=(reg_t)task;
-    swtch(&old,&new);
+    new.sp=r_sp();
+    // swtch(&old,&new);
 
+    userinit();
+    asm volatile("ecall");
     printf("----------------------\n");
-
     while(1);
 }
 

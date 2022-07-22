@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 07:17:35
+ * @LastEditTime: 2022-07-23 06:48:46
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -60,6 +60,7 @@ void    vmmap(addr_t* pgt,addr_t va,addr_t pa,uint sz,uint mode);
 
 // proc.c
 void    procinit();
+void    userinit();
 
 // string.c
 void*   memset(void*,int,uint);
@@ -69,3 +70,8 @@ size_t  strlen(const char* s);
 // swtch.S
 struct context;
 void    swtch(struct context* old,struct context* new);
+
+// proc.h
+struct trapframe;
+// usertrap.S
+void    loadframe(struct trapframe*);

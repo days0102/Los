@@ -21,6 +21,7 @@ SRCS_ASM = \
 	initos/entry.S \
 	kernel/kvec.S \
 	kernel/swtch.S \
+	kernel/usertrap.S \
 
 SRCS_C = \
 	initos/start.c \

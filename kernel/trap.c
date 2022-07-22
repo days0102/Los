@@ -2,13 +2,14 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-20 20:18:35
+ * @LastEditTime: 2022-07-23 06:54:38
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
 #include "defs.h"
 #include "riscv.h"
 #include "plic.h"
+#include "proc.h"
 
 /**
  * @description: 处理外部中断
@@ -25,6 +26,21 @@ void externinterrupt(){
         break;
     }
     w_pliccomplete(irq);
+}
+
+void zero(){
+    printf("zero\n");
+    reg_t pc=r_sepc();
+    w_sepc(pc+4);
+    struct pcb* p;
+    for(p=proc;p<&proc[NPROC];p++){
+        if(p->status==RUNABLE){
+            loadframe(&p->trapframe);
+            w_sp(p->trapframe.sp);
+            w_satp(SATP_SV32|(p->trapframe.ksatp>>12));
+            sfence_vma();
+        }
+    }
 }
 
 void trapvec(){
@@ -51,6 +67,7 @@ void trapvec(){
             break;
         }
     }else{
+        int ecall=0;
         printf("Exception : ");
         switch (code)
         {
@@ -85,6 +102,8 @@ void trapvec(){
             break;
         case 9: // 来自 S-mode 的系统调用
             printf("Environment call from S-mode\n");
+            zero();
+            ecall=1;
             break;
         case 12:
             printf("Instruction page fault\n");
@@ -99,6 +118,9 @@ void trapvec(){
             printf("Other\n");
             break;
         }
-        panic("Trap Exception");
+        if(!ecall){
+            panic("Trap Exception");
+            ecall=1;
+        }
     }
 }

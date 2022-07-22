@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-16 14:43:34
+ * @LastEditTime: 2022-07-22 15:35:30
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -279,6 +279,16 @@ static inline uint32 r_tp(){
 }
 static inline void w_tp(uint32 x){
     asm volatile("mv tp , %0": : "r"(x));
+}
+
+// 获取 thread id
+static inline uint32 r_sp(){
+    uint32 x;
+    asm volatile("mv %0 , sp": "=r"(x));
+    return x;
+}
+static inline void w_sp(uint32 x){
+    asm volatile("mv sp , %0": : "r"(x));
 }
 
 /**
