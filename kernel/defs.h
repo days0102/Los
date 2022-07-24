@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-23 06:48:46
+ * @LastEditTime: 2022-07-24 11:38:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -18,6 +18,7 @@ char uartintr();
 
 // kvec.S
 void    kvec();
+void    tvec();
 
 // printf.c
 void    panic(char*);
@@ -54,13 +55,16 @@ uint32  r_plicclaim();
 void    w_pliccomplete(uint32);
 
 // vm.c 
-void    vminit();
+void    kvminit();
 addr_t* pgtcreate();
 void    vmmap(addr_t* pgt,addr_t va,addr_t pa,uint sz,uint mode);
 
+// proc.h
+struct pcb;
 // proc.c
 void    procinit();
 void    userinit();
+struct pcb* nowproc();
 
 // string.c
 void*   memset(void*,int,uint);
@@ -75,3 +79,9 @@ void    swtch(struct context* old,struct context* new);
 struct trapframe;
 // usertrap.S
 void    loadframe(struct trapframe*);
+
+// clint.c
+void    clintinit();
+
+// time.c
+void    timerinit();

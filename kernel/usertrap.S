@@ -1,6 +1,7 @@
 
 // void saveframe(struct trapframe* tf)
 .global usertrap
+.align 2
 saveframe:
     sw ra,16(a0)
     sw sp,20(a0)
@@ -38,12 +39,17 @@ saveframe:
     ret
 
 .global loadframe
+.align 2
 loadframe:
-    # lw ra,16(a0)
-    # lw sp,20(a0)
+    lw t6,0(a0)
+    csrw satp,t6
+    sfence.vma zero, zero
+
+    lw ra,16(a0)
+    lw sp,20(a0)
     lw gp,24(a0)
     lw tp,28(a0)
-    # lw a0,32(a0)
+
     lw a1,36(a0)
     lw a2,40(a0)
     lw a3,44(a0)
@@ -70,14 +76,8 @@ loadframe:
     lw t3,124(a0)
     lw t4,128(a0)
     lw t5,132(a0)
-
-    # lw t6,0(a0)
-    # csrw sscratch,t6
-
     lw t6,136(a0)
+
     lw a0,32(a0)
 
-    # csrw satp,sscratch
-    # sfence.vma zero, zero
-
-    ret
+    sret

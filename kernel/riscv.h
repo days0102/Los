@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 15:35:30
+ * @LastEditTime: 2022-07-24 10:59:46
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -428,4 +428,9 @@ static inline uint32 r_mie(){
 }
 static inline void w_mie(uint32 x){
     asm volatile("csrw mie,%0"::"r"(x));
+}
+
+// mscratch 寄存器 时钟中断时使用
+static inline void w_mscratch(uint32 x){
+    asm volatile("csrw mscratch , %0" : :"r"(x));
 }

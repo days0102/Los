@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-23 06:54:38
+ * @LastEditTime: 2022-07-23 10:27:09
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -28,6 +28,12 @@ void externinterrupt(){
     w_pliccomplete(irq);
 }
 
+// 返回用户空间
+void usertrapret(){
+    struct pcb* p=nowproc();
+    loadframe(&p->trapframe);
+}
+
 void zero(){
     printf("zero\n");
     reg_t pc=r_sepc();
@@ -35,12 +41,10 @@ void zero(){
     struct pcb* p;
     for(p=proc;p<&proc[NPROC];p++){
         if(p->status==RUNABLE){
-            loadframe(&p->trapframe);
-            w_sp(p->trapframe.sp);
-            w_satp(SATP_SV32|(p->trapframe.ksatp>>12));
-            sfence_vma();
+            
         }
     }
+    usertrapret();
 }
 
 void trapvec(){

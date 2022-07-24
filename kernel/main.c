@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 22:15:51
+ * @LastEditTime: 2022-07-23 13:57:42
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -22,23 +22,25 @@ void main(){
 
     minit();        // 物理内存管理
     plicinit();     // PLIC 中断处理
-    vminit();       // 启动虚拟内存
+    
+    kvminit();       // 启动虚拟内存
 
-    procinit();
+
+    // procinit();
     
     // char* va=(char*)0xc0002000;
     // printf("%c\n",*va);
     // *va=10;
     // *(int *)0x00000000 = 100;
    
-    struct context old;
-    struct context new;
-    new.ra=(reg_t)task;
-    new.sp=r_sp();
-    // swtch(&old,&new);
+    // struct context old;
+    // struct context new;
+    // new.ra=(reg_t)task;
+    // new.sp=r_sp();
+    // // swtch(&old,&new);
 
-    userinit();
-    asm volatile("ecall");
+    // userinit();
+    // asm volatile("ecall");
     printf("----------------------\n");
     while(1);
 }

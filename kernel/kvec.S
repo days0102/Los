@@ -1,3 +1,5 @@
+#include "clint.h"
+
 .global kvec
 kvec:
     addi sp,sp,-128
@@ -70,3 +72,8 @@ kvec:
     addi sp,sp,128
     
     sret
+
+.global tvec
+tvec:
+    
+    call trapvec

@@ -2,13 +2,14 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 17:46:37
+ * @LastEditTime: 2022-07-24 11:06:41
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
 #include "proc.h"
 #include "vm.h"
 #include "defs.h"
+#include "riscv.h"
 
 uint nextpid=0;
 
@@ -18,6 +19,11 @@ void procinit(){
         p=&proc[i];
         p->kernelstack=(addr_t)(KSTACK+(i)*2*PGSIZE);
     }
+}
+
+struct pcb* nowproc(){
+    int hart=r_tp();
+    return cpu[hart].proc;
 }
 
 uint pidalloc(){
@@ -56,6 +62,9 @@ void userinit(){
     p->context.sp=KSPACE;
 
     p->status=RUNABLE;
+
+    int id=r_tp();
+    cpu[id].proc=p;
 }
 
 void schedule(){

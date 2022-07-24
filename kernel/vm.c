@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-22 07:21:46
+ * @LastEditTime: 2022-07-23 13:58:57
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.c
  */
@@ -13,6 +13,7 @@
 #include "uart.h"
 #include "plic.h"
 #include "proc.h"
+#include "clint.h"
 
 addr_t* kpgt;
 
@@ -90,9 +91,12 @@ void mkstack(addr_t* pgt){
 }
 
 // 初始化虚拟内存
-void vminit(){
+void kvminit(){
     kpgt=(addr_t*)palloc();
     memset(kpgt,0,PGSIZE);
+
+    // 映射 CLINT
+    vmmap(kpgt,CLINT_BASE,CLINT_BASE,0xc000,PTE_R|PTE_W);
 
     // 映射 PLIC 寄存器
     vmmap(kpgt,PLIC_BASE,PLIC_BASE,0x400000,PTE_R|PTE_W);
