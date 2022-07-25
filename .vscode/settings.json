@@ -11,6 +11,8 @@
         "types.h": "c",
         "plic.h": "c",
         "vm.h": "c",
-        "proc.h": "c"
+        "proc.h": "c",
+        "riscv.h": "c",
+        "clint.h": "c"
     }
 }

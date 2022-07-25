@@ -2,6 +2,7 @@
 
 .global kvec
 kvec:
+    // 利用栈空间保存寄存器状态
     addi sp,sp,-128
     sw ra,0(sp)
     sw sp,4(sp)
@@ -37,6 +38,7 @@ kvec:
 
     call trapvec
 
+    // 恢复寄存器状态
     lw ra,0(sp)
     lw sp,4(sp)
     lw gp,8(sp)
@@ -74,6 +76,43 @@ kvec:
     sret
 
 .global tvec
-tvec:
-    
-    call trapvec
+tvec:     // 时钟中断处理
+    // timerinit()将mscratch指向time_scartch
+    csrrw a0,mscratch,a0   
+    // 后面要使用 t1,t1,t3,t4,t5 ,先保存
+    sw t0,4*4(a0)
+    sw t1,5*4(a0)
+    sw t2,6*4(a0)
+    sw t3,7*4(a0)
+    sw t4,8*4(a0)
+    sw t5,9*4(a0)
+
+    lw t0,0(a0)     // CLINT_MTIMECMP(hart)
+    lw t1,8(a0)     // CLINT_INTERVAL 10000000
+    // CLINT_MTIMECMP 8byte 用两个寄存器存
+    lw t2,0(t0)     // *CLINT_MTIMECMP(hart) 0~3byte
+    lw t3,4(t0)     // *CLINT_MTIMECMP(hart) 4~7byte
+
+    add t4,t2,t1    // 低位相加
+    sltu t5,t4,t2   // 处理进位，t4小于t2则t5为1
+    add t3,t3,t5    // 高位加进位
+    mv t2,t4        // t2=t2+t1
+
+    sw t2,0(t0)
+    sw t3,4(t0)
+
+    // 产生一个 S-mode 软件中断
+    // mret 时触发 S-mode 软件中断
+    csrwi sip,2
+
+    // 恢复寄存器状态
+    lw t0,4*4(a0)
+    lw t1,5*4(a0)
+    lw t2,6*4(a0)
+    lw t3,7*4(a0)
+    lw t4,8*4(a0)
+    lw t5,9*4(a0)
+
+    csrrw a0,mscratch,a0
+
+    mret

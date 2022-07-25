@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-23 07:49:10
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-23 15:15:51
+ * @LastEditTime: 2022-07-24 11:47:40
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/clint.h
  */
@@ -13,7 +13,7 @@
 
 // mtime 大于等于 mtimecmp 会触发时钟中断
 // mtime 上电会重置, mtimecmp 不会重置
-#define CLINT_MTIMECMP(hart) (CLINT_BASE + 0x4000 + 4*(hart))
+#define CLINT_MTIMECMP(hart) (CLINT_BASE + 0x4000 + 8*(hart))   // 每个寄存器8
 
 // mtime 寄存器
 #define CLINT_MTIME (CLINT_BASE + 0xbff8 )

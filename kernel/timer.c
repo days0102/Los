@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-24 11:03:29
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-24 11:40:23
+ * @LastEditTime: 2022-07-25 11:34:49
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/timer.c
  */
@@ -13,7 +13,7 @@
 
 // [0] CLINT_MTIMECMP(hart)
 // [1] INTERVAL
-uint32 timer_sscartch[NCPUS][5];
+uint64 timer_sscartch[NCPUS][5];
 
 void timerinit(){
     uint hart=r_tp();
@@ -28,7 +28,9 @@ void timerinit(){
 
     s_mstatus_intr(INTR_MIE);   // 开启 M-mode 全局中断
 
-    w_mie(r_mie() | MTIE);      // 开启 M-mode 中断
+    w_sie(r_sie() | SSIE | STIE | SEIE); // 开 S-mode中断
 
-    // clintinit();                
+    w_mie(r_mie() | MTIE );      // 开启 M-mode 时钟中断
+
+    clintinit();                
 }

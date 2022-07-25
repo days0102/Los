@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-23 10:27:09
+ * @LastEditTime: 2022-07-24 22:30:26
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -10,6 +10,7 @@
 #include "riscv.h"
 #include "plic.h"
 #include "proc.h"
+#include "clint.h"
 
 /**
  * @description: 处理外部中断
@@ -47,8 +48,14 @@ void zero(){
     usertrapret();
 }
 
+void timerintr(){
+    w_sip(r_sip()& ~2);
+    printf("timer\n");
+}
+
 void trapvec(){
     uint32 scause=r_scause();
+    printf("sip : %d\n",r_sip());
 
     uint16 code= scause & 0xffff;
 
@@ -58,6 +65,7 @@ void trapvec(){
         {
         case 1:
             printf("Supervisor software interrupt\n");
+            timerintr();
             break;
         case 5:
             printf("Supervisor timer interrupt\n");
