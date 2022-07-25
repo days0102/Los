@@ -76,6 +76,7 @@ kvec:
     sret
 
 .global tvec
+// riscv 时钟中断产生在 M-mode 
 tvec:     // 时钟中断处理
     // timerinit()将mscratch指向time_scartch
     csrrw a0,mscratch,a0   

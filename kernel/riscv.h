@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-25 08:45:24
+ * @LastEditTime: 2022-07-25 12:35:17
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -404,6 +404,10 @@ static inline void s_sstatus_intr(uint32 m){
     w_sstatus(x);
 }
 
+/**
+ * @description: 
+ * sip 寄存器指示待处理的中断
+ */
 static inline uint32 r_sip(){
     uint32 x;
     asm volatile("csrr %0,sip":"=r"(x));

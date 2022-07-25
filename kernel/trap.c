@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-24 22:30:26
+ * @LastEditTime: 2022-07-25 12:36:12
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -49,8 +49,8 @@ void zero(){
 }
 
 void timerintr(){
-    w_sip(r_sip()& ~2);
-    printf("timer\n");
+    w_sip(r_sip()& ~2); // 清除中断
+    printf("timer interrupt\n");
 }
 
 void trapvec(){

@@ -49,6 +49,7 @@ all:kernel.elf
 run:kernel.elf
 	@echo "Press Ctrl-A and then X to exit QEMU"
 	${QEMU} ${QFLAGS} -kernel kernel.elf
+	@rm -rf *.o *.bin */*.o */*.d
 	
 kernel.elf: ${OBJS}
 	@# ${CC} ${CFLAGS} -Ttext=0x80000000 -o kernel.elf $^
