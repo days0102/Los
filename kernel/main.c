@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-25 12:33:04
+ * @LastEditTime: 2022-07-26 09:53:41
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -17,7 +17,12 @@ void main(){
     plicinit();     // PLIC 中断处理
     
     kvminit();       // 启动虚拟内存
-    
+
+    printf("usertrap: %p\n",usertrap);
+
+    userinit();
+    asm volatile("ecall");
+
     printf("----------------------\n");
     while(1);
 }

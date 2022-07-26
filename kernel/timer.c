@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-24 11:03:29
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-25 11:34:49
+ * @LastEditTime: 2022-07-25 15:14:03
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/timer.c
  */
@@ -32,5 +32,5 @@ void timerinit(){
 
     w_mie(r_mie() | MTIE );      // 开启 M-mode 时钟中断
 
-    clintinit();                
+    clintinit();                 // 初始化 CLINT           
 }

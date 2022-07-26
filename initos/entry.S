@@ -36,5 +36,5 @@ empty:
 .global stacks
 # .balign 4096 # n字节对齐
 stacks:
-    .skip sz*harts  # 分配栈空间
+    .skip sz*harts  # 分配栈空间 (.space)
     .end

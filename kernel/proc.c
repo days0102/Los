@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-24 11:06:41
+ * @LastEditTime: 2022-07-26 15:41:15
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -57,11 +57,17 @@ void userinit(){
     char* m=(char*)palloc();
     memmove(m,zeroproc,sizeof(zeroproc));
 
-    vmmap(p->pagetable,0,(addr_t)m,PGSIZE,PTE_R|PTE_W|PTE_X);
+    vmmap(p->pagetable,0,(addr_t)m,PGSIZE,PTE_R|PTE_W|PTE_X|PTE_U);
+    vmmap(p->pagetable,USERTRAP,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
 
     p->context.sp=KSPACE;
 
+    p->pagetable=(SATP_SV32|((reg_t)p->pagetable)>>12);
+    p->trapframe.ksp=p->kernelstack;
+
     p->status=RUNABLE;
+
+    mkstack(p->pagetable);
 
     int id=r_tp();
     cpu[id].proc=p;

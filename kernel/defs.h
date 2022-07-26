@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-24 11:38:39
+ * @LastEditTime: 2022-07-26 15:41:51
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -58,6 +58,7 @@ void    w_pliccomplete(uint32);
 void    kvminit();
 addr_t* pgtcreate();
 void    vmmap(addr_t* pgt,addr_t va,addr_t pa,uint sz,uint mode);
+void    mkstack(addr_t* pgt);
 
 // proc.h
 struct pcb;
@@ -78,7 +79,8 @@ void    swtch(struct context* old,struct context* new);
 // proc.h
 struct trapframe;
 // usertrap.S
-void    loadframe(struct trapframe*);
+void    loadframe(struct trapframe*,addr_t* pgt);
+extern char usertrap[];
 
 // clint.c
 void    clintinit();

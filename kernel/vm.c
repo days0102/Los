@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-23 13:58:57
+ * @LastEditTime: 2022-07-25 18:28:03
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.c
  */
@@ -106,10 +106,10 @@ void kvminit(){
     
     // 映射 内核 指令区
     vmmap(kpgt,(addr_t)textstart,(addr_t)textstart,(textend-textstart),PTE_R|PTE_X);
-    // 映射 内核 只读区
-    vmmap(kpgt,(addr_t)rodatastart,(addr_t)rodatastart,(rodataend-rodatastart),PTE_R);
     // 映射 数据区
     vmmap(kpgt,(addr_t)datastart,(addr_t)datastart,dataend-datastart,PTE_R|PTE_W);
+    // 映射 内核 只读区
+    vmmap(kpgt,(addr_t)rodatastart,(addr_t)rodatastart,(rodataend-rodatastart),PTE_R);
     // 映射 内核 全局数据区
     vmmap(kpgt,(addr_t)bssstart,(addr_t)bssstart,bssend-bssstart,PTE_R|PTE_W);
     
@@ -117,6 +117,9 @@ void kvminit(){
     vmmap(kpgt,(addr_t)mstart,(addr_t)mstart,mend-mstart,PTE_W|PTE_R);
 
     mkstack(kpgt);
+
+    // 映射 usertrap
+    vmmap(kpgt,USERTRAP,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
 
     // printpgt(pgt);
     w_satp(SATP_SV32|(((uint32)kpgt)>>12)); // 页表 PPN 写入Satp

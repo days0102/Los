@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-25 12:36:12
+ * @LastEditTime: 2022-07-26 16:49:28
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -32,39 +32,32 @@ void externinterrupt(){
 // 返回用户空间
 void usertrapret(){
     struct pcb* p=nowproc();
-    loadframe(&p->trapframe);
+    loadframe(&p->trapframe,p->pagetable);
 }
 
 void zero(){
     printf("zero\n");
     reg_t pc=r_sepc();
     w_sepc(pc+4);
-    struct pcb* p;
-    for(p=proc;p<&proc[NPROC];p++){
-        if(p->status==RUNABLE){
-            
-        }
-    }
     usertrapret();
 }
 
 void timerintr(){
     w_sip(r_sip()& ~2); // 清除中断
-    printf("timer interrupt\n");
+    // printf("timer interrupt\n");
 }
 
 void trapvec(){
     uint32 scause=r_scause();
-    printf("sip : %d\n",r_sip());
 
     uint16 code= scause & 0xffff;
 
     if(scause & (1<<31)){
-        printf("Interrupt : ");
+    //     printf("Interrupt : ");
         switch (code)
         {
         case 1:
-            printf("Supervisor software interrupt\n");
+            // printf("Supervisor software interrupt\n");
             timerintr();
             break;
         case 5:

@@ -40,14 +40,11 @@ SECTIONS
         PROVIDE(textstart = . );
         *(.text .text.*)
         PROVIDE(textend = . );
+        
+        /* usertrap  */
+        . = ALIGN(4096);
+        *(traptext)  /* 把 usertrap.S 放到这里 */
     }>ram
-
-    .rodata : {
-        . = ALIGN(4096);        /*保证位1个页偏移*/
-		PROVIDE(rodatastart = .);
-		*(.rodata .rodata.*)
-		PROVIDE(rodataend = .);
-	} >ram
 
     .data : {
         . = ALIGN(4096); 
@@ -57,6 +54,13 @@ SECTIONS
 		PROVIDE(dataend = .);
     }>ram
 
+    .rodata : {
+        . = ALIGN(4096);        /*保证位1个页偏移*/
+		PROVIDE(rodatastart = .);
+		*(.rodata .rodata.*)
+		PROVIDE(rodataend = .);
+	} >ram
+    
     .bss : {
         . = ALIGN(4096);
         PROVIDE(bssstart = .);
@@ -65,6 +69,11 @@ SECTIONS
 		*(COMMON)
 		PROVIDE(bssend = .);
     }>ram
+
+    /* .traptext : { */
+        /* . = ALIGN(4096); */
+        /* *(traptext)   把 usertrap.S 放到这里 */
+    /* }>ram */
 
     . = ALIGN(4096);
 
