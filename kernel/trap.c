@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-26 16:49:28
+ * @LastEditTime: 2022-08-01 16:39:37
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -32,7 +32,10 @@ void externinterrupt(){
 // 返回用户空间
 void usertrapret(){
     struct pcb* p=nowproc();
-    loadframe(&p->trapframe,p->pagetable);
+    s_sstatus_xpp(RISCV_U);
+    w_stvec((uint32)usertrap);
+    addr_t satp=(SATP_SV32|(addr_t)(p->pagetable)>>12);
+    userret(&p->trapframe,satp);
 }
 
 void zero(){

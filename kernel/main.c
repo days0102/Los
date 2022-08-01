@@ -24,6 +24,6 @@ void main(){
     asm volatile("ecall");
 
     printf("----------------------\n");
-    while(1);
+    schedule();
 }
 

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-26 15:41:51
+ * @LastEditTime: 2022-08-01 16:36:27
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -66,6 +66,7 @@ struct pcb;
 void    procinit();
 void    userinit();
 struct pcb* nowproc();
+void    schedule();
 
 // string.c
 void*   memset(void*,int,uint);
@@ -79,8 +80,9 @@ void    swtch(struct context* old,struct context* new);
 // proc.h
 struct trapframe;
 // usertrap.S
-void    loadframe(struct trapframe*,addr_t* pgt);
+void    userret(struct trapframe*,addr_t pgt);
 extern char usertrap[];
+extern char uservec[];
 
 // clint.c
 void    clintinit();

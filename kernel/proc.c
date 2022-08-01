@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-26 15:41:15
+ * @LastEditTime: 2022-08-01 17:47:24
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -48,7 +48,10 @@ struct pcb* procalloc(){
     return 0;
 }
 
-uint8 zeroproc[]={0x73,0x00,0x00,0x00};
+uint8 zeroproc[]={
+  0x93,0x08,0x10,0x00,
+  0x73,0x00,0x00,0x00
+  };
 
 // 初始化第一个进程
 void userinit(){
@@ -58,12 +61,13 @@ void userinit(){
     memmove(m,zeroproc,sizeof(zeroproc));
 
     vmmap(p->pagetable,0,(addr_t)m,PGSIZE,PTE_R|PTE_W|PTE_X|PTE_U);
-    vmmap(p->pagetable,USERTRAP,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
+    vmmap(p->pagetable,(uint32)usertrap,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
 
     p->context.sp=KSPACE;
 
-    p->pagetable=(SATP_SV32|((reg_t)p->pagetable)>>12);
-    p->trapframe.ksp=p->kernelstack;
+    p->pagetable=(addr_t*)p->pagetable;
+
+    p->trapframe.sp=PGSIZE;
 
     p->status=RUNABLE;
 

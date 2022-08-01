@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-25 12:35:17
+ * @LastEditTime: 2022-08-01 14:05:36
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -49,8 +49,8 @@ static inline void w_mstatus(uint32 x){
  */
 // Upon reset, a hart’s privilege mode is set to M
 #define XPP_MASK (3L<<11)   // 用于设置11~12bit
-#define MPP_SET (3<<11)     // 11~12bit为11
-#define SPP_SET (1<<11)     // 11~12bit为01
+#define M_MPP_SET (3<<11)     // 11~12bit为11
+#define M_SPP_SET (1<<11)     // 11~12bit为01
 // 获取 XPP 特权模式
 static inline uint8 a_mstatus_xpp(){
     uint32 x=r_mstatus();
@@ -81,11 +81,11 @@ static inline void s_mstatus_xpp(uint8 m){
         break;
     case RISCV_S:
         x &= ~XPP_MASK;
-        x |= SPP_SET;
+        x |= M_SPP_SET;
         break;
     case RISCV_M:
         x &= ~XPP_MASK;
-        x |= MPP_SET;
+        x |= M_MPP_SET;
         break;
     default:
         break;
@@ -103,19 +103,18 @@ static inline uint32 r_sstatus(){
 static inline void w_sstatus(uint32 x){
     asm volatile("csrw sstatus, %0" : : "r" (x) );
 }
+
+#define SPP_MASK (1<<8)
 // 获取 XPP 特权模式
 static inline uint8 a_sstatus_xpp(){
     uint32 x=r_sstatus();
-    x &= XPP_MASK;
+    x &= SPP_MASK;
     switch (x)
     {
-    case 0x1800:
-        x=RISCV_M;
-        break;
-    case 0x0800:
+    case 0x80:
         x=RISCV_S;
         break;
-    case 0x0000:
+    case 0x00:
         x=RISCV_U;
         break;
     default:
@@ -124,20 +123,17 @@ static inline uint8 a_sstatus_xpp(){
     return x;
 }
 // 设置特权模式
+#define S_SPP_SET (1<<8)
 static inline void s_sstatus_xpp(uint8 m){
     uint32 x=r_sstatus();
     switch (m)
     {
     case RISCV_U:
-        x &= ~XPP_MASK;
+        x &= ~SPP_MASK;
         break;
     case RISCV_S:
-        x &= ~XPP_MASK;
-        x |= SPP_SET;
-        break;
-    case RISCV_M:
-        x &= ~XPP_MASK;
-        x |= MPP_SET;
+        x &= ~SPP_MASK;
+        x |= S_SPP_SET;
         break;
     default:
         break;
