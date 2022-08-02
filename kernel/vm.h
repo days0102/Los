@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 16:35:56
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-25 18:10:35
+ * @LastEditTime: 2022-08-02 11:16:26
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.h
  */
@@ -16,7 +16,8 @@
 #define KSPACE 0xc0000000       // 内核空间起始地址
 #define KSTACK 0xc0002000
 
-#define USERTRAP 0xfffff000     // usertrap
+#define USERVEC 0xfffff000     // uservec
+#define TRAPFRAME (USERVEC-PGSIZE)
 
 #define BASE_ADDR 0x80000000
 

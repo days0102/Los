@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-01 17:47:24
+ * @LastEditTime: 2022-08-02 16:09:00
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -34,14 +34,13 @@ struct pcb* procalloc(){
     struct pcb* p;
     for(p=proc;p<&proc[NPROC];p++){
         if(p->status==UNUSED){
+            p->trapframe=(struct trapframe*)palloc(sizeof(struct trapframe));
+            
             p->pid=pidalloc();
             p->status=USED;
 
             p->pagetable=pgtcreate();
             
-            p->trapframe.epc=0;
-            p->trapframe.sp=KSPACE;
-
             return p;
         }
     }
@@ -57,17 +56,18 @@ uint8 zeroproc[]={
 void userinit(){
     struct pcb* p=procalloc();
     
+    p->trapframe->epc=0;
+    p->trapframe->sp=PGSIZE;
+    
     char* m=(char*)palloc();
     memmove(m,zeroproc,sizeof(zeroproc));
 
     vmmap(p->pagetable,0,(addr_t)m,PGSIZE,PTE_R|PTE_W|PTE_X|PTE_U);
     vmmap(p->pagetable,(uint32)usertrap,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
 
-    p->context.sp=KSPACE;
+    vmmap(p->pagetable,(addr_t)TRAPFRAME,(addr_t)p->trapframe,PGSIZE,PTE_R|PTE_W);
 
     p->pagetable=(addr_t*)p->pagetable;
-
-    p->trapframe.sp=PGSIZE;
 
     p->status=RUNABLE;
 

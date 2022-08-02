@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-25 18:28:03
+ * @LastEditTime: 2022-08-02 11:17:28
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.c
  */
@@ -119,7 +119,7 @@ void kvminit(){
     mkstack(kpgt);
 
     // 映射 usertrap
-    vmmap(kpgt,USERTRAP,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
+    vmmap(kpgt,USERVEC,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
 
     // printpgt(pgt);
     w_satp(SATP_SV32|(((uint32)kpgt)>>12)); // 页表 PPN 写入Satp

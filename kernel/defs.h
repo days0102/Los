@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-01 16:36:27
+ * @LastEditTime: 2022-08-02 14:41:01
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -80,7 +80,7 @@ void    swtch(struct context* old,struct context* new);
 // proc.h
 struct trapframe;
 // usertrap.S
-void    userret(struct trapframe*,addr_t pgt);
+void    userret(addr_t*,addr_t pgt);
 extern char usertrap[];
 extern char uservec[];
 

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-01 16:39:37
+ * @LastEditTime: 2022-08-02 16:09:20
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -11,6 +11,7 @@
 #include "plic.h"
 #include "proc.h"
 #include "clint.h"
+#include "vm.h"
 
 /**
  * @description: 处理外部中断
@@ -29,13 +30,45 @@ void externinterrupt(){
     w_pliccomplete(irq);
 }
 
+void ptf(struct trapframe *tf){
+    printf("kernel_sp: %d \n",tf->kernel_sp);
+    printf("kernel_satp: %d \n",tf->kernel_satp);
+    printf("kernel_tvec: %d \n",tf->kernel_tvec);
+
+    printf("ra: %d \n",tf->ra);
+    printf("sp: %d \n",tf->sp);
+    printf("tp: %d \n",tf->tp);
+    printf("t0: %d \n",tf->t0);
+    printf("t1: %d \n",tf->t1);
+    printf("t2: %d \n",tf->t2);
+    printf("t3: %d \n",tf->t3);
+    printf("t4: %d \n",tf->t4);
+    printf("t5: %d \n",tf->t5);
+    printf("t6: %d \n",tf->t6);
+    printf("a0: %d \n",tf->a0);
+    printf("a1: %d \n",tf->a1);
+    printf("a2: %d \n",tf->a2);
+    printf("a3: %d \n",tf->a3);
+    printf("a4: %d \n",tf->a4);
+    printf("a5: %d \n",tf->a5);
+    printf("a6: %d \n",tf->a6);
+    printf("a7: %d \n",tf->a7);
+}
+
 // 返回用户空间
 void usertrapret(){
     struct pcb* p=nowproc();
     s_sstatus_xpp(RISCV_U);
     w_stvec((uint32)usertrap);
     addr_t satp=(SATP_SV32|(addr_t)(p->pagetable)>>12);
-    userret(&p->trapframe,satp);
+    ptf(p->trapframe);
+    printf("%p\n",p->trapframe);
+    w_sepc((addr_t)p->trapframe->epc);
+    p->trapframe->kernel_satp=r_satp();
+    p->trapframe->kernel_tvec=(addr_t)trapvec;
+    p->trapframe->kernel_sp=(addr_t)p->kernelstack;
+    printf("%p\n",p->kernelstack);
+    userret((addr_t*)TRAPFRAME,satp);
 }
 
 void zero(){

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-07-26 09:53:41
+ * @LastEditTime: 2022-08-02 16:10:35
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -19,6 +19,8 @@ void main(){
     kvminit();       // 启动虚拟内存
 
     printf("usertrap: %p\n",usertrap);
+
+    procinit();
 
     userinit();
     asm volatile("ecall");
