@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-02 16:09:20
+ * @LastEditTime: 2022-08-03 14:10:49
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -80,7 +80,7 @@ void zero(){
 
 void timerintr(){
     w_sip(r_sip()& ~2); // 清除中断
-    // printf("timer interrupt\n");
+    yield();
 }
 
 void trapvec(){
@@ -108,7 +108,6 @@ void trapvec(){
             break;
         }
     }else{
-        int ecall=0;
         printf("Exception : ");
         switch (code)
         {
@@ -140,11 +139,12 @@ void trapvec(){
             break;
         case 8: // 来自 U-mode 的系统调用
             printf("Environment call from U-mode\n");
+            syscall();
+            usertrapret();
             break;
         case 9: // 来自 S-mode 的系统调用
             printf("Environment call from S-mode\n");
             zero();
-            ecall=1;
             break;
         case 12:
             printf("Instruction page fault\n");
@@ -159,9 +159,6 @@ void trapvec(){
             printf("Other\n");
             break;
         }
-        if(!ecall){
-            panic("Trap Exception");
-            ecall=1;
-        }
+        panic("Trap Exception");
     }
 }

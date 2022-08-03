@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-02 14:41:01
+ * @LastEditTime: 2022-08-03 14:10:26
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -26,6 +26,7 @@ int     printf(const char*,...);
 
 // trap.c
 void    trapvec();
+void    usertrapret();
 
 // pmm.c
 void    minit();
@@ -67,6 +68,7 @@ void    procinit();
 void    userinit();
 struct pcb* nowproc();
 void    schedule();
+void    yield();
 
 // string.c
 void*   memset(void*,int,uint);
@@ -89,3 +91,6 @@ void    clintinit();
 
 // time.c
 void    timerinit();
+
+// syscall.c
+void    syscall();

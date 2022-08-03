@@ -1,14 +1,15 @@
 
-// void saveframe(struct trapframe* tf)
 # .section traptext
 
 .global uservec
 uservec:
+
 .global usertrap
 usertrap:
-
+    // sscratch 指向 trapframe
     csrrw a0,sscratch,a0
 
+    // 保存用户态寄存器
     sw ra,16(a0)
     sw sp,20(a0)
     sw gp,24(a0)
@@ -42,15 +43,13 @@ usertrap:
     sw t5,132(a0)
     sw t6,136(a0)
 
-    lw sp,8(a0)
+    lw sp,8(a0)    // 内核栈
 
-    lw t5,4(a0)
-
-    lw t6,0(a0)
+    lw t6,0(a0)    // 内核页表
     csrw satp,t6
     sfence.vma zero,zero
 
-    jr t5
+    call trapvec    // 处理 trap 
 
 .global userret
 // userret( traoframe,satp )
@@ -62,6 +61,7 @@ userret:
     lw t0,32(a0)        // sscratch 暂存用户态 a0
     csrrw t0,sscratch,t0
 
+    // 加载用户态寄存器
     lw ra,16(a0)
     lw sp,20(a0)
     lw gp,24(a0)
@@ -99,4 +99,5 @@ userret:
 
     csrrw a0,sscratch,a0
 
+    // 返回用户态
     sret

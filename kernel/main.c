@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-02 16:10:35
+ * @LastEditTime: 2022-08-03 13:37:22
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -23,7 +23,6 @@ void main(){
     procinit();
 
     userinit();
-    asm volatile("ecall");
 
     printf("----------------------\n");
     schedule();

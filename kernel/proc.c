@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-02 16:09:00
+ * @LastEditTime: 2022-08-03 14:11:31
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -23,7 +23,12 @@ void procinit(){
 
 struct pcb* nowproc(){
     int hart=r_tp();
-    return cpu[hart].proc;
+    return cpus[hart].proc;
+}
+
+struct cpu* nowcpu(){
+    int hart=r_tp();
+    return &cpus[hart];
 }
 
 uint pidalloc(){
@@ -49,7 +54,8 @@ struct pcb* procalloc(){
 
 uint8 zeroproc[]={
   0x93,0x08,0x10,0x00,
-  0x73,0x00,0x00,0x00
+  0x73,0x00,0x00,0x00,
+  0x6f,0x00,0x00,0x00
   };
 
 // 初始化第一个进程
@@ -73,17 +79,31 @@ void userinit(){
 
     mkstack(p->pagetable);
 
-    int id=r_tp();
-    cpu[id].proc=p;
+    p->context.ra=(reg_t)usertrapret;
+    p->context.sp=p->kernelstack;
 }
 
 void schedule(){
+    struct cpu* c=nowcpu();
+
     for(;;){
         struct pcb* p;
         for(p=proc;p<&proc[NPROC];p++){
             if(p->status==RUNABLE){
-                
+                p->status=RUNNING;
+                c->proc=p;
+                swtch(&c->context,&p->context);
+                // swtch ret后跳转到p->context.ra
+
             }
         }
     }
+}
+
+void yield(){
+    struct pcb* p=nowproc();
+    if(p->status!=RUNNING){
+        panic("proc status error");
+    }
+    p->status=RUNABLE;
 }

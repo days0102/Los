@@ -36,6 +36,7 @@ SRCS_C = \
 	kernel/string.c \
 	kernel/clint.c \
 	kernel/timer.c \
+	kernel/syscall.c \
 
 SRCS_USER = \
 	user/zeroproc.S \
