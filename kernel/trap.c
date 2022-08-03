@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-03 14:10:49
+ * @LastEditTime: 2022-08-04 07:07:42
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -61,29 +61,36 @@ void usertrapret(){
     s_sstatus_xpp(RISCV_U);
     w_stvec((uint32)usertrap);
     addr_t satp=(SATP_SV32|(addr_t)(p->pagetable)>>12);
-    ptf(p->trapframe);
-    printf("%p\n",p->trapframe);
+    // ptf(p->trapframe);
+
+    // printf("%p\n",p->trapframe);
+    // printf("sepc: %p\n",r_sepc());
+    
     w_sepc((addr_t)p->trapframe->epc);
+
     p->trapframe->kernel_satp=r_satp();
     p->trapframe->kernel_tvec=(addr_t)trapvec;
     p->trapframe->kernel_sp=(addr_t)p->kernelstack;
-    printf("%p\n",p->kernelstack);
+
+    // printf("%p\n",p->kernelstack);
     userret((addr_t*)TRAPFRAME,satp);
 }
 
-void zero(){
-    printf("zero\n");
-    reg_t pc=r_sepc();
-    w_sepc(pc+4);
+static int first = 0; 
+void startproc(){
+    first = 1;
     usertrapret();
 }
 
 void timerintr(){
     w_sip(r_sip()& ~2); // 清除中断
-    yield();
+    // yield();
+    usertrapret();
 }
 
 void trapvec(){
+    w_stvec((reg_t)kvec);
+
     uint32 scause=r_scause();
 
     uint16 code= scause & 0xffff;
@@ -102,6 +109,7 @@ void trapvec(){
         case 9:
             printf("Supervisor external interrupt\n");
             externinterrupt();
+            usertrapret();
             break;
         default:
             printf("Other interrupt\n");
@@ -129,6 +137,7 @@ void trapvec(){
         case 5:
             printf("Load access fault\n");
             // ex : int a = *(int *)0x00000000;
+            printf("stval va: %p\n",r_stval());
             break;
         case 6:
             printf("Store/AMO address misaligned\n");
@@ -136,6 +145,7 @@ void trapvec(){
         case 7:
             printf("Store/AMO access fault\n");
             // ex : *(int *)0x00000000 = 100;
+            printf("stval va: %p\n",r_stval());
             break;
         case 8: // 来自 U-mode 的系统调用
             printf("Environment call from U-mode\n");
@@ -144,7 +154,7 @@ void trapvec(){
             break;
         case 9: // 来自 S-mode 的系统调用
             printf("Environment call from S-mode\n");
-            zero();
+            first ? usertrapret():startproc();
             break;
         case 12:
             printf("Instruction page fault\n");

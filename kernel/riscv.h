@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-01 14:05:36
+ * @LastEditTime: 2022-08-03 21:20:25
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -302,6 +302,17 @@ static inline uint32 r_scause(){
 }
 static inline void w_scause(uint32 x){
     asm volatile("csrw scause,%0"::"r"(x));
+}
+
+// trap 时写入异常相关信息
+/** 如果stval在指令获取、加载或存储发生断点、
+  * 地址错位、访问错误或页面错误异常时使用非
+  * 零值写入，则stval将包含出错的虚拟地址。
+*/
+static inline uint32 r_stval(){
+    uint32 x;
+    asm volatile("csrr %0,stval":"=r"(x));
+    return x;
 }
 
 /**
