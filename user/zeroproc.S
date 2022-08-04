@@ -1,4 +1,4 @@
-    li a7,1
+    li a7,2
     ecall
 label:
     j label

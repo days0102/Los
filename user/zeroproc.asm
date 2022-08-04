@@ -5,8 +5,8 @@ user/zeroproc.o:     file format elf32-littleriscv
 Disassembly of section .text:
 
 00000000 <label-0x8>:
-    li a7,1
-   0:	00100893          	li	a7,1
+    li a7,2
+   0:	00200893          	li	a7,2
     ecall
    4:	00000073          	ecall
 

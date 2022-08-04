@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-03 14:10:26
+ * @LastEditTime: 2022-08-04 07:44:27
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -63,12 +63,14 @@ void    mkstack(addr_t* pgt);
 
 // proc.h
 struct pcb;
+struct trapframe;
 // proc.c
 void    procinit();
 void    userinit();
 struct pcb* nowproc();
 void    schedule();
 void    yield();
+void    sched();
 
 // string.c
 void*   memset(void*,int,uint);
@@ -79,8 +81,6 @@ size_t  strlen(const char* s);
 struct context;
 void    swtch(struct context* old,struct context* new);
 
-// proc.h
-struct trapframe;
 // usertrap.S
 void    userret(addr_t*,addr_t pgt);
 extern char usertrap[];

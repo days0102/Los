@@ -52,9 +52,9 @@ usertrap:
     call trapvec    // 处理 trap 
 
 .global userret
-// userret( traoframe,satp )
+// userret( trapframe,satp )
 userret:
-
+    // 修改页表
     csrw satp,a1
     sfence.vma zero, zero
 

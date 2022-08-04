@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-04 07:07:42
+ * @LastEditTime: 2022-08-04 21:39:53
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/trap.c
  */
@@ -84,11 +84,12 @@ void startproc(){
 
 void timerintr(){
     w_sip(r_sip()& ~2); // 清除中断
-    // yield();
-    usertrapret();
+    yield();
+    
 }
 
 void trapvec(){
+    int where=r_sstatus()&S_SPP_SET;
     w_stvec((reg_t)kvec);
 
     uint32 scause=r_scause();
@@ -109,12 +110,12 @@ void trapvec(){
         case 9:
             printf("Supervisor external interrupt\n");
             externinterrupt();
-            usertrapret();
             break;
         default:
             printf("Other interrupt\n");
             break;
         }
+        where ? : usertrapret();
     }else{
         printf("Exception : ");
         switch (code)
@@ -158,6 +159,7 @@ void trapvec(){
             break;
         case 12:
             printf("Instruction page fault\n");
+            printf("stval va: %p\n",r_stval());
             break;
         case 13:
             printf("Load page fault\n");
