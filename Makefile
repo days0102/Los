@@ -39,12 +39,26 @@ SRCS_C = \
 	kernel/syscall.c \
 
 SRCS_USER = \
-	user/zeroproc.S \
+	user/initproc.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
 
-all:kernel.elf
+ULIB = user/usyscall.o
+UPROC= $(SRCS_USER:%.c=%.elf)
+
+# LDFLAGS = -z max-page-size=4096
+
+# .SECONDARY:  # 保留所有中间文件
+.PRECIOUS: %.o # 保留中间过程的 .o 文件
+%.elf :%.o $(ULIB)
+	$(CC) $(CFLAGS) -N -e main -Ttext 0 -o $@ $^
+
+user:$(UPROC)
+	@# @echo $(UPROC)
+	@echo "	Make UProc OK! "
+
+all:kernel.elf $(UPROC)
 	@echo "	Make OK! "
 
 run:kernel.elf
@@ -86,7 +100,7 @@ local:
 	@${GDB} kernel.elf -q -x other/localgdbinit
 
 clean:
-	rm -rf *.o *.bin *.elf */*.o */*.d
+	rm -rf *.o *.bin *.elf */*.o */*.d */*.elf */_*
 
 code: kernel.elf
 	@ # ${OBJDUMP} -S kernel.elf | less
