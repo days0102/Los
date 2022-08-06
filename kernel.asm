@@ -570,19 +570,20 @@ userret:
 800003c0:	10200073          	sret
 
 800003c4 <r_mstatus>:
- * @description: 获取 mstatus 寄存器（机器状态寄存器）值
  * mstatus 寄存器是一个 XLEN 位的可读/可写寄存器。
  * mstatus 寄存器持续跟踪和控制硬件线程的当前操作状态。
  * mstatus 在 H 和 S 特权级 ISA 受限的视图，分别出现在 hstatus 和 sstatus 寄存器中。
  */
-static inline uint32 r_mstatus(){
+static inline uint32 r_mstatus()
+{
 800003c4:	fe010113          	addi	sp,sp,-32
 800003c8:	00812e23          	sw	s0,28(sp)
 800003cc:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0, mstatus" : "=r" (x) );
+    asm volatile("csrr %0, mstatus"
 800003d0:	300027f3          	csrr	a5,mstatus
 800003d4:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 800003d8:	fec42783          	lw	a5,-20(s0)
 }
@@ -593,14 +594,17 @@ static inline uint32 r_mstatus(){
 
 800003ec <w_mstatus>:
 // 将 x 写入 mstatus 寄存器
-static inline void w_mstatus(uint32 x){
+static inline void w_mstatus(uint32 x)
+{
 800003ec:	fe010113          	addi	sp,sp,-32
 800003f0:	00812e23          	sw	s0,28(sp)
 800003f4:	02010413          	addi	s0,sp,32
 800003f8:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw mstatus, %0" : : "r" (x) );
+    asm volatile("csrw mstatus, %0"
 800003fc:	fec42783          	lw	a5,-20(s0)
 80000400:	30079073          	csrw	mstatus,a5
+                 :
+                 : "r"(x));
 }
 80000404:	00000013          	nop
 80000408:	01c12403          	lw	s0,28(sp)
@@ -608,19 +612,19 @@ static inline void w_mstatus(uint32 x){
 80000410:	00008067          	ret
 
 80000414 <s_mstatus_xpp>:
-        break;
     }
     return x;
 }
 // 设置特权模式
-static inline void s_mstatus_xpp(uint8 m){
+static inline void s_mstatus_xpp(uint8 m)
+{
 80000414:	fd010113          	addi	sp,sp,-48
 80000418:	02112623          	sw	ra,44(sp)
 8000041c:	02812423          	sw	s0,40(sp)
 80000420:	03010413          	addi	s0,sp,48
 80000424:	00050793          	mv	a5,a0
 80000428:	fcf40fa3          	sb	a5,-33(s0)
-    uint32 x=r_mstatus();
+    uint32 x = r_mstatus();
 8000042c:	f99ff0ef          	jal	ra,800003c4 <r_mstatus>
 80000430:	fea42623          	sw	a0,-20(s0)
     switch (m)
@@ -691,14 +695,16 @@ static inline void s_mstatus_xpp(uint8 m){
 800004e8 <r_sstatus>:
 
 /* sstatus 寄存器与mstatus相仿*/
-static inline uint32 r_sstatus(){
+static inline uint32 r_sstatus()
+{
 800004e8:	fe010113          	addi	sp,sp,-32
 800004ec:	00812e23          	sw	s0,28(sp)
 800004f0:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0, sstatus" : "=r" (x) );
+    asm volatile("csrr %0, sstatus"
 800004f4:	100027f3          	csrr	a5,sstatus
 800004f8:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 800004fc:	fec42783          	lw	a5,-20(s0)
 }
@@ -709,14 +715,17 @@ static inline uint32 r_sstatus(){
 
 80000510 <w_sstatus>:
 // 将 x 写入 mstatus 寄存器
-static inline void w_sstatus(uint32 x){
+static inline void w_sstatus(uint32 x)
+{
 80000510:	fe010113          	addi	sp,sp,-32
 80000514:	00812e23          	sw	s0,28(sp)
 80000518:	02010413          	addi	s0,sp,32
 8000051c:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw sstatus, %0" : : "r" (x) );
+    asm volatile("csrw sstatus, %0"
 80000520:	fec42783          	lw	a5,-20(s0)
 80000524:	10079073          	csrw	sstatus,a5
+                 :
+                 : "r"(x));
 }
 80000528:	00000013          	nop
 8000052c:	01c12403          	lw	s0,28(sp)
@@ -724,19 +733,21 @@ static inline void w_sstatus(uint32 x){
 80000534:	00008067          	ret
 
 80000538 <w_mepc>:
-    uint32 x;
-    asm volatile("csrr %0, mepc" : "=r" (x) );
+                 : "=r"(x));
     return x;
 }
 // 写mepc寄存器
-static inline void w_mepc(uint32 x){
+static inline void w_mepc(uint32 x)
+{
 80000538:	fe010113          	addi	sp,sp,-32
 8000053c:	00812e23          	sw	s0,28(sp)
 80000540:	02010413          	addi	s0,sp,32
 80000544:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw mepc, %0" : : "r" (x) );
+    asm volatile("csrw mepc, %0"
 80000548:	fec42783          	lw	a5,-20(s0)
 8000054c:	34179073          	csrw	mepc,a5
+                 :
+                 : "r"(x));
 }
 80000550:	00000013          	nop
 80000554:	01c12403          	lw	s0,28(sp)
@@ -744,19 +755,21 @@ static inline void w_mepc(uint32 x){
 8000055c:	00008067          	ret
 
 80000560 <w_stvec>:
-static inline uint32 r_stvec(){
-    uint32 x;
-    asm volatile("csrr %0 , stvec" : "=r" (x));
+    asm volatile("csrr %0 , stvec"
+                 : "=r"(x));
     return x;
 }
-static inline void w_stvec(uint32 x){
+static inline void w_stvec(uint32 x)
+{
 80000560:	fe010113          	addi	sp,sp,-32
 80000564:	00812e23          	sw	s0,28(sp)
 80000568:	02010413          	addi	s0,sp,32
 8000056c:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw stvec , %0" : : "r"(x));
+    asm volatile("csrw stvec , %0"
 80000570:	fec42783          	lw	a5,-20(s0)
 80000574:	10579073          	csrw	stvec,a5
+                 :
+                 : "r"(x));
 }
 80000578:	00000013          	nop
 8000057c:	01c12403          	lw	s0,28(sp)
@@ -764,19 +777,21 @@ static inline void w_stvec(uint32 x){
 80000584:	00008067          	ret
 
 80000588 <w_mideleg>:
-static inline uint32 r_mideleg(){
-    uint32 x;
-    asm volatile("csrr %0 , mideleg" : "=r"(x));
+    asm volatile("csrr %0 , mideleg"
+                 : "=r"(x));
     return x;
 }
-static inline void w_mideleg(uint32 x){
+static inline void w_mideleg(uint32 x)
+{
 80000588:	fe010113          	addi	sp,sp,-32
 8000058c:	00812e23          	sw	s0,28(sp)
 80000590:	02010413          	addi	s0,sp,32
 80000594:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw mideleg , %0 " : : "r"(x));
+    asm volatile("csrw mideleg , %0 "
 80000598:	fec42783          	lw	a5,-20(s0)
 8000059c:	30379073          	csrw	mideleg,a5
+                 :
+                 : "r"(x));
 }
 800005a0:	00000013          	nop
 800005a4:	01c12403          	lw	s0,28(sp)
@@ -784,19 +799,21 @@ static inline void w_mideleg(uint32 x){
 800005ac:	00008067          	ret
 
 800005b0 <w_medeleg>:
-static inline uint32 r_medeleg(){
-    uint32 x;
-    asm volatile("csrr %0 , medeleg" : "=r"(x));
+    asm volatile("csrr %0 , medeleg"
+                 : "=r"(x));
     return x;
 }
-static inline void w_medeleg(uint32 x){
+static inline void w_medeleg(uint32 x)
+{
 800005b0:	fe010113          	addi	sp,sp,-32
 800005b4:	00812e23          	sw	s0,28(sp)
 800005b8:	02010413          	addi	s0,sp,32
 800005bc:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw medeleg , %0 " : : "r"(x));
+    asm volatile("csrw medeleg , %0 "
 800005c0:	fec42783          	lw	a5,-20(s0)
 800005c4:	30279073          	csrw	medeleg,a5
+                 :
+                 : "r"(x));
 }
 800005c8:	00000013          	nop
 800005cc:	01c12403          	lw	s0,28(sp)
@@ -804,19 +821,21 @@ static inline void w_medeleg(uint32 x){
 800005d4:	00008067          	ret
 
 800005d8 <w_satp>:
-static inline uint32 r_satp(){
-    uint32 x;
-    asm volatile("csrr %0,satp":"=r"(x));
+    asm volatile("csrr %0,satp"
+                 : "=r"(x));
     return x;
 }
-static inline void w_satp(uint32 x){
+static inline void w_satp(uint32 x)
+{
 800005d8:	fe010113          	addi	sp,sp,-32
 800005dc:	00812e23          	sw	s0,28(sp)
 800005e0:	02010413          	addi	s0,sp,32
 800005e4:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw satp,%0"::"r"(x));
+    asm volatile("csrw satp,%0"
 800005e8:	fec42783          	lw	a5,-20(s0)
 800005ec:	18079073          	csrw	satp,a5
+                 :
+                 : "r"(x));
 }
 800005f0:	00000013          	nop
 800005f4:	01c12403          	lw	s0,28(sp)
@@ -824,18 +843,18 @@ static inline void w_satp(uint32 x){
 800005fc:	00008067          	ret
 
 80000600 <s_sstatus_intr>:
-    default:
         break;
     }
     return x;
 }
-static inline void s_sstatus_intr(uint32 m){
+static inline void s_sstatus_intr(uint32 m)
+{
 80000600:	fd010113          	addi	sp,sp,-48
 80000604:	02112623          	sw	ra,44(sp)
 80000608:	02812423          	sw	s0,40(sp)
 8000060c:	03010413          	addi	s0,sp,48
 80000610:	fca42e23          	sw	a0,-36(s0)
-    uint32 x=r_sstatus();
+    uint32 x = r_sstatus();
 80000614:	ed5ff0ef          	jal	ra,800004e8 <r_sstatus>
 80000618:	fea42623          	sw	a0,-20(s0)
     switch (m)
@@ -859,33 +878,33 @@ static inline void s_sstatus_intr(uint32 m){
 80000660:	04f71063          	bne	a4,a5,800006a0 <s_sstatus_intr+0xa0>
     {
     case INTR_SPIE:
-        x |= INTR_SPIE;    // 开
+        x |= INTR_SPIE; // 开
 80000664:	fec42783          	lw	a5,-20(s0)
 80000668:	0207e793          	ori	a5,a5,32
 8000066c:	fef42623          	sw	a5,-20(s0)
         break;
 80000670:	0340006f          	j	800006a4 <s_sstatus_intr+0xa4>
     case ~INTR_SPIE:
-        x &= ~INTR_SPIE;   // 关
+        x &= ~INTR_SPIE; // 关
 80000674:	fec42783          	lw	a5,-20(s0)
 80000678:	fdf7f793          	andi	a5,a5,-33
 8000067c:	fef42623          	sw	a5,-20(s0)
         break;
 80000680:	0240006f          	j	800006a4 <s_sstatus_intr+0xa4>
     case INTR_SIE:
-        x |= INTR_SIE;     // 开
+        x |= INTR_SIE; // 开
 80000684:	fec42783          	lw	a5,-20(s0)
 80000688:	0027e793          	ori	a5,a5,2
 8000068c:	fef42623          	sw	a5,-20(s0)
         break;
 80000690:	0140006f          	j	800006a4 <s_sstatus_intr+0xa4>
     case ~INTR_SIE:
-        x &= INTR_SIE;     // 关
+        x &= INTR_SIE; // 关
 80000694:	fec42783          	lw	a5,-20(s0)
 80000698:	0027f793          	andi	a5,a5,2
 8000069c:	fef42623          	sw	a5,-20(s0)
     default:
-        break;   
+        break;
 800006a0:	00000013          	nop
     }
     w_sstatus(x);
@@ -899,12 +918,12 @@ static inline void s_sstatus_intr(uint32 m){
 800006bc:	00008067          	ret
 
 800006c0 <start>:
-#include "kernel/defs.h"
 #include "kernel/riscv.h"
 
-extern void main();     // 定义在main.c
+extern void main(); // 定义在main.c
 
-void start(){
+void start()
+{
 800006c0:	ff010113          	addi	sp,sp,-16
 800006c4:	00112623          	sw	ra,12(sp)
 800006c8:	00812423          	sw	s0,8(sp)
@@ -916,43 +935,43 @@ void start(){
 800006d8:	00078513          	mv	a0,a5
 800006dc:	164000ef          	jal	ra,80000840 <uartputs>
 
-    s_mstatus_xpp(RISCV_S);     // 设置特权模式为 S-mode
+    s_mstatus_xpp(RISCV_S); // 设置特权模式为 S-mode
 800006e0:	00100513          	li	a0,1
 800006e4:	d31ff0ef          	jal	ra,80000414 <s_mstatus_xpp>
 
-    w_satp((uint32)0);          // 暂时禁用分页
+    w_satp((uint32)0); // 暂时禁用分页
 800006e8:	00000513          	li	a0,0
 800006ec:	eedff0ef          	jal	ra,800005d8 <w_satp>
 
-    w_mideleg((uint32)0xffff);  // 16项中断委托给S-mode
+    w_mideleg((uint32)0xffff); // 16项中断委托给S-mode
 800006f0:	000107b7          	lui	a5,0x10
 800006f4:	fff78513          	addi	a0,a5,-1 # ffff <sz+0xefff>
 800006f8:	e91ff0ef          	jal	ra,80000588 <w_mideleg>
-    w_medeleg((uint32)0xffff);  // 16项异常委托给S-mode
+    w_medeleg((uint32)0xffff); // 16项异常委托给S-mode
 800006fc:	000107b7          	lui	a5,0x10
 80000700:	fff78513          	addi	a0,a5,-1 # ffff <sz+0xefff>
 80000704:	eadff0ef          	jal	ra,800005b0 <w_medeleg>
 
-    s_sstatus_intr(INTR_SIE);   // S-mode 开全局中断
+    s_sstatus_intr(INTR_SIE); // S-mode 开全局中断
 80000708:	00200513          	li	a0,2
 8000070c:	ef5ff0ef          	jal	ra,80000600 <s_sstatus_intr>
-    
-    w_stvec((uint32)kvec);      // 设置 S-mode trap处理函数
+
+    w_stvec((uint32)kvec); // 设置 S-mode trap处理函数
 80000710:	800007b7          	lui	a5,0x80000
 80000714:	02c78793          	addi	a5,a5,44 # 8000002c <memend+0xf800002c>
 80000718:	00078513          	mv	a0,a5
 8000071c:	e45ff0ef          	jal	ra,80000560 <w_stvec>
 
-    timerinit();                // 时钟定时器
+    timerinit(); // 时钟定时器
 80000720:	36c020ef          	jal	ra,80002a8c <timerinit>
 
-    w_mepc((uint32)main);       // 设置 mepc 为 main 地址
+    w_mepc((uint32)main); // 设置 mepc 为 main 地址
 80000724:	800017b7          	lui	a5,0x80001
 80000728:	90c78793          	addi	a5,a5,-1780 # 8000090c <memend+0xf800090c>
 8000072c:	00078513          	mv	a0,a5
 80000730:	e09ff0ef          	jal	ra,80000538 <w_mepc>
     // Upon reset, a hart’s privilege mode is set to M
-    asm volatile("mret");       // 改变特权级，从M-mode返回。跳转至mepc寄存器地址处
+    asm volatile("mret"); // 改变特权级，从M-mode返回。跳转至mepc寄存器地址处
 80000734:	30200073          	mret
 80000738:	00000013          	nop
 8000073c:	00c12083          	lw	ra,12(sp)
@@ -961,28 +980,28 @@ void start(){
 80000748:	00008067          	ret
 
 8000074c <uartinit>:
- * @FilePath: /los/kernel/uart.c
  */
 #include "types.h"
 #include "uart.h"
 
-void uartinit(){
+void uartinit()
+{
 8000074c:	fe010113          	addi	sp,sp,-32
 80000750:	00812e23          	sw	s0,28(sp)
 80000754:	02010413          	addi	s0,sp,32
     // 关闭中断
-    uart_write(UART_IER,0x00);
+    uart_write(UART_IER, 0x00);
 80000758:	100007b7          	lui	a5,0x10000
 8000075c:	00178793          	addi	a5,a5,1 # 10000001 <sz+0xffff001>
 80000760:	00078023          	sb	zero,0(a5)
 
     // 设置传输波特率
-    uint8 lcr=uart_read(UART_LCR);  // 读取LCR寄存器值
+    uint8 lcr = uart_read(UART_LCR);      // 读取LCR寄存器值
 80000764:	100007b7          	lui	a5,0x10000
 80000768:	00378793          	addi	a5,a5,3 # 10000003 <sz+0xffff003>
 8000076c:	0007c783          	lbu	a5,0(a5)
 80000770:	fef407a3          	sb	a5,-17(s0)
-    uart_write(UART_LCR,lcr|(1<<7));    // LCR 寄存器第7位置1，控制 DLL 和 DLM 寄存器作用
+    uart_write(UART_LCR, lcr | (1 << 7)); // LCR 寄存器第7位置1，控制 DLL 和 DLM 寄存器作用
 80000774:	100007b7          	lui	a5,0x10000
 80000778:	00378793          	addi	a5,a5,3 # 10000003 <sz+0xffff003>
 8000077c:	fef44703          	lbu	a4,-17(s0)
@@ -990,19 +1009,19 @@ void uartinit(){
 80000784:	0ff77713          	andi	a4,a4,255
 80000788:	00e78023          	sb	a4,0(a5)
     // 设置0x0003,38.4K频
-    uart_write(UART_DLL,0x03);      // 设置低位
+    uart_write(UART_DLL, 0x03); // 设置低位
 8000078c:	100007b7          	lui	a5,0x10000
 80000790:	00300713          	li	a4,3
 80000794:	00e78023          	sb	a4,0(a5) # 10000000 <sz+0xffff000>
-    uart_write(UART_DLM,0x00);      // 设置高位
+    uart_write(UART_DLM, 0x00); // 设置高位
 80000798:	100007b7          	lui	a5,0x10000
 8000079c:	00178793          	addi	a5,a5,1 # 10000001 <sz+0xffff001>
 800007a0:	00078023          	sb	zero,0(a5)
 
     // 设置校验位
-    lcr=0;
+    lcr = 0;
 800007a4:	fe0407a3          	sb	zero,-17(s0)
-    uart_write(UART_LCR,lcr|(3<<0));
+    uart_write(UART_LCR, lcr | (3 << 0));
 800007a8:	100007b7          	lui	a5,0x10000
 800007ac:	00378793          	addi	a5,a5,3 # 10000003 <sz+0xffff003>
 800007b0:	fef44703          	lbu	a4,-17(s0)
@@ -1011,7 +1030,7 @@ void uartinit(){
 800007bc:	00e78023          	sb	a4,0(a5)
 
     // 开中断
-    uart_write(UART_IER,uart_read(UART_IER)|(1<<0));
+    uart_write(UART_IER, uart_read(UART_IER) | (1 << 0));
 800007c0:	100007b7          	lui	a5,0x10000
 800007c4:	00178793          	addi	a5,a5,1 # 10000001 <sz+0xffff001>
 800007c8:	0007c783          	lbu	a5,0(a5)
@@ -1030,14 +1049,15 @@ void uartinit(){
 800007f4 <uartputc>:
 
 // 轮询处理数据
-char uartputc(char c){
+char uartputc(char c)
+{
 800007f4:	fe010113          	addi	sp,sp,-32
 800007f8:	00812e23          	sw	s0,28(sp)
 800007fc:	02010413          	addi	s0,sp,32
 80000800:	00050793          	mv	a5,a0
 80000804:	fef407a3          	sb	a5,-17(s0)
     // LSR 寄存器第5位标记 THR 寄存器状态，1空闲，0忙
-    while(((uart_read(UART_LSR))&(1<<5))==0);     // 轮询
+    while (((uart_read(UART_LSR)) & (1 << 5)) == 0)
 80000808:	00000013          	nop
 8000080c:	100007b7          	lui	a5,0x10000
 80000810:	00578793          	addi	a5,a5,5 # 10000005 <sz+0xffff005>
@@ -1045,7 +1065,8 @@ char uartputc(char c){
 80000818:	0ff7f793          	andi	a5,a5,255
 8000081c:	0207f793          	andi	a5,a5,32
 80000820:	fe0786e3          	beqz	a5,8000080c <uartputc+0x18>
-    return uart_write(UART_THR,c);
+        ; // 轮询
+    return uart_write(UART_THR, c);
 80000824:	10000737          	lui	a4,0x10000
 80000828:	fef44783          	lbu	a5,-17(s0)
 8000082c:	00f70023          	sb	a5,0(a4) # 10000000 <sz+0xffff000>
@@ -1058,7 +1079,8 @@ char uartputc(char c){
 80000840 <uartputs>:
 
 // 发送字符串
-void uartputs(char* s){
+void uartputs(char *s)
+{
 80000840:	fe010113          	addi	sp,sp,-32
 80000844:	00112e23          	sw	ra,28(sp)
 80000848:	00812c23          	sw	s0,24(sp)
@@ -1080,7 +1102,6 @@ void uartputs(char* s){
 80000874:	0007c783          	lbu	a5,0(a5)
 80000878:	fe0790e3          	bnez	a5,80000858 <uartputs+0x18>
     }
-    
 }
 8000087c:	00000013          	nop
 80000880:	00000013          	nop
@@ -1092,23 +1113,27 @@ void uartputs(char* s){
 80000894 <uartgetc>:
 
 // 接收输入
-int uartgetc(){
+int uartgetc()
+{
 80000894:	ff010113          	addi	sp,sp,-16
 80000898:	00812623          	sw	s0,12(sp)
 8000089c:	01010413          	addi	s0,sp,16
-    if(uart_read(UART_LSR)&(1<<0)){
+    if (uart_read(UART_LSR) & (1 << 0))
 800008a0:	100007b7          	lui	a5,0x10000
 800008a4:	00578793          	addi	a5,a5,5 # 10000005 <sz+0xffff005>
 800008a8:	0007c783          	lbu	a5,0(a5)
 800008ac:	0ff7f793          	andi	a5,a5,255
 800008b0:	0017f793          	andi	a5,a5,1
 800008b4:	00078a63          	beqz	a5,800008c8 <uartgetc+0x34>
+    {
         return uart_read(UART_RHR);
 800008b8:	100007b7          	lui	a5,0x10000
 800008bc:	0007c783          	lbu	a5,0(a5) # 10000000 <sz+0xffff000>
 800008c0:	0ff7f793          	andi	a5,a5,255
 800008c4:	0080006f          	j	800008cc <uartgetc+0x38>
-    }else{
+    }
+    else
+    {
         return -1;
 800008c8:	fff00793          	li	a5,-1
     }
@@ -1121,7 +1146,8 @@ int uartgetc(){
 800008dc <uartintr>:
 
 // 键盘输入中断
-char uartintr(){
+char uartintr()
+{
 800008dc:	ff010113          	addi	sp,sp,-16
 800008e0:	00112623          	sw	ra,12(sp)
 800008e4:	00812423          	sw	s0,8(sp)
@@ -1137,12 +1163,12 @@ char uartintr(){
 80000908:	00008067          	ret
 
 8000090c <main>:
- */
 #include "riscv.h"
 #include "defs.h"
 #include "swtch.h"
 
-void main(){
+void main()
+{
 8000090c:	ff010113          	addi	sp,sp,-16
 80000910:	00112623          	sw	ra,12(sp)
 80000914:	00812423          	sw	s0,8(sp)
@@ -1152,15 +1178,15 @@ void main(){
 80000920:	00c78513          	addi	a0,a5,12 # 8000c00c <memend+0xf800c00c>
 80000924:	081000ef          	jal	ra,800011a4 <printf>
 
-    minit();        // 物理内存管理
+    minit();    // 物理内存管理
 80000928:	489000ef          	jal	ra,800015b0 <minit>
-    plicinit();     // PLIC 中断处理
+    plicinit(); // PLIC 中断处理
 8000092c:	709000ef          	jal	ra,80001834 <plicinit>
-    
-    kvminit();       // 启动虚拟内存
+
+    kvminit(); // 启动虚拟内存
 80000930:	3bc010ef          	jal	ra,80001cec <kvminit>
 
-    printf("usertrap: %p\n",usertrap);
+    printf("usertrap: %p\n", usertrap);
 80000934:	800007b7          	lui	a5,0x80000
 80000938:	29878593          	addi	a1,a5,664 # 80000298 <memend+0xf8000298>
 8000093c:	8000c7b7          	lui	a5,0x8000c
@@ -1187,19 +1213,20 @@ void main(){
 80000970:	00008067          	ret
 
 80000974 <r_sstatus>:
-    }
     w_mstatus(x);
 }
 
 /* sstatus 寄存器与mstatus相仿*/
-static inline uint32 r_sstatus(){
+static inline uint32 r_sstatus()
+{
 80000974:	fe010113          	addi	sp,sp,-32
 80000978:	00812e23          	sw	s0,28(sp)
 8000097c:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0, sstatus" : "=r" (x) );
+    asm volatile("csrr %0, sstatus"
 80000980:	100027f3          	csrr	a5,sstatus
 80000984:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 80000988:	fec42783          	lw	a5,-20(s0)
 }
@@ -1210,14 +1237,17 @@ static inline uint32 r_sstatus(){
 
 8000099c <w_sstatus>:
 // 将 x 写入 mstatus 寄存器
-static inline void w_sstatus(uint32 x){
+static inline void w_sstatus(uint32 x)
+{
 8000099c:	fe010113          	addi	sp,sp,-32
 800009a0:	00812e23          	sw	s0,28(sp)
 800009a4:	02010413          	addi	s0,sp,32
 800009a8:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw sstatus, %0" : : "r" (x) );
+    asm volatile("csrw sstatus, %0"
 800009ac:	fec42783          	lw	a5,-20(s0)
 800009b0:	10079073          	csrw	sstatus,a5
+                 :
+                 : "r"(x));
 }
 800009b4:	00000013          	nop
 800009b8:	01c12403          	lw	s0,28(sp)
@@ -1225,19 +1255,19 @@ static inline void w_sstatus(uint32 x){
 800009c0:	00008067          	ret
 
 800009c4 <s_sstatus_xpp>:
-    }
     return x;
 }
 // 设置特权模式
-#define S_SPP_SET (1<<8)
-static inline void s_sstatus_xpp(uint8 m){
+#define S_SPP_SET (1 << 8)
+static inline void s_sstatus_xpp(uint8 m)
+{
 800009c4:	fd010113          	addi	sp,sp,-48
 800009c8:	02112623          	sw	ra,44(sp)
 800009cc:	02812423          	sw	s0,40(sp)
 800009d0:	03010413          	addi	s0,sp,48
 800009d4:	00050793          	mv	a5,a0
 800009d8:	fcf40fa3          	sb	a5,-33(s0)
-    uint32 x=r_sstatus();
+    uint32 x = r_sstatus();
 800009dc:	f99ff0ef          	jal	ra,80000974 <r_sstatus>
 800009e0:	fea42623          	sw	a0,-20(s0)
     switch (m)
@@ -1280,19 +1310,21 @@ static inline void s_sstatus_xpp(uint8 m){
 80000a3c:	00008067          	ret
 
 80000a40 <w_sepc>:
-    uint32 x;
-    asm volatile("csrr %0, sepc" : "=r" (x) );
+                 : "=r"(x));
     return x;
 }
 // 写 sepc寄存器
-static inline void w_sepc(uint32 x){
+static inline void w_sepc(uint32 x)
+{
 80000a40:	fe010113          	addi	sp,sp,-32
 80000a44:	00812e23          	sw	s0,28(sp)
 80000a48:	02010413          	addi	s0,sp,32
 80000a4c:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw sepc, %0" : : "r" (x) );
+    asm volatile("csrw sepc, %0"
 80000a50:	fec42783          	lw	a5,-20(s0)
 80000a54:	14179073          	csrw	sepc,a5
+                 :
+                 : "r"(x));
 }
 80000a58:	00000013          	nop
 80000a5c:	01c12403          	lw	s0,28(sp)
@@ -1300,19 +1332,21 @@ static inline void w_sepc(uint32 x){
 80000a64:	00008067          	ret
 
 80000a68 <w_stvec>:
-static inline uint32 r_stvec(){
-    uint32 x;
-    asm volatile("csrr %0 , stvec" : "=r" (x));
+    asm volatile("csrr %0 , stvec"
+                 : "=r"(x));
     return x;
 }
-static inline void w_stvec(uint32 x){
+static inline void w_stvec(uint32 x)
+{
 80000a68:	fe010113          	addi	sp,sp,-32
 80000a6c:	00812e23          	sw	s0,28(sp)
 80000a70:	02010413          	addi	s0,sp,32
 80000a74:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw stvec , %0" : : "r"(x));
+    asm volatile("csrw stvec , %0"
 80000a78:	fec42783          	lw	a5,-20(s0)
 80000a7c:	10579073          	csrw	stvec,a5
+                 :
+                 : "r"(x));
 }
 80000a80:	00000013          	nop
 80000a84:	01c12403          	lw	s0,28(sp)
@@ -1320,19 +1354,20 @@ static inline void w_stvec(uint32 x){
 80000a8c:	00008067          	ret
 
 80000a90 <r_satp>:
- * mode = 地址转换方案 0=bare 1=SV32
  * asid = 地址空间标识
  * ppn  = 根页表物理页码(物理地址/4Kb)
  */
-#define SATP_SV32 (1<<31)    
-static inline uint32 r_satp(){
+#define SATP_SV32 (1 << 31)
+static inline uint32 r_satp()
+{
 80000a90:	fe010113          	addi	sp,sp,-32
 80000a94:	00812e23          	sw	s0,28(sp)
 80000a98:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0,satp":"=r"(x));
+    asm volatile("csrr %0,satp"
 80000a9c:	180027f3          	csrr	a5,satp
 80000aa0:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 80000aa4:	fec42783          	lw	a5,-20(s0)
 }
@@ -1342,19 +1377,20 @@ static inline uint32 r_satp(){
 80000ab4:	00008067          	ret
 
 80000ab8 <r_scause>:
- * 写入一个代码，表明导致该trap的事件。
  *     1bit         31bit
  * type | Exception Code (WLRL)
- * type 1=中断 2=异常 
+ * type 1=中断 2=异常
  */
-static inline uint32 r_scause(){
+static inline uint32 r_scause()
+{
 80000ab8:	fe010113          	addi	sp,sp,-32
 80000abc:	00812e23          	sw	s0,28(sp)
 80000ac0:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0,scause":"=r"(x));
+    asm volatile("csrr %0,scause"
 80000ac4:	142027f3          	csrr	a5,scause
 80000ac8:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 80000acc:	fec42783          	lw	a5,-20(s0)
 }
@@ -1364,19 +1400,20 @@ static inline uint32 r_scause(){
 80000adc:	00008067          	ret
 
 80000ae0 <r_stval>:
-// trap 时写入异常相关信息
 /** 如果stval在指令获取、加载或存储发生断点、
-  * 地址错位、访问错误或页面错误异常时使用非
-  * 零值写入，则stval将包含出错的虚拟地址。
-*/
-static inline uint32 r_stval(){
+ * 地址错位、访问错误或页面错误异常时使用非
+ * 零值写入，则stval将包含出错的虚拟地址。
+ */
+static inline uint32 r_stval()
+{
 80000ae0:	fe010113          	addi	sp,sp,-32
 80000ae4:	00812e23          	sw	s0,28(sp)
 80000ae8:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0,stval":"=r"(x));
+    asm volatile("csrr %0,stval"
 80000aec:	143027f3          	csrr	a5,stval
 80000af0:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 80000af4:	fec42783          	lw	a5,-20(s0)
 }
@@ -1386,19 +1423,20 @@ static inline uint32 r_stval(){
 80000b04:	00008067          	ret
 
 80000b08 <r_sip>:
-
 /**
- * @description: 
+ * @description:
  * sip 寄存器指示待处理的中断
  */
-static inline uint32 r_sip(){
+static inline uint32 r_sip()
+{
 80000b08:	fe010113          	addi	sp,sp,-32
 80000b0c:	00812e23          	sw	s0,28(sp)
 80000b10:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0,sip":"=r"(x));
+    asm volatile("csrr %0,sip"
 80000b14:	144027f3          	csrr	a5,sip
 80000b18:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 80000b1c:	fec42783          	lw	a5,-20(s0)
 }
@@ -1408,14 +1446,17 @@ static inline uint32 r_sip(){
 80000b2c:	00008067          	ret
 
 80000b30 <w_sip>:
-static inline void w_sip(uint32 x){
+static inline void w_sip(uint32 x)
+{
 80000b30:	fe010113          	addi	sp,sp,-32
 80000b34:	00812e23          	sw	s0,28(sp)
 80000b38:	02010413          	addi	s0,sp,32
 80000b3c:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw sip,%0"::"r"(x));
+    asm volatile("csrw sip,%0"
 80000b40:	fec42783          	lw	a5,-20(s0)
 80000b44:	14479073          	csrw	sip,a5
+                 :
+                 : "r"(x));
 }
 80000b48:	00000013          	nop
 80000b4c:	01c12403          	lw	s0,28(sp)
@@ -1423,20 +1464,20 @@ static inline void w_sip(uint32 x){
 80000b54:	00008067          	ret
 
 80000b58 <externinterrupt>:
-#include "vm.h"
 
 /**
  * @description: 处理外部中断
  */
-void externinterrupt(){
+void externinterrupt()
+{
 80000b58:	fe010113          	addi	sp,sp,-32
 80000b5c:	00112e23          	sw	ra,28(sp)
 80000b60:	00812c23          	sw	s0,24(sp)
 80000b64:	02010413          	addi	s0,sp,32
-    uint32 irq=r_plicclaim();
+    uint32 irq = r_plicclaim();
 80000b68:	591000ef          	jal	ra,800018f8 <r_plicclaim>
 80000b6c:	fea42623          	sw	a0,-20(s0)
-    printf("irq : %d\n",irq);
+    printf("irq : %d\n", irq);
 80000b70:	fec42583          	lw	a1,-20(s0)
 80000b74:	8000c7b7          	lui	a5,0x8000c
 80000b78:	04878513          	addi	a0,a5,72 # 8000c048 <memend+0xf800c048>
@@ -1446,8 +1487,8 @@ void externinterrupt(){
 80000b84:	00a00793          	li	a5,10
 80000b88:	02f71063          	bne	a4,a5,80000ba8 <externinterrupt+0x50>
     {
-    case UART_IRQ:  // uart 中断(键盘输入)
-        printf("recived : %c\n",uartintr());
+    case UART_IRQ: // uart 中断(键盘输入)
+        printf("recived : %c\n", uartintr());
 80000b8c:	d51ff0ef          	jal	ra,800008dc <uartintr>
 80000b90:	00050793          	mv	a5,a0
 80000b94:	00078593          	mv	a1,a5
@@ -1472,27 +1513,28 @@ void externinterrupt(){
 
 80000bc8 <ptf>:
 
-void ptf(struct trapframe *tf){
+void ptf(struct trapframe *tf)
+{
 80000bc8:	fe010113          	addi	sp,sp,-32
 80000bcc:	00112e23          	sw	ra,28(sp)
 80000bd0:	00812c23          	sw	s0,24(sp)
 80000bd4:	02010413          	addi	s0,sp,32
 80000bd8:	fea42623          	sw	a0,-20(s0)
-    printf("kernel_sp: %d \n",tf->kernel_sp);
+    printf("kernel_sp: %d \n", tf->kernel_sp);
 80000bdc:	fec42783          	lw	a5,-20(s0)
 80000be0:	0087a783          	lw	a5,8(a5)
 80000be4:	00078593          	mv	a1,a5
 80000be8:	8000c7b7          	lui	a5,0x8000c
 80000bec:	06478513          	addi	a0,a5,100 # 8000c064 <memend+0xf800c064>
 80000bf0:	5b4000ef          	jal	ra,800011a4 <printf>
-    printf("kernel_satp: %d \n",tf->kernel_satp);
+    printf("kernel_satp: %d \n", tf->kernel_satp);
 80000bf4:	fec42783          	lw	a5,-20(s0)
 80000bf8:	0007a783          	lw	a5,0(a5)
 80000bfc:	00078593          	mv	a1,a5
 80000c00:	8000c7b7          	lui	a5,0x8000c
 80000c04:	07478513          	addi	a0,a5,116 # 8000c074 <memend+0xf800c074>
 80000c08:	59c000ef          	jal	ra,800011a4 <printf>
-    printf("kernel_tvec: %d \n",tf->kernel_tvec);
+    printf("kernel_tvec: %d \n", tf->kernel_tvec);
 80000c0c:	fec42783          	lw	a5,-20(s0)
 80000c10:	0047a783          	lw	a5,4(a5)
 80000c14:	00078593          	mv	a1,a5
@@ -1500,126 +1542,126 @@ void ptf(struct trapframe *tf){
 80000c1c:	08878513          	addi	a0,a5,136 # 8000c088 <memend+0xf800c088>
 80000c20:	584000ef          	jal	ra,800011a4 <printf>
 
-    printf("ra: %d \n",tf->ra);
+    printf("ra: %d \n", tf->ra);
 80000c24:	fec42783          	lw	a5,-20(s0)
 80000c28:	0107a783          	lw	a5,16(a5)
 80000c2c:	00078593          	mv	a1,a5
 80000c30:	8000c7b7          	lui	a5,0x8000c
 80000c34:	09c78513          	addi	a0,a5,156 # 8000c09c <memend+0xf800c09c>
 80000c38:	56c000ef          	jal	ra,800011a4 <printf>
-    printf("sp: %d \n",tf->sp);
+    printf("sp: %d \n", tf->sp);
 80000c3c:	fec42783          	lw	a5,-20(s0)
 80000c40:	0147a783          	lw	a5,20(a5)
 80000c44:	00078593          	mv	a1,a5
 80000c48:	8000c7b7          	lui	a5,0x8000c
 80000c4c:	0a878513          	addi	a0,a5,168 # 8000c0a8 <memend+0xf800c0a8>
 80000c50:	554000ef          	jal	ra,800011a4 <printf>
-    printf("tp: %d \n",tf->tp);
+    printf("tp: %d \n", tf->tp);
 80000c54:	fec42783          	lw	a5,-20(s0)
 80000c58:	01c7a783          	lw	a5,28(a5)
 80000c5c:	00078593          	mv	a1,a5
 80000c60:	8000c7b7          	lui	a5,0x8000c
 80000c64:	0b478513          	addi	a0,a5,180 # 8000c0b4 <memend+0xf800c0b4>
 80000c68:	53c000ef          	jal	ra,800011a4 <printf>
-    printf("t0: %d \n",tf->t0);
+    printf("t0: %d \n", tf->t0);
 80000c6c:	fec42783          	lw	a5,-20(s0)
 80000c70:	0707a783          	lw	a5,112(a5)
 80000c74:	00078593          	mv	a1,a5
 80000c78:	8000c7b7          	lui	a5,0x8000c
 80000c7c:	0c078513          	addi	a0,a5,192 # 8000c0c0 <memend+0xf800c0c0>
 80000c80:	524000ef          	jal	ra,800011a4 <printf>
-    printf("t1: %d \n",tf->t1);
+    printf("t1: %d \n", tf->t1);
 80000c84:	fec42783          	lw	a5,-20(s0)
 80000c88:	0747a783          	lw	a5,116(a5)
 80000c8c:	00078593          	mv	a1,a5
 80000c90:	8000c7b7          	lui	a5,0x8000c
 80000c94:	0cc78513          	addi	a0,a5,204 # 8000c0cc <memend+0xf800c0cc>
 80000c98:	50c000ef          	jal	ra,800011a4 <printf>
-    printf("t2: %d \n",tf->t2);
+    printf("t2: %d \n", tf->t2);
 80000c9c:	fec42783          	lw	a5,-20(s0)
 80000ca0:	0787a783          	lw	a5,120(a5)
 80000ca4:	00078593          	mv	a1,a5
 80000ca8:	8000c7b7          	lui	a5,0x8000c
 80000cac:	0d878513          	addi	a0,a5,216 # 8000c0d8 <memend+0xf800c0d8>
 80000cb0:	4f4000ef          	jal	ra,800011a4 <printf>
-    printf("t3: %d \n",tf->t3);
+    printf("t3: %d \n", tf->t3);
 80000cb4:	fec42783          	lw	a5,-20(s0)
 80000cb8:	07c7a783          	lw	a5,124(a5)
 80000cbc:	00078593          	mv	a1,a5
 80000cc0:	8000c7b7          	lui	a5,0x8000c
 80000cc4:	0e478513          	addi	a0,a5,228 # 8000c0e4 <memend+0xf800c0e4>
 80000cc8:	4dc000ef          	jal	ra,800011a4 <printf>
-    printf("t4: %d \n",tf->t4);
+    printf("t4: %d \n", tf->t4);
 80000ccc:	fec42783          	lw	a5,-20(s0)
 80000cd0:	0807a783          	lw	a5,128(a5)
 80000cd4:	00078593          	mv	a1,a5
 80000cd8:	8000c7b7          	lui	a5,0x8000c
 80000cdc:	0f078513          	addi	a0,a5,240 # 8000c0f0 <memend+0xf800c0f0>
 80000ce0:	4c4000ef          	jal	ra,800011a4 <printf>
-    printf("t5: %d \n",tf->t5);
+    printf("t5: %d \n", tf->t5);
 80000ce4:	fec42783          	lw	a5,-20(s0)
 80000ce8:	0847a783          	lw	a5,132(a5)
 80000cec:	00078593          	mv	a1,a5
 80000cf0:	8000c7b7          	lui	a5,0x8000c
 80000cf4:	0fc78513          	addi	a0,a5,252 # 8000c0fc <memend+0xf800c0fc>
 80000cf8:	4ac000ef          	jal	ra,800011a4 <printf>
-    printf("t6: %d \n",tf->t6);
+    printf("t6: %d \n", tf->t6);
 80000cfc:	fec42783          	lw	a5,-20(s0)
 80000d00:	0887a783          	lw	a5,136(a5)
 80000d04:	00078593          	mv	a1,a5
 80000d08:	8000c7b7          	lui	a5,0x8000c
 80000d0c:	10878513          	addi	a0,a5,264 # 8000c108 <memend+0xf800c108>
 80000d10:	494000ef          	jal	ra,800011a4 <printf>
-    printf("a0: %d \n",tf->a0);
+    printf("a0: %d \n", tf->a0);
 80000d14:	fec42783          	lw	a5,-20(s0)
 80000d18:	0207a783          	lw	a5,32(a5)
 80000d1c:	00078593          	mv	a1,a5
 80000d20:	8000c7b7          	lui	a5,0x8000c
 80000d24:	11478513          	addi	a0,a5,276 # 8000c114 <memend+0xf800c114>
 80000d28:	47c000ef          	jal	ra,800011a4 <printf>
-    printf("a1: %d \n",tf->a1);
+    printf("a1: %d \n", tf->a1);
 80000d2c:	fec42783          	lw	a5,-20(s0)
 80000d30:	0247a783          	lw	a5,36(a5)
 80000d34:	00078593          	mv	a1,a5
 80000d38:	8000c7b7          	lui	a5,0x8000c
 80000d3c:	12078513          	addi	a0,a5,288 # 8000c120 <memend+0xf800c120>
 80000d40:	464000ef          	jal	ra,800011a4 <printf>
-    printf("a2: %d \n",tf->a2);
+    printf("a2: %d \n", tf->a2);
 80000d44:	fec42783          	lw	a5,-20(s0)
 80000d48:	0287a783          	lw	a5,40(a5)
 80000d4c:	00078593          	mv	a1,a5
 80000d50:	8000c7b7          	lui	a5,0x8000c
 80000d54:	12c78513          	addi	a0,a5,300 # 8000c12c <memend+0xf800c12c>
 80000d58:	44c000ef          	jal	ra,800011a4 <printf>
-    printf("a3: %d \n",tf->a3);
+    printf("a3: %d \n", tf->a3);
 80000d5c:	fec42783          	lw	a5,-20(s0)
 80000d60:	02c7a783          	lw	a5,44(a5)
 80000d64:	00078593          	mv	a1,a5
 80000d68:	8000c7b7          	lui	a5,0x8000c
 80000d6c:	13878513          	addi	a0,a5,312 # 8000c138 <memend+0xf800c138>
 80000d70:	434000ef          	jal	ra,800011a4 <printf>
-    printf("a4: %d \n",tf->a4);
+    printf("a4: %d \n", tf->a4);
 80000d74:	fec42783          	lw	a5,-20(s0)
 80000d78:	0307a783          	lw	a5,48(a5)
 80000d7c:	00078593          	mv	a1,a5
 80000d80:	8000c7b7          	lui	a5,0x8000c
 80000d84:	14478513          	addi	a0,a5,324 # 8000c144 <memend+0xf800c144>
 80000d88:	41c000ef          	jal	ra,800011a4 <printf>
-    printf("a5: %d \n",tf->a5);
+    printf("a5: %d \n", tf->a5);
 80000d8c:	fec42783          	lw	a5,-20(s0)
 80000d90:	0347a783          	lw	a5,52(a5)
 80000d94:	00078593          	mv	a1,a5
 80000d98:	8000c7b7          	lui	a5,0x8000c
 80000d9c:	15078513          	addi	a0,a5,336 # 8000c150 <memend+0xf800c150>
 80000da0:	404000ef          	jal	ra,800011a4 <printf>
-    printf("a6: %d \n",tf->a6);
+    printf("a6: %d \n", tf->a6);
 80000da4:	fec42783          	lw	a5,-20(s0)
 80000da8:	0387a783          	lw	a5,56(a5)
 80000dac:	00078593          	mv	a1,a5
 80000db0:	8000c7b7          	lui	a5,0x8000c
 80000db4:	15c78513          	addi	a0,a5,348 # 8000c15c <memend+0xf800c15c>
 80000db8:	3ec000ef          	jal	ra,800011a4 <printf>
-    printf("a7: %d \n",tf->a7);
+    printf("a7: %d \n", tf->a7);
 80000dbc:	fec42783          	lw	a5,-20(s0)
 80000dc0:	03c7a783          	lw	a5,60(a5)
 80000dc4:	00078593          	mv	a1,a5
@@ -1636,13 +1678,14 @@ void ptf(struct trapframe *tf){
 80000de8 <usertrapret>:
 
 // 返回用户空间
-void usertrapret(){
+void usertrapret()
+{
 80000de8:	fe010113          	addi	sp,sp,-32
 80000dec:	00112e23          	sw	ra,28(sp)
 80000df0:	00812c23          	sw	s0,24(sp)
 80000df4:	00912a23          	sw	s1,20(sp)
 80000df8:	02010413          	addi	s0,sp,32
-    struct pcb* p=nowproc();
+    struct pcb *p = nowproc();
 80000dfc:	1e0010ef          	jal	ra,80001fdc <nowproc>
 80000e00:	fea42623          	sw	a0,-20(s0)
     s_sstatus_xpp(RISCV_U);
@@ -1653,7 +1696,7 @@ void usertrapret(){
 80000e10:	29878793          	addi	a5,a5,664 # 80000298 <memend+0xf8000298>
 80000e14:	00078513          	mv	a0,a5
 80000e18:	c51ff0ef          	jal	ra,80000a68 <w_stvec>
-    addr_t satp=(SATP_SV32|(addr_t)(p->pagetable)>>12);
+    addr_t satp = (SATP_SV32 | (addr_t)(p->pagetable) >> 12);
 80000e1c:	fec42783          	lw	a5,-20(s0)
 80000e20:	0887a783          	lw	a5,136(a5)
 80000e24:	00c7d713          	srli	a4,a5,0xc
@@ -1664,7 +1707,7 @@ void usertrapret(){
 
     // printf("%p\n",p->trapframe);
     // printf("sepc: %p\n",r_sepc());
-    
+
     w_sepc((addr_t)p->trapframe->epc);
 80000e34:	fec42783          	lw	a5,-20(s0)
 80000e38:	0087a783          	lw	a5,8(a5) # 80000008 <memend+0xf8000008>
@@ -1672,19 +1715,19 @@ void usertrapret(){
 80000e40:	00078513          	mv	a0,a5
 80000e44:	bfdff0ef          	jal	ra,80000a40 <w_sepc>
 
-    p->trapframe->kernel_satp=r_satp();
+    p->trapframe->kernel_satp = r_satp();
 80000e48:	fec42783          	lw	a5,-20(s0)
 80000e4c:	0087a483          	lw	s1,8(a5)
 80000e50:	c41ff0ef          	jal	ra,80000a90 <r_satp>
 80000e54:	00050793          	mv	a5,a0
 80000e58:	00f4a023          	sw	a5,0(s1)
-    p->trapframe->kernel_tvec=(addr_t)trapvec;
+    p->trapframe->kernel_tvec = (addr_t)trapvec;
 80000e5c:	fec42783          	lw	a5,-20(s0)
 80000e60:	0087a783          	lw	a5,8(a5)
 80000e64:	80001737          	lui	a4,0x80001
 80000e68:	f1870713          	addi	a4,a4,-232 # 80000f18 <memend+0xf8000f18>
 80000e6c:	00e7a223          	sw	a4,4(a5)
-    p->trapframe->kernel_sp=(addr_t)p->kernelstack;
+    p->trapframe->kernel_sp = (addr_t)p->kernelstack;
 80000e70:	fec42783          	lw	a5,-20(s0)
 80000e74:	0087a783          	lw	a5,8(a5)
 80000e78:	fec42703          	lw	a4,-20(s0)
@@ -1692,7 +1735,7 @@ void usertrapret(){
 80000e80:	00e7a423          	sw	a4,8(a5)
 
     // printf("%p\n",p->kernelstack);
-    userret((addr_t*)TRAPFRAME,satp);
+    userret((addr_t *)TRAPFRAME, satp);
 80000e84:	fe842583          	lw	a1,-24(s0)
 80000e88:	ffffe537          	lui	a0,0xffffe
 80000e8c:	ca4ff0ef          	jal	ra,80000330 <userret>
@@ -1706,8 +1749,9 @@ void usertrapret(){
 
 80000ea8 <startproc>:
 
-static int first = 0; 
-void startproc(){
+static int first = 0;
+void startproc()
+{
 80000ea8:	ff010113          	addi	sp,sp,-16
 80000eac:	00112623          	sw	ra,12(sp)
 80000eb0:	00812423          	sw	s0,8(sp)
@@ -1727,12 +1771,13 @@ void startproc(){
 
 80000edc <timerintr>:
 
-void timerintr(){
+void timerintr()
+{
 80000edc:	ff010113          	addi	sp,sp,-16
 80000ee0:	00112623          	sw	ra,12(sp)
 80000ee4:	00812423          	sw	s0,8(sp)
 80000ee8:	01010413          	addi	s0,sp,16
-    w_sip(r_sip()& ~2); // 清除中断
+    w_sip(r_sip() & ~2); // 清除中断
 80000eec:	c1dff0ef          	jal	ra,80000b08 <r_sip>
 80000ef0:	00050793          	mv	a5,a0
 80000ef4:	ffd7f793          	andi	a5,a5,-3
@@ -1740,7 +1785,6 @@ void timerintr(){
 80000efc:	c35ff0ef          	jal	ra,80000b30 <w_sip>
     yield();
 80000f00:	514010ef          	jal	ra,80002414 <yield>
-    
 }
 80000f04:	00000013          	nop
 80000f08:	00c12083          	lw	ra,12(sp)
@@ -1750,12 +1794,13 @@ void timerintr(){
 
 80000f18 <trapvec>:
 
-void trapvec(){
+void trapvec()
+{
 80000f18:	fe010113          	addi	sp,sp,-32
 80000f1c:	00112e23          	sw	ra,28(sp)
 80000f20:	00812c23          	sw	s0,24(sp)
 80000f24:	02010413          	addi	s0,sp,32
-    int where=r_sstatus()&S_SPP_SET;
+    int where = r_sstatus() & S_SPP_SET;
 80000f28:	a4dff0ef          	jal	ra,80000974 <r_sstatus>
 80000f2c:	00050793          	mv	a5,a0
 80000f30:	1007f793          	andi	a5,a5,256
@@ -1766,18 +1811,19 @@ void trapvec(){
 80000f40:	00078513          	mv	a0,a5
 80000f44:	b25ff0ef          	jal	ra,80000a68 <w_stvec>
 
-    uint32 scause=r_scause();
+    uint32 scause = r_scause();
 80000f48:	b71ff0ef          	jal	ra,80000ab8 <r_scause>
 80000f4c:	fea42423          	sw	a0,-24(s0)
 
-    uint16 code= scause & 0xffff;
+    uint16 code = scause & 0xffff;
 80000f50:	fe842783          	lw	a5,-24(s0)
 80000f54:	fef41323          	sh	a5,-26(s0)
 
-    if(scause & (1<<31)){
+    if (scause & (1 << 31))
 80000f58:	fe842783          	lw	a5,-24(s0)
 80000f5c:	0607dc63          	bgez	a5,80000fd4 <trapvec+0xbc>
-    //     printf("Interrupt : ");
+    {
+        //     printf("Interrupt : ");
         switch (code)
 80000f60:	fe645783          	lhu	a5,-26(s0)
 80000f64:	00900713          	li	a4,9
@@ -1820,7 +1866,7 @@ void trapvec(){
             break;
 80000fc0:	00000013          	nop
         }
-        where ? : usertrapret();
+        where ?: usertrapret();
 80000fc4:	fec42783          	lw	a5,-20(s0)
 80000fc8:	18079863          	bnez	a5,80001158 <trapvec+0x240>
 80000fcc:	e1dff0ef          	jal	ra,80000de8 <usertrapret>
@@ -1879,7 +1925,7 @@ void trapvec(){
 80001054:	8000c7b7          	lui	a5,0x8000c
 80001058:	25078513          	addi	a0,a5,592 # 8000c250 <memend+0xf800c250>
 8000105c:	148000ef          	jal	ra,800011a4 <printf>
-            printf("stval va: %p\n",r_stval());
+            printf("stval va: %p\n", r_stval());
 80001060:	a81ff0ef          	jal	ra,80000ae0 <r_stval>
 80001064:	00050793          	mv	a5,a0
 80001068:	00078593          	mv	a1,a5
@@ -1898,7 +1944,7 @@ void trapvec(){
 8000108c:	8000c7b7          	lui	a5,0x8000c
 80001090:	29478513          	addi	a0,a5,660 # 8000c294 <memend+0xf800c294>
 80001094:	110000ef          	jal	ra,800011a4 <printf>
-            printf("stval va: %p\n",r_stval());
+            printf("stval va: %p\n", r_stval());
 80001098:	a49ff0ef          	jal	ra,80000ae0 <r_stval>
 8000109c:	00050793          	mv	a5,a0
 800010a0:	00078593          	mv	a1,a5
@@ -1921,14 +1967,14 @@ void trapvec(){
 800010cc:	8000c7b7          	lui	a5,0x8000c
 800010d0:	2cc78513          	addi	a0,a5,716 # 8000c2cc <memend+0xf800c2cc>
 800010d4:	0d0000ef          	jal	ra,800011a4 <printf>
-            first ? usertrapret():startproc();
+            first ? usertrapret() : startproc();
 800010d8:	8000d7b7          	lui	a5,0x8000d
 800010dc:	0047a783          	lw	a5,4(a5) # 8000d004 <memend+0xf800d004>
 800010e0:	00078663          	beqz	a5,800010ec <trapvec+0x1d4>
 800010e4:	d05ff0ef          	jal	ra,80000de8 <usertrapret>
             break;
 800010e8:	0640006f          	j	8000114c <trapvec+0x234>
-            first ? usertrapret():startproc();
+            first ? usertrapret() : startproc();
 800010ec:	dbdff0ef          	jal	ra,80000ea8 <startproc>
             break;
 800010f0:	05c0006f          	j	8000114c <trapvec+0x234>
@@ -1936,7 +1982,7 @@ void trapvec(){
 800010f4:	8000c7b7          	lui	a5,0x8000c
 800010f8:	2ec78513          	addi	a0,a5,748 # 8000c2ec <memend+0xf800c2ec>
 800010fc:	0a8000ef          	jal	ra,800011a4 <printf>
-            printf("stval va: %p\n",r_stval());
+            printf("stval va: %p\n", r_stval());
 80001100:	9e1ff0ef          	jal	ra,80000ae0 <r_stval>
 80001104:	00050793          	mv	a5,a0
 80001108:	00078593          	mv	a1,a5
@@ -1975,38 +2021,38 @@ void trapvec(){
 80001168:	00008067          	ret
 
 8000116c <panic>:
- */
 #include "defs.h"
 #include "types.h"
 #include "stdarg.h"
 
-void panic(char* s){
+void panic(char *s)
+{
 8000116c:	fe010113          	addi	sp,sp,-32
 80001170:	00112e23          	sw	ra,28(sp)
 80001174:	00812c23          	sw	s0,24(sp)
 80001178:	02010413          	addi	s0,sp,32
 8000117c:	fea42623          	sw	a0,-20(s0)
-    uartputs("panic: ");
+	uartputs("panic: ");
 80001180:	8000c7b7          	lui	a5,0x8000c
 80001184:	38878513          	addi	a0,a5,904 # 8000c388 <memend+0xf800c388>
 80001188:	eb8ff0ef          	jal	ra,80000840 <uartputs>
-    uartputs(s);
+	uartputs(s);
 8000118c:	fec42503          	lw	a0,-20(s0)
 80001190:	eb0ff0ef          	jal	ra,80000840 <uartputs>
 	uartputs("\n");
 80001194:	8000c7b7          	lui	a5,0x8000c
 80001198:	39078513          	addi	a0,a5,912 # 8000c390 <memend+0xf800c390>
 8000119c:	ea4ff0ef          	jal	ra,80000840 <uartputs>
-    while(1);
+	while (1)
 800011a0:	0000006f          	j	800011a0 <panic+0x34>
 
 800011a4 <printf>:
-}
 
 static char outbuf[1024];
 // 简易版 printf
 // 未处理异常
-int printf(const char* fmt,...){
+int printf(const char *fmt, ...)
+{
 800011a4:	f8010113          	addi	sp,sp,-128
 800011a8:	04112e23          	sw	ra,92(sp)
 800011ac:	04812c23          	sw	s0,88(sp)
@@ -2019,32 +2065,35 @@ int printf(const char* fmt,...){
 800011c8:	00f42a23          	sw	a5,20(s0)
 800011cc:	01042c23          	sw	a6,24(s0)
 800011d0:	01142e23          	sw	a7,28(s0)
-    va_list vl;			// 保存参数的地址，定义在stdarg.h
-	va_start(vl,fmt);	// 将vl指向fmt后面的参数
+	va_list vl;		   // 保存参数的地址，定义在stdarg.h
+	va_start(vl, fmt); // 将vl指向fmt后面的参数
 800011d4:	02040793          	addi	a5,s0,32
 800011d8:	faf42423          	sw	a5,-88(s0)
 800011dc:	fa842783          	lw	a5,-88(s0)
 800011e0:	fe478793          	addi	a5,a5,-28
 800011e4:	faf42c23          	sw	a5,-72(s0)
 	char ch;
-	const char* s = fmt;
+	const char *s = fmt;
 800011e8:	fac42783          	lw	a5,-84(s0)
 800011ec:	fef42623          	sw	a5,-20(s0)
-	int tt=0;
+	int tt = 0;
 800011f0:	fe042423          	sw	zero,-24(s0)
-	int idx=0;
+	int idx = 0;
 800011f4:	fe042223          	sw	zero,-28(s0)
-	while((ch=*(s))){
+	while ((ch = *(s)))
 800011f8:	36c0006f          	j	80001564 <printf+0x3c0>
-		if(ch=='%'){
+	{
+		if (ch == '%')
 800011fc:	fbf44703          	lbu	a4,-65(s0)
 80001200:	02500793          	li	a5,37
 80001204:	04f71863          	bne	a4,a5,80001254 <printf+0xb0>
-			if(tt==1){
+		{
+			if (tt == 1)
 80001208:	fe842703          	lw	a4,-24(s0)
 8000120c:	00100793          	li	a5,1
 80001210:	02f71663          	bne	a4,a5,8000123c <printf+0x98>
-				outbuf[idx++]='%';
+			{
+				outbuf[idx++] = '%';
 80001214:	fe442783          	lw	a5,-28(s0)
 80001218:	00178713          	addi	a4,a5,1
 8000121c:	fee42223          	sw	a4,-28(s0)
@@ -2053,11 +2102,13 @@ int printf(const char* fmt,...){
 80001228:	00f707b3          	add	a5,a4,a5
 8000122c:	02500713          	li	a4,37
 80001230:	00e78023          	sb	a4,0(a5)
-				tt=0;
+				tt = 0;
 80001234:	fe042423          	sw	zero,-24(s0)
 80001238:	00c0006f          	j	80001244 <printf+0xa0>
-			}else{
-				tt=1;
+			}
+			else
+			{
+				tt = 1;
 8000123c:	00100793          	li	a5,1
 80001240:	fef42423          	sw	a5,-24(s0)
 			}
@@ -2066,11 +2117,14 @@ int printf(const char* fmt,...){
 80001248:	00178793          	addi	a5,a5,1
 8000124c:	fef42623          	sw	a5,-20(s0)
 80001250:	3140006f          	j	80001564 <printf+0x3c0>
-		}else{
-			if(tt==1){
+		}
+		else
+		{
+			if (tt == 1)
 80001254:	fe842703          	lw	a4,-24(s0)
 80001258:	00100793          	li	a5,1
 8000125c:	2cf71e63          	bne	a4,a5,80001538 <printf+0x394>
+			{
 				switch (ch)
 80001260:	fbf44783          	lbu	a5,-65(s0)
 80001264:	fa878793          	addi	a5,a5,-88
@@ -2087,15 +2141,15 @@ int printf(const char* fmt,...){
 				case 'd':
 				{
 					// 获取参数，将指针指向下一个参数
-					int x=va_arg(vl,int);
+					int x = va_arg(vl, int);
 80001288:	fb842783          	lw	a5,-72(s0)
 8000128c:	00478713          	addi	a4,a5,4
 80001290:	fae42c23          	sw	a4,-72(s0)
 80001294:	0007a783          	lw	a5,0(a5)
 80001298:	fef42023          	sw	a5,-32(s0)
-					int len=0;
+					int len = 0;
 8000129c:	fc042e23          	sw	zero,-36(s0)
-					for(int n=x;n/=10;len++);
+					for (int n = x; n /= 10; len++)
 800012a0:	fe042783          	lw	a5,-32(s0)
 800012a4:	fcf42c23          	sw	a5,-40(s0)
 800012a8:	0100006f          	j	800012b8 <printf+0x114>
@@ -2108,11 +2162,13 @@ int printf(const char* fmt,...){
 800012c4:	fcf42c23          	sw	a5,-40(s0)
 800012c8:	fd842783          	lw	a5,-40(s0)
 800012cc:	fe0790e3          	bnez	a5,800012ac <printf+0x108>
-					for(int i=len;i>=0;i--){
+						;
+					for (int i = len; i >= 0; i--)
 800012d0:	fdc42783          	lw	a5,-36(s0)
 800012d4:	fcf42a23          	sw	a5,-44(s0)
 800012d8:	0540006f          	j	8000132c <printf+0x188>
-						outbuf[idx+i]='0'+(x%10);
+					{
+						outbuf[idx + i] = '0' + (x % 10);
 800012dc:	fe042703          	lw	a4,-32(s0)
 800012e0:	00a00793          	li	a5,10
 800012e4:	02f767b3          	rem	a5,a4,a5
@@ -2126,32 +2182,32 @@ int printf(const char* fmt,...){
 80001304:	00868693          	addi	a3,a3,8 # 8000d008 <memend+0xf800d008>
 80001308:	00f687b3          	add	a5,a3,a5
 8000130c:	00e78023          	sb	a4,0(a5)
-						x/=10;
+						x /= 10;
 80001310:	fe042703          	lw	a4,-32(s0)
 80001314:	00a00793          	li	a5,10
 80001318:	02f747b3          	div	a5,a4,a5
 8000131c:	fef42023          	sw	a5,-32(s0)
-					for(int i=len;i>=0;i--){
+					for (int i = len; i >= 0; i--)
 80001320:	fd442783          	lw	a5,-44(s0)
 80001324:	fff78793          	addi	a5,a5,-1
 80001328:	fcf42a23          	sw	a5,-44(s0)
 8000132c:	fd442783          	lw	a5,-44(s0)
 80001330:	fa07d6e3          	bgez	a5,800012dc <printf+0x138>
 					}
-					idx+=(len+1);
+					idx += (len + 1);
 80001334:	fdc42783          	lw	a5,-36(s0)
 80001338:	00178793          	addi	a5,a5,1
 8000133c:	fe442703          	lw	a4,-28(s0)
 80001340:	00f707b3          	add	a5,a4,a5
 80001344:	fef42223          	sw	a5,-28(s0)
-					tt=0;
+					tt = 0;
 80001348:	fe042423          	sw	zero,-24(s0)
 					break;
 8000134c:	1dc0006f          	j	80001528 <printf+0x384>
 				}
 				case 'p':
 				{
-					outbuf[idx++]='0';
+					outbuf[idx++] = '0';
 80001350:	fe442783          	lw	a5,-28(s0)
 80001354:	00178713          	addi	a4,a5,1
 80001358:	fee42223          	sw	a4,-28(s0)
@@ -2160,7 +2216,7 @@ int printf(const char* fmt,...){
 80001364:	00f707b3          	add	a5,a4,a5
 80001368:	03000713          	li	a4,48
 8000136c:	00e78023          	sb	a4,0(a5)
-					outbuf[idx++]='x';
+					outbuf[idx++] = 'x';
 80001370:	fe442783          	lw	a5,-28(s0)
 80001374:	00178713          	addi	a4,a5,1
 80001378:	fee42223          	sw	a4,-28(s0)
@@ -2169,19 +2225,19 @@ int printf(const char* fmt,...){
 80001384:	00f707b3          	add	a5,a4,a5
 80001388:	07800713          	li	a4,120
 8000138c:	00e78023          	sb	a4,0(a5)
-				}	// 接着下面输出16进制数
+				} // 接着下面输出16进制数
 				case 'x':
-				case 'X':	// 大小写一致
+				case 'X': // 大小写一致
 				{
-					uint x=va_arg(vl,uint);
+					uint x = va_arg(vl, uint);
 80001390:	fb842783          	lw	a5,-72(s0)
 80001394:	00478713          	addi	a4,a5,4
 80001398:	fae42c23          	sw	a4,-72(s0)
 8000139c:	0007a783          	lw	a5,0(a5)
 800013a0:	fcf42823          	sw	a5,-48(s0)
-					int len=0;
+					int len = 0;
 800013a4:	fc042623          	sw	zero,-52(s0)
-					for(unsigned int n=x;n/=16;len++);
+					for (unsigned int n = x; n /= 16; len++)
 800013a8:	fd042783          	lw	a5,-48(s0)
 800013ac:	fcf42423          	sw	a5,-56(s0)
 800013b0:	0100006f          	j	800013c0 <printf+0x21c>
@@ -2193,11 +2249,13 @@ int printf(const char* fmt,...){
 800013c8:	fcf42423          	sw	a5,-56(s0)
 800013cc:	fc842783          	lw	a5,-56(s0)
 800013d0:	fe0792e3          	bnez	a5,800013b4 <printf+0x210>
-					for(int i=len;i>=0;i--){
+						;
+					for (int i = len; i >= 0; i--)
 800013d4:	fcc42783          	lw	a5,-52(s0)
 800013d8:	fcf42223          	sw	a5,-60(s0)
 800013dc:	0840006f          	j	80001460 <printf+0x2bc>
-						char c=(x%16)>=10?'a'+((x%16)-10):'0'+(x%16);
+					{
+						char c = (x % 16) >= 10 ? 'a' + ((x % 16) - 10) : '0' + (x % 16);
 800013e0:	fd042783          	lw	a5,-48(s0)
 800013e4:	00f7f713          	andi	a4,a5,15
 800013e8:	00900793          	li	a5,9
@@ -2216,7 +2274,7 @@ int printf(const char* fmt,...){
 8000141c:	03078793          	addi	a5,a5,48
 80001420:	0ff7f793          	andi	a5,a5,255
 80001424:	faf40f23          	sb	a5,-66(s0)
-						outbuf[idx+i]=c;
+						outbuf[idx + i] = c;
 80001428:	fe442703          	lw	a4,-28(s0)
 8000142c:	fc442783          	lw	a5,-60(s0)
 80001430:	00f707b3          	add	a5,a4,a5
@@ -2225,37 +2283,37 @@ int printf(const char* fmt,...){
 8000143c:	00f707b3          	add	a5,a4,a5
 80001440:	fbe44703          	lbu	a4,-66(s0)
 80001444:	00e78023          	sb	a4,0(a5)
-						x/=16;
+						x /= 16;
 80001448:	fd042783          	lw	a5,-48(s0)
 8000144c:	0047d793          	srli	a5,a5,0x4
 80001450:	fcf42823          	sw	a5,-48(s0)
-					for(int i=len;i>=0;i--){
+					for (int i = len; i >= 0; i--)
 80001454:	fc442783          	lw	a5,-60(s0)
 80001458:	fff78793          	addi	a5,a5,-1
 8000145c:	fcf42223          	sw	a5,-60(s0)
 80001460:	fc442783          	lw	a5,-60(s0)
 80001464:	f607dee3          	bgez	a5,800013e0 <printf+0x23c>
 					}
-					idx+=(len+1);
+					idx += (len + 1);
 80001468:	fcc42783          	lw	a5,-52(s0)
 8000146c:	00178793          	addi	a5,a5,1
 80001470:	fe442703          	lw	a4,-28(s0)
 80001474:	00f707b3          	add	a5,a4,a5
 80001478:	fef42223          	sw	a5,-28(s0)
-					tt=0;
+					tt = 0;
 8000147c:	fe042423          	sw	zero,-24(s0)
 					break;
 80001480:	0a80006f          	j	80001528 <printf+0x384>
 				}
 				case 'c':
 					// 'char' is promoted to 'int' when passed through '...'
-					ch=va_arg(vl,int);
+					ch = va_arg(vl, int);
 80001484:	fb842783          	lw	a5,-72(s0)
 80001488:	00478713          	addi	a4,a5,4
 8000148c:	fae42c23          	sw	a4,-72(s0)
 80001490:	0007a783          	lw	a5,0(a5)
 80001494:	faf40fa3          	sb	a5,-65(s0)
-					outbuf[idx++]=ch;
+					outbuf[idx++] = ch;
 80001498:	fe442783          	lw	a5,-28(s0)
 8000149c:	00178713          	addi	a4,a5,1
 800014a0:	fee42223          	sw	a4,-28(s0)
@@ -2264,21 +2322,22 @@ int printf(const char* fmt,...){
 800014ac:	00f707b3          	add	a5,a4,a5
 800014b0:	fbf44703          	lbu	a4,-65(s0)
 800014b4:	00e78023          	sb	a4,0(a5)
-					tt=0;
+					tt = 0;
 800014b8:	fe042423          	sw	zero,-24(s0)
 					break;
 800014bc:	06c0006f          	j	80001528 <printf+0x384>
 				case 's':
 				{
-					char* ss=va_arg(vl,char*);
+					char *ss = va_arg(vl, char *);
 800014c0:	fb842783          	lw	a5,-72(s0)
 800014c4:	00478713          	addi	a4,a5,4
 800014c8:	fae42c23          	sw	a4,-72(s0)
 800014cc:	0007a783          	lw	a5,0(a5)
 800014d0:	fcf42023          	sw	a5,-64(s0)
-					while(*ss){
+					while (*ss)
 800014d4:	0300006f          	j	80001504 <printf+0x360>
-						outbuf[idx++]=*ss++;
+					{
+						outbuf[idx++] = *ss++;
 800014d8:	fc042703          	lw	a4,-64(s0)
 800014dc:	00170793          	addi	a5,a4,1
 800014e0:	fcf42023          	sw	a5,-64(s0)
@@ -2290,12 +2349,12 @@ int printf(const char* fmt,...){
 800014f8:	00868693          	addi	a3,a3,8 # 8000d008 <memend+0xf800d008>
 800014fc:	00f687b3          	add	a5,a3,a5
 80001500:	00e78023          	sb	a4,0(a5)
-					while(*ss){
+					while (*ss)
 80001504:	fc042783          	lw	a5,-64(s0)
 80001508:	0007c783          	lbu	a5,0(a5)
 8000150c:	fc0796e3          	bnez	a5,800014d8 <printf+0x334>
 					}
-					tt=0;
+					tt = 0;
 80001510:	fe042423          	sw	zero,-24(s0)
 					break;
 80001514:	0140006f          	j	80001528 <printf+0x384>
@@ -2313,8 +2372,10 @@ int printf(const char* fmt,...){
 8000152c:	00178793          	addi	a5,a5,1
 80001530:	fef42623          	sw	a5,-20(s0)
 80001534:	0300006f          	j	80001564 <printf+0x3c0>
-			}else{
-				outbuf[idx++]=ch;
+			}
+			else
+			{
+				outbuf[idx++] = ch;
 80001538:	fe442783          	lw	a5,-28(s0)
 8000153c:	00178713          	addi	a4,a5,1
 80001540:	fee42223          	sw	a4,-28(s0)
@@ -2327,7 +2388,7 @@ int printf(const char* fmt,...){
 80001558:	fec42783          	lw	a5,-20(s0)
 8000155c:	00178793          	addi	a5,a5,1
 80001560:	fef42623          	sw	a5,-20(s0)
-	while((ch=*(s))){
+	while ((ch = *(s)))
 80001564:	fec42783          	lw	a5,-20(s0)
 80001568:	0007c783          	lbu	a5,0(a5)
 8000156c:	faf40fa3          	sb	a5,-65(s0)
@@ -2336,8 +2397,8 @@ int printf(const char* fmt,...){
 			}
 		}
 	}
-	va_end(vl);	// 释法参数
-	outbuf[idx]='\0';
+	va_end(vl); // 释法参数
+	outbuf[idx] = '\0';
 80001578:	8000d7b7          	lui	a5,0x8000d
 8000157c:	00878713          	addi	a4,a5,8 # 8000d008 <memend+0xf800d008>
 80001580:	fe442783          	lw	a5,-28(s0)
@@ -2356,105 +2417,106 @@ int printf(const char* fmt,...){
 800015ac:	00008067          	ret
 
 800015b0 <minit>:
-struct
 {
-    struct pmp* freelist;
-}mem;
+    struct pmp *freelist;
+} mem;
 #define _DEBUG
-void minit(){
+void minit()
+{
 800015b0:	fe010113          	addi	sp,sp,-32
 800015b4:	00112e23          	sw	ra,28(sp)
 800015b8:	00812c23          	sw	s0,24(sp)
 800015bc:	02010413          	addi	s0,sp,32
-    #ifdef _DEBUG
-        printf("textstart:%p    ",textstart);
+#ifdef _DEBUG
+    printf("textstart:%p    ", textstart);
 800015c0:	800007b7          	lui	a5,0x80000
 800015c4:	00078593          	mv	a1,a5
 800015c8:	8000c7b7          	lui	a5,0x8000c
 800015cc:	43078513          	addi	a0,a5,1072 # 8000c430 <memend+0xf800c430>
 800015d0:	bd5ff0ef          	jal	ra,800011a4 <printf>
-        printf("textend:%p\n",textend);
+    printf("textend:%p\n", textend);
 800015d4:	800037b7          	lui	a5,0x80003
 800015d8:	c7478593          	addi	a1,a5,-908 # 80002c74 <memend+0xf8002c74>
 800015dc:	8000c7b7          	lui	a5,0x8000c
 800015e0:	44478513          	addi	a0,a5,1092 # 8000c444 <memend+0xf800c444>
 800015e4:	bc1ff0ef          	jal	ra,800011a4 <printf>
-        printf("datastart:%p    ",datastart);
+    printf("datastart:%p    ", datastart);
 800015e8:	800037b7          	lui	a5,0x80003
 800015ec:	00078593          	mv	a1,a5
 800015f0:	8000c7b7          	lui	a5,0x8000c
 800015f4:	45078513          	addi	a0,a5,1104 # 8000c450 <memend+0xf800c450>
 800015f8:	badff0ef          	jal	ra,800011a4 <printf>
-        printf("dataend:%p\n",dataend);
+    printf("dataend:%p\n", dataend);
 800015fc:	8000b7b7          	lui	a5,0x8000b
 80001600:	02478593          	addi	a1,a5,36 # 8000b024 <memend+0xf800b024>
 80001604:	8000c7b7          	lui	a5,0x8000c
 80001608:	46478513          	addi	a0,a5,1124 # 8000c464 <memend+0xf800c464>
 8000160c:	b99ff0ef          	jal	ra,800011a4 <printf>
-        printf("rodatastart:%p  ",rodatastart);
+    printf("rodatastart:%p  ", rodatastart);
 80001610:	8000c7b7          	lui	a5,0x8000c
 80001614:	00078593          	mv	a1,a5
 80001618:	8000c7b7          	lui	a5,0x8000c
 8000161c:	47078513          	addi	a0,a5,1136 # 8000c470 <memend+0xf800c470>
 80001620:	b85ff0ef          	jal	ra,800011a4 <printf>
-        printf("rodataend:%p\n",rodataend);
+    printf("rodataend:%p\n", rodataend);
 80001624:	8000c7b7          	lui	a5,0x8000c
 80001628:	55a78593          	addi	a1,a5,1370 # 8000c55a <memend+0xf800c55a>
 8000162c:	8000c7b7          	lui	a5,0x8000c
 80001630:	48478513          	addi	a0,a5,1156 # 8000c484 <memend+0xf800c484>
 80001634:	b71ff0ef          	jal	ra,800011a4 <printf>
-        printf("bssstart:%p     ",bssstart);
+    printf("bssstart:%p     ", bssstart);
 80001638:	8000d7b7          	lui	a5,0x8000d
 8000163c:	00078593          	mv	a1,a5
 80001640:	8000c7b7          	lui	a5,0x8000c
 80001644:	49478513          	addi	a0,a5,1172 # 8000c494 <memend+0xf800c494>
 80001648:	b5dff0ef          	jal	ra,800011a4 <printf>
-        printf("bssend:%p\n",bssend);
+    printf("bssend:%p\n", bssend);
 8000164c:	8000e7b7          	lui	a5,0x8000e
 80001650:	b9078593          	addi	a1,a5,-1136 # 8000db90 <memend+0xf800db90>
 80001654:	8000c7b7          	lui	a5,0x8000c
 80001658:	4a878513          	addi	a0,a5,1192 # 8000c4a8 <memend+0xf800c4a8>
 8000165c:	b49ff0ef          	jal	ra,800011a4 <printf>
-        printf("mstart:%p   ",mstart);
+    printf("mstart:%p   ", mstart);
 80001660:	8000e7b7          	lui	a5,0x8000e
 80001664:	00078593          	mv	a1,a5
 80001668:	8000c7b7          	lui	a5,0x8000c
 8000166c:	4b478513          	addi	a0,a5,1204 # 8000c4b4 <memend+0xf800c4b4>
 80001670:	b35ff0ef          	jal	ra,800011a4 <printf>
-        printf("mend:%p\n",mend);
+    printf("mend:%p\n", mend);
 80001674:	880007b7          	lui	a5,0x88000
 80001678:	00078593          	mv	a1,a5
 8000167c:	8000c7b7          	lui	a5,0x8000c
 80001680:	4c478513          	addi	a0,a5,1220 # 8000c4c4 <memend+0xf800c4c4>
 80001684:	b21ff0ef          	jal	ra,800011a4 <printf>
-        printf("stack:%p\n",stacks);
+    printf("stack:%p\n", stacks);
 80001688:	800037b7          	lui	a5,0x80003
 8000168c:	00078593          	mv	a1,a5
 80001690:	8000c7b7          	lui	a5,0x8000c
 80001694:	4d078513          	addi	a0,a5,1232 # 8000c4d0 <memend+0xf800c4d0>
 80001698:	b0dff0ef          	jal	ra,800011a4 <printf>
-    #endif
+#endif
 
-    char* p=(char*)mstart;
+    char *p = (char *)mstart;
 8000169c:	8000e7b7          	lui	a5,0x8000e
 800016a0:	00078793          	mv	a5,a5
 800016a4:	fef42623          	sw	a5,-20(s0)
-    struct pmp* m;
-    for( ; p + PGSIZE <= (char*)mend ; p+=PGSIZE){
+    struct pmp *m;
+    for (; p + PGSIZE <= (char *)mend; p += PGSIZE)
 800016a8:	0380006f          	j	800016e0 <minit+0x130>
-        m=(struct pmp*)p;
+    {
+        m = (struct pmp *)p;
 800016ac:	fec42783          	lw	a5,-20(s0)
 800016b0:	fef42423          	sw	a5,-24(s0)
-        m->next=mem.freelist;
+        m->next = mem.freelist;
 800016b4:	8000e7b7          	lui	a5,0x8000e
 800016b8:	a487a703          	lw	a4,-1464(a5) # 8000da48 <memend+0xf800da48>
 800016bc:	fe842783          	lw	a5,-24(s0)
 800016c0:	00e7a023          	sw	a4,0(a5)
-        mem.freelist=m;
+        mem.freelist = m;
 800016c4:	8000e7b7          	lui	a5,0x8000e
 800016c8:	fe842703          	lw	a4,-24(s0)
 800016cc:	a4e7a423          	sw	a4,-1464(a5) # 8000da48 <memend+0xf800da48>
-    for( ; p + PGSIZE <= (char*)mend ; p+=PGSIZE){
+    for (; p + PGSIZE <= (char *)mend; p += PGSIZE)
 800016d0:	fec42703          	lw	a4,-20(s0)
 800016d4:	000017b7          	lui	a5,0x1
 800016d8:	00f707b3          	add	a5,a4,a5
@@ -2476,33 +2538,34 @@ void minit(){
 
 80001710 <palloc>:
 
-void* palloc(){
+void *palloc()
+{
 80001710:	fe010113          	addi	sp,sp,-32
 80001714:	00112e23          	sw	ra,28(sp)
 80001718:	00812c23          	sw	s0,24(sp)
 8000171c:	02010413          	addi	s0,sp,32
-    struct pmp* p=(struct pmp*)mem.freelist;
+    struct pmp *p = (struct pmp *)mem.freelist;
 80001720:	8000e7b7          	lui	a5,0x8000e
 80001724:	a487a783          	lw	a5,-1464(a5) # 8000da48 <memend+0xf800da48>
 80001728:	fef42623          	sw	a5,-20(s0)
-    if(p)
+    if (p)
 8000172c:	fec42783          	lw	a5,-20(s0)
 80001730:	00078c63          	beqz	a5,80001748 <palloc+0x38>
-        mem.freelist=mem.freelist->next;
+        mem.freelist = mem.freelist->next;
 80001734:	8000e7b7          	lui	a5,0x8000e
 80001738:	a487a783          	lw	a5,-1464(a5) # 8000da48 <memend+0xf800da48>
 8000173c:	0007a703          	lw	a4,0(a5)
 80001740:	8000e7b7          	lui	a5,0x8000e
 80001744:	a4e7a423          	sw	a4,-1464(a5) # 8000da48 <memend+0xf800da48>
-    if(p)
+    if (p)
 80001748:	fec42783          	lw	a5,-20(s0)
 8000174c:	00078a63          	beqz	a5,80001760 <palloc+0x50>
-        memset(p,0,PGSIZE);
+        memset(p, 0, PGSIZE);
 80001750:	00001637          	lui	a2,0x1
 80001754:	00000593          	li	a1,0
 80001758:	fec42503          	lw	a0,-20(s0)
 8000175c:	5e9000ef          	jal	ra,80002544 <memset>
-    return (void*)p;
+    return (void *)p;
 80001760:	fec42783          	lw	a5,-20(s0)
 }
 80001764:	00078513          	mv	a0,a5
@@ -2513,20 +2576,21 @@ void* palloc(){
 
 80001778 <pfree>:
 
-void pfree(void* addr){
+void pfree(void *addr)
+{
 80001778:	fd010113          	addi	sp,sp,-48
 8000177c:	02812623          	sw	s0,44(sp)
 80001780:	03010413          	addi	s0,sp,48
 80001784:	fca42e23          	sw	a0,-36(s0)
-    struct pmp* p=(struct pmp*)addr;
+    struct pmp *p = (struct pmp *)addr;
 80001788:	fdc42783          	lw	a5,-36(s0)
 8000178c:	fef42623          	sw	a5,-20(s0)
-    p->next=mem.freelist;
+    p->next = mem.freelist;
 80001790:	8000e7b7          	lui	a5,0x8000e
 80001794:	a487a703          	lw	a4,-1464(a5) # 8000da48 <memend+0xf800da48>
 80001798:	fec42783          	lw	a5,-20(s0)
 8000179c:	00e7a023          	sw	a4,0(a5)
-    mem.freelist=p;
+    mem.freelist = p;
 800017a0:	8000e7b7          	lui	a5,0x8000e
 800017a4:	fec42703          	lw	a4,-20(s0)
 800017a8:	a4e7a423          	sw	a4,-1464(a5) # 8000da48 <memend+0xf800da48>
@@ -2536,11 +2600,11 @@ void pfree(void* addr){
 800017b8:	00008067          	ret
 
 800017bc <r_tp>:
-static inline uint32 r_tp(){
+{
 800017bc:	fe010113          	addi	sp,sp,-32
 800017c0:	00812e23          	sw	s0,28(sp)
 800017c4:	02010413          	addi	s0,sp,32
-    asm volatile("mv %0 , tp": "=r"(x));
+    asm volatile("mv %0 , tp"
 800017c8:	00020793          	mv	a5,tp
 800017cc:	fef42623          	sw	a5,-20(s0)
     return x;
@@ -2552,19 +2616,20 @@ static inline uint32 r_tp(){
 800017e0:	00008067          	ret
 
 800017e4 <r_sie>:
- * @description: S-mode 中断使能
  */
-#define SEIE (1<<9)
-#define STIE (1<<5)
-#define SSIE (1<<1)
-static inline uint32 r_sie(){
+#define SEIE (1 << 9)
+#define STIE (1 << 5)
+#define SSIE (1 << 1)
+static inline uint32 r_sie()
+{
 800017e4:	fe010113          	addi	sp,sp,-32
 800017e8:	00812e23          	sw	s0,28(sp)
 800017ec:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0,sie " : "=r"(x));
+    asm volatile("csrr %0,sie "
 800017f0:	104027f3          	csrr	a5,sie
 800017f4:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 800017f8:	fec42783          	lw	a5,-20(s0)
 }
@@ -2574,14 +2639,17 @@ static inline uint32 r_sie(){
 80001808:	00008067          	ret
 
 8000180c <w_sie>:
-static inline void w_sie(uint32 x){
+static inline void w_sie(uint32 x)
+{
 8000180c:	fe010113          	addi	sp,sp,-32
 80001810:	00812e23          	sw	s0,28(sp)
 80001814:	02010413          	addi	s0,sp,32
 80001818:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw sie,%0"::"r"(x));
+    asm volatile("csrw sie,%0"
 8000181c:	fec42783          	lw	a5,-20(s0)
 80001820:	10479073          	csrw	sie,a5
+                 :
+                 : "r"(x));
 }
 80001824:	00000013          	nop
 80001828:	01c12403          	lw	s0,28(sp)
@@ -2589,23 +2657,23 @@ static inline void w_sie(uint32 x){
 80001830:	00008067          	ret
 
 80001834 <plicinit>:
-#include "plic.h"
 #include "types.h"
 #include "riscv.h"
 
 // 初始化平台级中断控制 Platform Level Interrupt Controller (PLIC).
-void plicinit(){
+void plicinit()
+{
 80001834:	ff010113          	addi	sp,sp,-16
 80001838:	00112623          	sw	ra,12(sp)
 8000183c:	00812423          	sw	s0,8(sp)
 80001840:	01010413          	addi	s0,sp,16
-    *(uint32*)PLIC_PRIORITY(UART_IRQ)=1; // uart 设置优先级(1~7)，0为关中断
+    *(uint32 *)PLIC_PRIORITY(UART_IRQ) = 1; // uart 设置优先级(1~7)，0为关中断
 80001844:	0c0007b7          	lui	a5,0xc000
 80001848:	02878793          	addi	a5,a5,40 # c000028 <sz+0xbfff028>
 8000184c:	00100713          	li	a4,1
 80001850:	00e7a023          	sw	a4,0(a5)
-    
-    *(uint32*)PLIC_SENABLE(r_tp()) = (1<<UART_IRQ);  // uart 开中断
+
+    *(uint32 *)PLIC_SENABLE(r_tp()) = (1 << UART_IRQ); // uart 开中断
 80001854:	f69ff0ef          	jal	ra,800017bc <r_tp>
 80001858:	00050793          	mv	a5,a0
 8000185c:	00879713          	slli	a4,a5,0x8
@@ -2615,7 +2683,7 @@ void plicinit(){
 8000186c:	00078713          	mv	a4,a5
 80001870:	40000793          	li	a5,1024
 80001874:	00f72023          	sw	a5,0(a4)
-    *(uint32*)PLIC_MENABLE(r_tp()) = (1<<UART_IRQ);  // uart 开中断
+    *(uint32 *)PLIC_MENABLE(r_tp()) = (1 << UART_IRQ); // uart 开中断
 80001878:	f45ff0ef          	jal	ra,800017bc <r_tp>
 8000187c:	00050713          	mv	a4,a0
 80001880:	000c07b7          	lui	a5,0xc0
@@ -2627,7 +2695,7 @@ void plicinit(){
 80001898:	00f72023          	sw	a5,0(a4)
 
     // 设置优先级阈值(忽略小于阈值的中断)
-    *(uint32*)PLIC_MPRIORITY(r_tp()) = 0;
+    *(uint32 *)PLIC_MPRIORITY(r_tp()) = 0;
 8000189c:	f21ff0ef          	jal	ra,800017bc <r_tp>
 800018a0:	00050713          	mv	a4,a0
 800018a4:	000067b7          	lui	a5,0x6
@@ -2635,7 +2703,7 @@ void plicinit(){
 800018ac:	00f707b3          	add	a5,a4,a5
 800018b0:	00d79793          	slli	a5,a5,0xd
 800018b4:	0007a023          	sw	zero,0(a5)
-    *(uint32*)PLIC_SPRIORITY(r_tp()) = 0;
+    *(uint32 *)PLIC_SPRIORITY(r_tp()) = 0;
 800018b8:	f05ff0ef          	jal	ra,800017bc <r_tp>
 800018bc:	00050793          	mv	a5,a0
 800018c0:	00d79713          	slli	a4,a5,0xd
@@ -2643,7 +2711,7 @@ void plicinit(){
 800018c8:	00f707b3          	add	a5,a4,a5
 800018cc:	0007a023          	sw	zero,0(a5) # c201000 <sz+0xc200000>
 
-    w_sie(r_sie()|SSIE|STIE|SEIE); // 开S-mode中断
+    w_sie(r_sie() | SSIE | STIE | SEIE); // 开S-mode中断
 800018d0:	f15ff0ef          	jal	ra,800017e4 <r_sie>
 800018d4:	00050793          	mv	a5,a0
 800018d8:	2227e793          	ori	a5,a5,546
@@ -2659,12 +2727,13 @@ void plicinit(){
 800018f8 <r_plicclaim>:
 
 // 读取claim寄存器，获取当前最高优先级中断源
-uint32 r_plicclaim(){
+uint32 r_plicclaim()
+{
 800018f8:	ff010113          	addi	sp,sp,-16
 800018fc:	00112623          	sw	ra,12(sp)
 80001900:	00812423          	sw	s0,8(sp)
 80001904:	01010413          	addi	s0,sp,16
-    return *(uint32*)PLIC_SCLAIM(r_tp());
+    return *(uint32 *)PLIC_SCLAIM(r_tp());
 80001908:	eb5ff0ef          	jal	ra,800017bc <r_tp>
 8000190c:	00050793          	mv	a5,a0
 80001910:	00d79713          	slli	a4,a5,0xd
@@ -2681,13 +2750,14 @@ uint32 r_plicclaim(){
 
 80001938 <w_pliccomplete>:
 // 写complete寄存器，表示irq中断处理完成
-void w_pliccomplete(uint32 irq){
+void w_pliccomplete(uint32 irq)
+{
 80001938:	fe010113          	addi	sp,sp,-32
 8000193c:	00112e23          	sw	ra,28(sp)
 80001940:	00812c23          	sw	s0,24(sp)
 80001944:	02010413          	addi	s0,sp,32
 80001948:	fea42623          	sw	a0,-20(s0)
-    *(uint32*)PLIC_MCOMPLETE(r_tp())=irq;
+    *(uint32 *)PLIC_MCOMPLETE(r_tp()) = irq;
 8000194c:	e71ff0ef          	jal	ra,800017bc <r_tp>
 80001950:	00050793          	mv	a5,a0
 80001954:	00d79713          	slli	a4,a5,0xd
@@ -2704,12 +2774,12 @@ void w_pliccomplete(uint32 irq){
 80001980:	00008067          	ret
 
 80001984 <w_satp>:
-static inline void w_satp(uint32 x){
+{
 80001984:	fe010113          	addi	sp,sp,-32
 80001988:	00812e23          	sw	s0,28(sp)
 8000198c:	02010413          	addi	s0,sp,32
 80001990:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw satp,%0"::"r"(x));
+    asm volatile("csrw satp,%0"
 80001994:	fec42783          	lw	a5,-20(s0)
 80001998:	18079073          	csrw	satp,a5
 }
@@ -2719,7 +2789,7 @@ static inline void w_satp(uint32 x){
 800019a8:	00008067          	ret
 
 800019ac <sfence_vma>:
-static inline void sfence_vma(){
+{
 800019ac:	ff010113          	addi	sp,sp,-16
 800019b0:	00812623          	sw	s0,12(sp)
 800019b4:	01010413          	addi	s0,sp,16
@@ -2732,20 +2802,20 @@ static inline void sfence_vma(){
 800019c8:	00008067          	ret
 
 800019cc <acquriepte>:
-/**
  * @description:  获取 PTE
  * @param {addr_t*} pgt 页表
  * @param {addr_t} va   虚拟地址
  */
-pte_t* acquriepte(addr_t* pgt,addr_t va){
+pte_t *acquriepte(addr_t *pgt, addr_t va)
+{
 800019cc:	fd010113          	addi	sp,sp,-48
 800019d0:	02112623          	sw	ra,44(sp)
 800019d4:	02812423          	sw	s0,40(sp)
 800019d8:	03010413          	addi	s0,sp,48
 800019dc:	fca42e23          	sw	a0,-36(s0)
 800019e0:	fcb42c23          	sw	a1,-40(s0)
-    pte_t* pte;
-    pte = &pgt[VPN(1,va)];          // 获取一级页表 PTE
+    pte_t *pte;
+    pte = &pgt[VPN(1, va)]; // 获取一级页表 PTE
 800019e4:	fd842783          	lw	a5,-40(s0)
 800019e8:	0167d793          	srli	a5,a5,0x16
 800019ec:	00279793          	slli	a5,a5,0x2
@@ -2753,23 +2823,26 @@ pte_t* acquriepte(addr_t* pgt,addr_t va){
 800019f4:	00f707b3          	add	a5,a4,a5
 800019f8:	fef42623          	sw	a5,-20(s0)
     // printf("%d\n",VPN(1,va));
-    if(*pte & PTE_V){               // 已分配页
+    if (*pte & PTE_V)
 800019fc:	fec42783          	lw	a5,-20(s0)
 80001a00:	0007a783          	lw	a5,0(a5)
 80001a04:	0017f793          	andi	a5,a5,1
 80001a08:	00078e63          	beqz	a5,80001a24 <acquriepte+0x58>
-        pgt=(addr_t*)PTE2PA(*pte);
+    { // 已分配页
+        pgt = (addr_t *)PTE2PA(*pte);
 80001a0c:	fec42783          	lw	a5,-20(s0)
 80001a10:	0007a783          	lw	a5,0(a5)
 80001a14:	00a7d793          	srli	a5,a5,0xa
 80001a18:	00c79793          	slli	a5,a5,0xc
 80001a1c:	fcf42e23          	sw	a5,-36(s0)
 80001a20:	0340006f          	j	80001a54 <acquriepte+0x88>
-    }else{                          // 未分配页
-        pgt=(addr_t*)palloc();      // 二级页表
+    }
+    else
+    {                             // 未分配页
+        pgt = (addr_t *)palloc(); // 二级页表
 80001a24:	cedff0ef          	jal	ra,80001710 <palloc>
 80001a28:	fca42e23          	sw	a0,-36(s0)
-        memset(pgt,0,PGSIZE);
+        memset(pgt, 0, PGSIZE);
 80001a2c:	00001637          	lui	a2,0x1
 80001a30:	00000593          	li	a1,0
 80001a34:	fdc42503          	lw	a0,-36(s0)
@@ -2782,7 +2855,7 @@ pte_t* acquriepte(addr_t* pgt,addr_t va){
 80001a4c:	fec42783          	lw	a5,-20(s0)
 80001a50:	00e7a023          	sw	a4,0(a5)
     }
-    return &pgt[VPN(0,va)];         // 返回二级页表 PTE
+    return &pgt[VPN(0, va)]; // 返回二级页表 PTE
 80001a54:	fd842783          	lw	a5,-40(s0)
 80001a58:	00c7d793          	srli	a5,a5,0xc
 80001a5c:	3ff7f793          	andi	a5,a5,1023
@@ -2797,12 +2870,12 @@ pte_t* acquriepte(addr_t* pgt,addr_t va){
 80001a7c:	00008067          	ret
 
 80001a80 <vmmap>:
- * @param {addr_t} va   虚拟地址
  * @param {addr_t} pa   物理地址
  * @param {uint} size   内存大小
  * @param {uint} mode   PTE 模式
  */
-void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
+void vmmap(addr_t *pgt, addr_t va, addr_t pa, uint size, uint mode)
+{
 80001a80:	fc010113          	addi	sp,sp,-64
 80001a84:	02112e23          	sw	ra,60(sp)
 80001a88:	02812c23          	sw	s0,56(sp)
@@ -2812,15 +2885,15 @@ void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
 80001a98:	fcc42a23          	sw	a2,-44(s0)
 80001a9c:	fcd42823          	sw	a3,-48(s0)
 80001aa0:	fce42623          	sw	a4,-52(s0)
-    pte_t* pte;
-    
+    pte_t *pte;
+
     // PPN
-    addr_t start = ((va>>12)<<12);   
+    addr_t start = ((va >> 12) << 12);
 80001aa4:	fd842703          	lw	a4,-40(s0)
 80001aa8:	fffff7b7          	lui	a5,0xfffff
 80001aac:	00f777b3          	and	a5,a4,a5
 80001ab0:	fef42623          	sw	a5,-20(s0)
-    addr_t end =(((va + (size - 1)) >>12)<<12);
+    addr_t end = (((va + (size - 1)) >> 12) << 12);
 80001ab4:	fd042703          	lw	a4,-48(s0)
 80001ab8:	fd842783          	lw	a5,-40(s0)
 80001abc:	00f707b3          	add	a5,a4,a5
@@ -2829,13 +2902,14 @@ void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
 80001ac8:	00f777b3          	and	a5,a4,a5
 80001acc:	fef42423          	sw	a5,-24(s0)
 
-    while(1){
-        pte=acquriepte(pgt,start);
+    while (1)
+    {
+        pte = acquriepte(pgt, start);
 80001ad0:	fec42583          	lw	a1,-20(s0)
 80001ad4:	fdc42503          	lw	a0,-36(s0)
 80001ad8:	ef5ff0ef          	jal	ra,800019cc <acquriepte>
 80001adc:	fea42223          	sw	a0,-28(s0)
-        if(*pte & PTE_V)
+        if (*pte & PTE_V)
 80001ae0:	fe442783          	lw	a5,-28(s0)
 80001ae4:	0007a783          	lw	a5,0(a5) # fffff000 <memend+0x77fff000>
 80001ae8:	0017f793          	andi	a5,a5,1
@@ -2844,7 +2918,7 @@ void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
 80001af0:	8000c7b7          	lui	a5,0x8000c
 80001af4:	4dc78513          	addi	a0,a5,1244 # 8000c4dc <memend+0xf800c4dc>
 80001af8:	e74ff0ef          	jal	ra,8000116c <panic>
-        *pte = PA2PTE(pa) | mode | PTE_V ;
+        *pte = PA2PTE(pa) | mode | PTE_V;
 80001afc:	fd442783          	lw	a5,-44(s0)
 80001b00:	00c7d793          	srli	a5,a5,0xc
 80001b04:	00a79713          	slli	a4,a5,0xa
@@ -2853,10 +2927,11 @@ void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
 80001b10:	0017e713          	ori	a4,a5,1
 80001b14:	fe442783          	lw	a5,-28(s0)
 80001b18:	00e7a023          	sw	a4,0(a5)
-        if(start==end)  break;
+        if (start == end)
 80001b1c:	fec42703          	lw	a4,-20(s0)
 80001b20:	fe842783          	lw	a5,-24(s0)
 80001b24:	02f70463          	beq	a4,a5,80001b4c <vmmap+0xcc>
+            break;
         start += PGSIZE;
 80001b28:	fec42703          	lw	a4,-20(s0)
 80001b2c:	000017b7          	lui	a5,0x1
@@ -2867,9 +2942,9 @@ void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
 80001b3c:	000017b7          	lui	a5,0x1
 80001b40:	00f707b3          	add	a5,a4,a5
 80001b44:	fcf42a23          	sw	a5,-44(s0)
-        pte=acquriepte(pgt,start);
+        pte = acquriepte(pgt, start);
 80001b48:	f89ff06f          	j	80001ad0 <vmmap+0x50>
-        if(start==end)  break;
+            break;
 80001b4c:	00000013          	nop
     }
 }
@@ -2881,53 +2956,58 @@ void vmmap(addr_t* pgt,addr_t va,addr_t pa,uint size,uint mode){
 
 80001b64 <printpgt>:
 
-void printpgt(addr_t* pgt){
+void printpgt(addr_t *pgt)
+{
 80001b64:	fc010113          	addi	sp,sp,-64
 80001b68:	02112e23          	sw	ra,60(sp)
 80001b6c:	02812c23          	sw	s0,56(sp)
 80001b70:	04010413          	addi	s0,sp,64
 80001b74:	fca42623          	sw	a0,-52(s0)
-    for(int i=0;i<1024;i++){
+    for (int i = 0; i < 1024; i++)
 80001b78:	fe042623          	sw	zero,-20(s0)
 80001b7c:	0c40006f          	j	80001c40 <printpgt+0xdc>
-        pte_t pte=pgt[i];
+    {
+        pte_t pte = pgt[i];
 80001b80:	fec42783          	lw	a5,-20(s0)
 80001b84:	00279793          	slli	a5,a5,0x2
 80001b88:	fcc42703          	lw	a4,-52(s0)
 80001b8c:	00f707b3          	add	a5,a4,a5
 80001b90:	0007a783          	lw	a5,0(a5) # 1000 <sz>
 80001b94:	fef42223          	sw	a5,-28(s0)
-        if(pte & PTE_V){
+        if (pte & PTE_V)
 80001b98:	fe442783          	lw	a5,-28(s0)
 80001b9c:	0017f793          	andi	a5,a5,1
 80001ba0:	08078a63          	beqz	a5,80001c34 <printpgt+0xd0>
-            addr_t* pgt2=(addr_t*)PTE2PA(pte);
+        {
+            addr_t *pgt2 = (addr_t *)PTE2PA(pte);
 80001ba4:	fe442783          	lw	a5,-28(s0)
 80001ba8:	00a7d793          	srli	a5,a5,0xa
 80001bac:	00c79793          	slli	a5,a5,0xc
 80001bb0:	fef42023          	sw	a5,-32(s0)
-            printf(".. %d: pte %p pa %p\n",i,pte,pgt2);
+            printf(".. %d: pte %p pa %p\n", i, pte, pgt2);
 80001bb4:	fe042683          	lw	a3,-32(s0)
 80001bb8:	fe442603          	lw	a2,-28(s0)
 80001bbc:	fec42583          	lw	a1,-20(s0)
 80001bc0:	8000c7b7          	lui	a5,0x8000c
 80001bc4:	4e878513          	addi	a0,a5,1256 # 8000c4e8 <memend+0xf800c4e8>
 80001bc8:	ddcff0ef          	jal	ra,800011a4 <printf>
-            for(int j=0;j<1024;j++){
+            for (int j = 0; j < 1024; j++)
 80001bcc:	fe042423          	sw	zero,-24(s0)
 80001bd0:	0580006f          	j	80001c28 <printpgt+0xc4>
-                pte_t pte2=pgt2[j];
+            {
+                pte_t pte2 = pgt2[j];
 80001bd4:	fe842783          	lw	a5,-24(s0)
 80001bd8:	00279793          	slli	a5,a5,0x2
 80001bdc:	fe042703          	lw	a4,-32(s0)
 80001be0:	00f707b3          	add	a5,a4,a5
 80001be4:	0007a783          	lw	a5,0(a5)
 80001be8:	fcf42e23          	sw	a5,-36(s0)
-                if(pte2 & PTE_V){
+                if (pte2 & PTE_V)
 80001bec:	fdc42783          	lw	a5,-36(s0)
 80001bf0:	0017f793          	andi	a5,a5,1
 80001bf4:	02078463          	beqz	a5,80001c1c <printpgt+0xb8>
-                    printf(".. ..%d: pte %p pa %p\n",j,pte2,PTE2PA(pte2));
+                {
+                    printf(".. ..%d: pte %p pa %p\n", j, pte2, PTE2PA(pte2));
 80001bf8:	fdc42783          	lw	a5,-36(s0)
 80001bfc:	00a7d793          	srli	a5,a5,0xa
 80001c00:	00c79793          	slli	a5,a5,0xc
@@ -2937,14 +3017,14 @@ void printpgt(addr_t* pgt){
 80001c10:	8000c7b7          	lui	a5,0x8000c
 80001c14:	50078513          	addi	a0,a5,1280 # 8000c500 <memend+0xf800c500>
 80001c18:	d8cff0ef          	jal	ra,800011a4 <printf>
-            for(int j=0;j<1024;j++){
+            for (int j = 0; j < 1024; j++)
 80001c1c:	fe842783          	lw	a5,-24(s0)
 80001c20:	00178793          	addi	a5,a5,1
 80001c24:	fef42423          	sw	a5,-24(s0)
 80001c28:	fe842703          	lw	a4,-24(s0)
 80001c2c:	3ff00793          	li	a5,1023
 80001c30:	fae7d2e3          	bge	a5,a4,80001bd4 <printpgt+0x70>
-    for(int i=0;i<1024;i++){
+    for (int i = 0; i < 1024; i++)
 80001c34:	fec42783          	lw	a5,-20(s0)
 80001c38:	00178793          	addi	a5,a5,1
 80001c3c:	fef42623          	sw	a5,-20(s0)
@@ -2968,35 +3048,37 @@ void printpgt(addr_t* pgt){
 // 进程内核栈初始化
 // 所有进程共享一个内核空间
 // 每个进程在内核中有独立的内核栈
-void mkstack(addr_t* pgt){
+void mkstack(addr_t *pgt)
+{
 80001c64:	fd010113          	addi	sp,sp,-48
 80001c68:	02112623          	sw	ra,44(sp)
 80001c6c:	02812423          	sw	s0,40(sp)
 80001c70:	03010413          	addi	s0,sp,48
 80001c74:	fca42e23          	sw	a0,-36(s0)
-    for(int i=0;i<NPROC;i++){
+    for (int i = 0; i < NPROC; i++)
 80001c78:	fe042623          	sw	zero,-20(s0)
 80001c7c:	04c0006f          	j	80001cc8 <mkstack+0x64>
-        addr_t va=(addr_t)(KSPACE+PGSIZE+(i)*2*PGSIZE);
+    {
+        addr_t va = (addr_t)(KSPACE + PGSIZE + (i)*2 * PGSIZE);
 80001c80:	fec42783          	lw	a5,-20(s0)
 80001c84:	00d79793          	slli	a5,a5,0xd
 80001c88:	00078713          	mv	a4,a5
 80001c8c:	c00017b7          	lui	a5,0xc0001
 80001c90:	00f707b3          	add	a5,a4,a5
 80001c94:	fef42423          	sw	a5,-24(s0)
-        addr_t pa=(addr_t)palloc();
+        addr_t pa = (addr_t)palloc(); //! 待处理
 80001c98:	a79ff0ef          	jal	ra,80001710 <palloc>
 80001c9c:	00050793          	mv	a5,a0
 80001ca0:	fef42223          	sw	a5,-28(s0)
         // printf("%p %p\n",va,pa);
-        vmmap(pgt,va,pa,PGSIZE,PTE_R|PTE_W);
+        vmmap(pgt, va, pa, PGSIZE, PTE_R | PTE_W);
 80001ca4:	00600713          	li	a4,6
 80001ca8:	000016b7          	lui	a3,0x1
 80001cac:	fe442603          	lw	a2,-28(s0)
 80001cb0:	fe842583          	lw	a1,-24(s0)
 80001cb4:	fdc42503          	lw	a0,-36(s0)
 80001cb8:	dc9ff0ef          	jal	ra,80001a80 <vmmap>
-    for(int i=0;i<NPROC;i++){
+    for (int i = 0; i < NPROC; i++)
 80001cbc:	fec42783          	lw	a5,-20(s0)
 80001cc0:	00178793          	addi	a5,a5,1 # c0001001 <memend+0x38001001>
 80001cc4:	fef42623          	sw	a5,-20(s0)
@@ -3015,17 +3097,18 @@ void mkstack(addr_t* pgt){
 80001cec <kvminit>:
 
 // 初始化虚拟内存
-void kvminit(){
+void kvminit()
+{
 80001cec:	ff010113          	addi	sp,sp,-16
 80001cf0:	00112623          	sw	ra,12(sp)
 80001cf4:	00812423          	sw	s0,8(sp)
 80001cf8:	01010413          	addi	s0,sp,16
-    kpgt=(addr_t*)palloc();
+    kpgt = (addr_t *)palloc();
 80001cfc:	a15ff0ef          	jal	ra,80001710 <palloc>
 80001d00:	00050713          	mv	a4,a0
 80001d04:	8000e7b7          	lui	a5,0x8000e
 80001d08:	a4e7a623          	sw	a4,-1460(a5) # 8000da4c <memend+0xf800da4c>
-    memset(kpgt,0,PGSIZE);
+    memset(kpgt, 0, PGSIZE);
 80001d0c:	8000e7b7          	lui	a5,0x8000e
 80001d10:	a4c7a783          	lw	a5,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001d14:	00001637          	lui	a2,0x1
@@ -3034,7 +3117,7 @@ void kvminit(){
 80001d20:	025000ef          	jal	ra,80002544 <memset>
 
     // 映射 CLINT
-    vmmap(kpgt,CLINT_BASE,CLINT_BASE,0xc000,PTE_R|PTE_W);
+    vmmap(kpgt, CLINT_BASE, CLINT_BASE, 0xc000, PTE_R | PTE_W);
 80001d24:	8000e7b7          	lui	a5,0x8000e
 80001d28:	a4c7a783          	lw	a5,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001d2c:	00600713          	li	a4,6
@@ -3045,7 +3128,7 @@ void kvminit(){
 80001d40:	d41ff0ef          	jal	ra,80001a80 <vmmap>
 
     // 映射 PLIC 寄存器
-    vmmap(kpgt,PLIC_BASE,PLIC_BASE,0x400000,PTE_R|PTE_W);
+    vmmap(kpgt, PLIC_BASE, PLIC_BASE, 0x400000, PTE_R | PTE_W);
 80001d44:	8000e7b7          	lui	a5,0x8000e
 80001d48:	a4c7a783          	lw	a5,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001d4c:	00600713          	li	a4,6
@@ -3056,7 +3139,7 @@ void kvminit(){
 80001d60:	d21ff0ef          	jal	ra,80001a80 <vmmap>
 
     // 映射 UART 寄存器
-    vmmap(kpgt,UART_BASE,UART_BASE,PGSIZE,PTE_R|PTE_W);
+    vmmap(kpgt, UART_BASE, UART_BASE, PGSIZE, PTE_R | PTE_W);
 80001d64:	8000e7b7          	lui	a5,0x8000e
 80001d68:	a4c7a783          	lw	a5,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001d6c:	00600713          	li	a4,6
@@ -3065,9 +3148,9 @@ void kvminit(){
 80001d78:	100005b7          	lui	a1,0x10000
 80001d7c:	00078513          	mv	a0,a5
 80001d80:	d01ff0ef          	jal	ra,80001a80 <vmmap>
-    
+
     // 映射 内核 指令区
-    vmmap(kpgt,(addr_t)textstart,(addr_t)textstart,(textend-textstart),PTE_R|PTE_X);
+    vmmap(kpgt, (addr_t)textstart, (addr_t)textstart, (textend - textstart), PTE_R | PTE_X);
 80001d84:	8000e7b7          	lui	a5,0x8000e
 80001d88:	a4c7a503          	lw	a0,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001d8c:	800007b7          	lui	a5,0x80000
@@ -3083,7 +3166,7 @@ void kvminit(){
 80001db4:	00078693          	mv	a3,a5
 80001db8:	cc9ff0ef          	jal	ra,80001a80 <vmmap>
     // 映射 数据区
-    vmmap(kpgt,(addr_t)datastart,(addr_t)datastart,dataend-datastart,PTE_R|PTE_W);
+    vmmap(kpgt, (addr_t)datastart, (addr_t)datastart, dataend - datastart, PTE_R | PTE_W);
 80001dbc:	8000e7b7          	lui	a5,0x8000e
 80001dc0:	a4c7a503          	lw	a0,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001dc4:	800037b7          	lui	a5,0x80003
@@ -3099,7 +3182,7 @@ void kvminit(){
 80001dec:	00078693          	mv	a3,a5
 80001df0:	c91ff0ef          	jal	ra,80001a80 <vmmap>
     // 映射 内核 只读区
-    vmmap(kpgt,(addr_t)rodatastart,(addr_t)rodatastart,(rodataend-rodatastart),PTE_R);
+    vmmap(kpgt, (addr_t)rodatastart, (addr_t)rodatastart, (rodataend - rodatastart), PTE_R);
 80001df4:	8000e7b7          	lui	a5,0x8000e
 80001df8:	a4c7a503          	lw	a0,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001dfc:	8000c7b7          	lui	a5,0x8000c
@@ -3115,7 +3198,7 @@ void kvminit(){
 80001e24:	00078693          	mv	a3,a5
 80001e28:	c59ff0ef          	jal	ra,80001a80 <vmmap>
     // 映射 内核 全局数据区
-    vmmap(kpgt,(addr_t)bssstart,(addr_t)bssstart,bssend-bssstart,PTE_R|PTE_W);
+    vmmap(kpgt, (addr_t)bssstart, (addr_t)bssstart, bssend - bssstart, PTE_R | PTE_W);
 80001e2c:	8000e7b7          	lui	a5,0x8000e
 80001e30:	a4c7a503          	lw	a0,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001e34:	8000d7b7          	lui	a5,0x8000d
@@ -3130,9 +3213,9 @@ void kvminit(){
 80001e58:	00600713          	li	a4,6
 80001e5c:	00078693          	mv	a3,a5
 80001e60:	c21ff0ef          	jal	ra,80001a80 <vmmap>
-    
+
     // 映射空闲内存区
-    vmmap(kpgt,(addr_t)mstart,(addr_t)mstart,mend-mstart,PTE_W|PTE_R);
+    vmmap(kpgt, (addr_t)mstart, (addr_t)mstart, mend - mstart, PTE_W | PTE_R);
 80001e64:	8000e7b7          	lui	a5,0x8000e
 80001e68:	a4c7a503          	lw	a0,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001e6c:	8000e7b7          	lui	a5,0x8000e
@@ -3155,7 +3238,7 @@ void kvminit(){
 80001ea8:	dbdff0ef          	jal	ra,80001c64 <mkstack>
 
     // 映射 usertrap
-    vmmap(kpgt,USERVEC,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
+    vmmap(kpgt, USERVEC, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
 80001eac:	8000e7b7          	lui	a5,0x8000e
 80001eb0:	a4c7a503          	lw	a0,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001eb4:	800007b7          	lui	a5,0x80000
@@ -3167,7 +3250,7 @@ void kvminit(){
 80001ecc:	bb5ff0ef          	jal	ra,80001a80 <vmmap>
 
     // printpgt(pgt);
-    w_satp(SATP_SV32|(((uint32)kpgt)>>12)); // 页表 PPN 写入Satp
+    w_satp(SATP_SV32 | (((uint32)kpgt) >> 12)); // 页表 PPN 写入Satp
 80001ed0:	8000e7b7          	lui	a5,0x8000e
 80001ed4:	a4c7a783          	lw	a5,-1460(a5) # 8000da4c <memend+0xf800da4c>
 80001ed8:	00c7d713          	srli	a4,a5,0xc
@@ -3175,7 +3258,7 @@ void kvminit(){
 80001ee0:	00f767b3          	or	a5,a4,a5
 80001ee4:	00078513          	mv	a0,a5
 80001ee8:	a9dff0ef          	jal	ra,80001984 <w_satp>
-    sfence_vma();       // 刷新页表
+    sfence_vma();                               // 刷新页表
 80001eec:	ac1ff0ef          	jal	ra,800019ac <sfence_vma>
 }
 80001ef0:	00000013          	nop
@@ -3186,13 +3269,14 @@ void kvminit(){
 
 80001f04 <pgtcreate>:
 
-addr_t* pgtcreate(){
+addr_t *pgtcreate()
+{
 80001f04:	fe010113          	addi	sp,sp,-32
 80001f08:	00112e23          	sw	ra,28(sp)
 80001f0c:	00812c23          	sw	s0,24(sp)
 80001f10:	02010413          	addi	s0,sp,32
     // 分配页表
-    addr_t* pgt=(addr_t*)palloc();
+    addr_t *pgt = (addr_t *)palloc();
 80001f14:	ffcff0ef          	jal	ra,80001710 <palloc>
 80001f18:	fea42623          	sw	a0,-20(s0)
 
@@ -3206,11 +3290,11 @@ addr_t* pgtcreate(){
 80001f30:	00008067          	ret
 
 80001f34 <r_tp>:
-static inline uint32 r_tp(){
+{
 80001f34:	fe010113          	addi	sp,sp,-32
 80001f38:	00812e23          	sw	s0,28(sp)
 80001f3c:	02010413          	addi	s0,sp,32
-    asm volatile("mv %0 , tp": "=r"(x));
+    asm volatile("mv %0 , tp"
 80001f40:	00020793          	mv	a5,tp
 80001f44:	fef42623          	sw	a5,-20(s0)
     return x;
@@ -3222,20 +3306,21 @@ static inline uint32 r_tp(){
 80001f58:	00008067          	ret
 
 80001f5c <procinit>:
-#include "riscv.h"
 #include "syscall.h"
 
-uint nextpid=0;
+uint nextpid = 0;
 
-void procinit(){
+void procinit()
+{
 80001f5c:	fe010113          	addi	sp,sp,-32
 80001f60:	00812e23          	sw	s0,28(sp)
 80001f64:	02010413          	addi	s0,sp,32
-    struct pcb* p;
-    for(int i=0;i<NPROC;i++){
+    struct pcb *p;
+    for (int i = 0; i < NPROC; i++)
 80001f68:	fe042623          	sw	zero,-20(s0)
 80001f6c:	0500006f          	j	80001fbc <procinit+0x60>
-        p=&proc[i];
+    {
+        p = &proc[i];
 80001f70:	fec42703          	lw	a4,-20(s0)
 80001f74:	00070793          	mv	a5,a4
 80001f78:	00379793          	slli	a5,a5,0x3
@@ -3245,7 +3330,7 @@ void procinit(){
 80001f88:	40870713          	addi	a4,a4,1032 # 8000d408 <memend+0xf800d408>
 80001f8c:	00e787b3          	add	a5,a5,a4
 80001f90:	fef42423          	sw	a5,-24(s0)
-        p->kernelstack=(addr_t)(KSTACK+(i)*2*PGSIZE);
+        p->kernelstack = (addr_t)(KSTACK + (i)*2 * PGSIZE);
 80001f94:	fec42783          	lw	a5,-20(s0)
 80001f98:	00d79793          	slli	a5,a5,0xd
 80001f9c:	00078713          	mv	a4,a5
@@ -3253,7 +3338,7 @@ void procinit(){
 80001fa4:	00f70733          	add	a4,a4,a5
 80001fa8:	fe842783          	lw	a5,-24(s0)
 80001fac:	08e7a623          	sw	a4,140(a5) # c000208c <memend+0x3800208c>
-    for(int i=0;i<NPROC;i++){
+    for (int i = 0; i < NPROC; i++)
 80001fb0:	fec42783          	lw	a5,-20(s0)
 80001fb4:	00178793          	addi	a5,a5,1
 80001fb8:	fef42623          	sw	a5,-20(s0)
@@ -3270,12 +3355,13 @@ void procinit(){
 
 80001fdc <nowproc>:
 
-struct pcb* nowproc(){
+struct pcb *nowproc()
+{
 80001fdc:	fe010113          	addi	sp,sp,-32
 80001fe0:	00112e23          	sw	ra,28(sp)
 80001fe4:	00812c23          	sw	s0,24(sp)
 80001fe8:	02010413          	addi	s0,sp,32
-    int hart=r_tp();
+    int hart = r_tp();
 80001fec:	f49ff0ef          	jal	ra,80001f34 <r_tp>
 80001ff0:	00050793          	mv	a5,a0
 80001ff4:	fef42623          	sw	a5,-20(s0)
@@ -3295,12 +3381,13 @@ struct pcb* nowproc(){
 
 80002024 <nowcpu>:
 
-struct cpu* nowcpu(){
+struct cpu *nowcpu()
+{
 80002024:	fe010113          	addi	sp,sp,-32
 80002028:	00112e23          	sw	ra,28(sp)
 8000202c:	00812c23          	sw	s0,24(sp)
 80002030:	02010413          	addi	s0,sp,32
-    int hart=r_tp();
+    int hart = r_tp();
 80002034:	f01ff0ef          	jal	ra,80001f34 <r_tp>
 80002038:	00050793          	mv	a5,a0
 8000203c:	fef42623          	sw	a5,-20(s0)
@@ -3319,7 +3406,8 @@ struct cpu* nowcpu(){
 
 80002068 <pidalloc>:
 
-uint pidalloc(){
+uint pidalloc()
+{
 80002068:	ff010113          	addi	sp,sp,-16
 8000206c:	00812623          	sw	s0,12(sp)
 80002070:	01010413          	addi	s0,sp,16
@@ -3329,7 +3417,7 @@ uint pidalloc(){
 8000207c:	00178693          	addi	a3,a5,1
 80002080:	8000d737          	lui	a4,0x8000d
 80002084:	00d72023          	sw	a3,0(a4) # 8000d000 <memend+0xf800d000>
-} 
+}
 80002088:	00078513          	mv	a0,a5
 8000208c:	00c12403          	lw	s0,12(sp)
 80002090:	01010113          	addi	sp,sp,16
@@ -3337,49 +3425,52 @@ uint pidalloc(){
 
 80002098 <procalloc>:
 
-struct pcb* procalloc(){
+struct pcb *procalloc()
+{
 80002098:	fe010113          	addi	sp,sp,-32
 8000209c:	00112e23          	sw	ra,28(sp)
 800020a0:	00812c23          	sw	s0,24(sp)
 800020a4:	02010413          	addi	s0,sp,32
-    struct pcb* p;
-    for(p=proc;p<&proc[NPROC];p++){
+    struct pcb *p;
+    for (p = proc; p < &proc[NPROC]; p++)
 800020a8:	8000d7b7          	lui	a5,0x8000d
 800020ac:	40878793          	addi	a5,a5,1032 # 8000d408 <memend+0xf800d408>
 800020b0:	fef42623          	sw	a5,-20(s0)
 800020b4:	0680006f          	j	8000211c <procalloc+0x84>
-        if(p->status==UNUSED){
+    {
+        if (p->status == UNUSED)
 800020b8:	fec42783          	lw	a5,-20(s0)
 800020bc:	0047a783          	lw	a5,4(a5)
 800020c0:	04079863          	bnez	a5,80002110 <procalloc+0x78>
-            p->trapframe=(struct trapframe*)palloc(sizeof(struct trapframe));
+        {
+            p->trapframe = (struct trapframe *)palloc(sizeof(struct trapframe));
 800020c4:	08c00513          	li	a0,140
 800020c8:	e48ff0ef          	jal	ra,80001710 <palloc>
 800020cc:	00050713          	mv	a4,a0
 800020d0:	fec42783          	lw	a5,-20(s0)
 800020d4:	00e7a423          	sw	a4,8(a5)
-            
-            p->pid=pidalloc();
+
+            p->pid = pidalloc();
 800020d8:	f91ff0ef          	jal	ra,80002068 <pidalloc>
 800020dc:	00050793          	mv	a5,a0
 800020e0:	00078713          	mv	a4,a5
 800020e4:	fec42783          	lw	a5,-20(s0)
 800020e8:	00e7a023          	sw	a4,0(a5)
-            p->status=USED;
+            p->status = USED;
 800020ec:	fec42783          	lw	a5,-20(s0)
 800020f0:	00100713          	li	a4,1
 800020f4:	00e7a223          	sw	a4,4(a5)
 
-            p->pagetable=pgtcreate();
+            p->pagetable = pgtcreate();
 800020f8:	e0dff0ef          	jal	ra,80001f04 <pgtcreate>
 800020fc:	00050713          	mv	a4,a0
 80002100:	fec42783          	lw	a5,-20(s0)
 80002104:	08e7a423          	sw	a4,136(a5)
-            
+
             return p;
 80002108:	fec42783          	lw	a5,-20(s0)
 8000210c:	0240006f          	j	80002130 <procalloc+0x98>
-    for(p=proc;p<&proc[NPROC];p++){
+    for (p = proc; p < &proc[NPROC]; p++)
 80002110:	fec42783          	lw	a5,-20(s0)
 80002114:	09078793          	addi	a5,a5,144
 80002118:	fef42623          	sw	a5,-20(s0)
@@ -3399,34 +3490,34 @@ struct pcb* procalloc(){
 80002140:	00008067          	ret
 
 80002144 <userinit>:
-  0x73,0x00,0x00,0x00,
-  0x6f,0x00,0x00,0x00
-  };
+    0x73, 0x00, 0x00, 0x00,
+    0x6f, 0x00, 0x00, 0x00};
 
 // 初始化第一个进程
-void userinit(){
+void userinit()
+{
 80002144:	fe010113          	addi	sp,sp,-32
 80002148:	00112e23          	sw	ra,28(sp)
 8000214c:	00812c23          	sw	s0,24(sp)
 80002150:	02010413          	addi	s0,sp,32
-    struct pcb* p=procalloc();
+    struct pcb *p = procalloc();
 80002154:	f45ff0ef          	jal	ra,80002098 <procalloc>
 80002158:	fea42623          	sw	a0,-20(s0)
-    
-    p->trapframe->epc=0;
+
+    p->trapframe->epc = 0;
 8000215c:	fec42783          	lw	a5,-20(s0)
 80002160:	0087a783          	lw	a5,8(a5)
 80002164:	0007a623          	sw	zero,12(a5)
-    p->trapframe->sp=PGSIZE;
+    p->trapframe->sp = PGSIZE;
 80002168:	fec42783          	lw	a5,-20(s0)
 8000216c:	0087a783          	lw	a5,8(a5)
 80002170:	00001737          	lui	a4,0x1
 80002174:	00e7aa23          	sw	a4,20(a5)
-    
-    char* m=(char*)palloc();
+
+    char *m = (char *)palloc();
 80002178:	d98ff0ef          	jal	ra,80001710 <palloc>
 8000217c:	fea42423          	sw	a0,-24(s0)
-    memmove(m,zeroproc,sizeof(zeroproc));
+    memmove(m, zeroproc, sizeof(zeroproc));
 80002180:	00c00613          	li	a2,12
 80002184:	00000693          	li	a3,0
 80002188:	8000b7b7          	lui	a5,0x8000b
@@ -3434,7 +3525,7 @@ void userinit(){
 80002190:	fe842503          	lw	a0,-24(s0)
 80002194:	41c000ef          	jal	ra,800025b0 <memmove>
 
-    vmmap(p->pagetable,0,(addr_t)m,PGSIZE,PTE_R|PTE_W|PTE_X|PTE_U);
+    vmmap(p->pagetable, 0, (addr_t)m, PGSIZE, PTE_R | PTE_W | PTE_X | PTE_U);
 80002198:	fec42783          	lw	a5,-20(s0)
 8000219c:	0887a783          	lw	a5,136(a5) # 8000b088 <memend+0xf800b088>
 800021a0:	fe842603          	lw	a2,-24(s0)
@@ -3443,7 +3534,7 @@ void userinit(){
 800021ac:	00000593          	li	a1,0
 800021b0:	00078513          	mv	a0,a5
 800021b4:	8cdff0ef          	jal	ra,80001a80 <vmmap>
-    vmmap(p->pagetable,(uint32)usertrap,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
+    vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
 800021b8:	fec42783          	lw	a5,-20(s0)
 800021bc:	0887a503          	lw	a0,136(a5)
 800021c0:	800007b7          	lui	a5,0x80000
@@ -3455,7 +3546,7 @@ void userinit(){
 800021d8:	00078613          	mv	a2,a5
 800021dc:	8a5ff0ef          	jal	ra,80001a80 <vmmap>
 
-    vmmap(p->pagetable,(addr_t)TRAPFRAME,(addr_t)p->trapframe,PGSIZE,PTE_R|PTE_W);
+    vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
 800021e0:	fec42783          	lw	a5,-20(s0)
 800021e4:	0887a503          	lw	a0,136(a5)
 800021e8:	fec42783          	lw	a5,-20(s0)
@@ -3466,13 +3557,13 @@ void userinit(){
 800021fc:	ffffe5b7          	lui	a1,0xffffe
 80002200:	881ff0ef          	jal	ra,80001a80 <vmmap>
 
-    p->pagetable=(addr_t*)p->pagetable;
+    p->pagetable = (addr_t *)p->pagetable;
 80002204:	fec42783          	lw	a5,-20(s0)
 80002208:	0887a703          	lw	a4,136(a5)
 8000220c:	fec42783          	lw	a5,-20(s0)
 80002210:	08e7a423          	sw	a4,136(a5)
 
-    p->status=RUNABLE;
+    p->status = RUNABLE;
 80002214:	fec42783          	lw	a5,-20(s0)
 80002218:	00200713          	li	a4,2
 8000221c:	00e7a223          	sw	a4,4(a5)
@@ -3482,47 +3573,46 @@ void userinit(){
 80002224:	0887a783          	lw	a5,136(a5)
 80002228:	00078513          	mv	a0,a5
 8000222c:	a39ff0ef          	jal	ra,80001c64 <mkstack>
-    
-    p->context.ra=(reg_t)usertrapret;
+
+    p->context.ra = (reg_t)usertrapret;
 80002230:	800017b7          	lui	a5,0x80001
 80002234:	de878713          	addi	a4,a5,-536 # 80000de8 <memend+0xf8000de8>
 80002238:	fec42783          	lw	a5,-20(s0)
 8000223c:	00e7a623          	sw	a4,12(a5)
-    p->context.sp=p->kernelstack;
+    p->context.sp = p->kernelstack;
 80002240:	fec42783          	lw	a5,-20(s0)
 80002244:	08c7a703          	lw	a4,140(a5)
 80002248:	fec42783          	lw	a5,-20(s0)
 8000224c:	00e7a823          	sw	a4,16(a5)
 
-
-    p=procalloc();
+    p = procalloc();
 80002250:	e49ff0ef          	jal	ra,80002098 <procalloc>
 80002254:	fea42623          	sw	a0,-20(s0)
-    p->context.ra=(reg_t)usertrapret;
+    p->context.ra = (reg_t)usertrapret;
 80002258:	800017b7          	lui	a5,0x80001
 8000225c:	de878713          	addi	a4,a5,-536 # 80000de8 <memend+0xf8000de8>
 80002260:	fec42783          	lw	a5,-20(s0)
 80002264:	00e7a623          	sw	a4,12(a5)
-    p->context.sp=p->kernelstack;
+    p->context.sp = p->kernelstack;
 80002268:	fec42783          	lw	a5,-20(s0)
 8000226c:	08c7a703          	lw	a4,140(a5)
 80002270:	fec42783          	lw	a5,-20(s0)
 80002274:	00e7a823          	sw	a4,16(a5)
 
-    p->trapframe->epc=0;
+    p->trapframe->epc = 0;
 80002278:	fec42783          	lw	a5,-20(s0)
 8000227c:	0087a783          	lw	a5,8(a5)
 80002280:	0007a623          	sw	zero,12(a5)
-    p->trapframe->sp=PGSIZE;
+    p->trapframe->sp = PGSIZE;
 80002284:	fec42783          	lw	a5,-20(s0)
 80002288:	0087a783          	lw	a5,8(a5)
 8000228c:	00001737          	lui	a4,0x1
 80002290:	00e7aa23          	sw	a4,20(a5)
-    
-    m=(char*)palloc();
+
+    m = (char *)palloc();
 80002294:	c7cff0ef          	jal	ra,80001710 <palloc>
 80002298:	fea42423          	sw	a0,-24(s0)
-    memmove(m,firstproc,sizeof(zeroproc));
+    memmove(m, firstproc, sizeof(zeroproc));
 8000229c:	00c00613          	li	a2,12
 800022a0:	00000693          	li	a3,0
 800022a4:	8000b7b7          	lui	a5,0x8000b
@@ -3530,7 +3620,7 @@ void userinit(){
 800022ac:	fe842503          	lw	a0,-24(s0)
 800022b0:	300000ef          	jal	ra,800025b0 <memmove>
 
-    vmmap(p->pagetable,0,(addr_t)m,PGSIZE,PTE_R|PTE_W|PTE_X|PTE_U);
+    vmmap(p->pagetable, 0, (addr_t)m, PGSIZE, PTE_R | PTE_W | PTE_X | PTE_U);
 800022b4:	fec42783          	lw	a5,-20(s0)
 800022b8:	0887a783          	lw	a5,136(a5)
 800022bc:	fe842603          	lw	a2,-24(s0)
@@ -3539,7 +3629,7 @@ void userinit(){
 800022c8:	00000593          	li	a1,0
 800022cc:	00078513          	mv	a0,a5
 800022d0:	fb0ff0ef          	jal	ra,80001a80 <vmmap>
-    vmmap(p->pagetable,(uint32)usertrap,(uint32)usertrap,PGSIZE,PTE_R|PTE_X);
+    vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
 800022d4:	fec42783          	lw	a5,-20(s0)
 800022d8:	0887a503          	lw	a0,136(a5)
 800022dc:	800007b7          	lui	a5,0x80000
@@ -3551,7 +3641,7 @@ void userinit(){
 800022f4:	00078613          	mv	a2,a5
 800022f8:	f88ff0ef          	jal	ra,80001a80 <vmmap>
 
-    vmmap(p->pagetable,(addr_t)TRAPFRAME,(addr_t)p->trapframe,PGSIZE,PTE_R|PTE_W);
+    vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
 800022fc:	fec42783          	lw	a5,-20(s0)
 80002300:	0887a503          	lw	a0,136(a5)
 80002304:	fec42783          	lw	a5,-20(s0)
@@ -3562,13 +3652,13 @@ void userinit(){
 80002318:	ffffe5b7          	lui	a1,0xffffe
 8000231c:	f64ff0ef          	jal	ra,80001a80 <vmmap>
 
-    p->pagetable=(addr_t*)p->pagetable;
+    p->pagetable = (addr_t *)p->pagetable;
 80002320:	fec42783          	lw	a5,-20(s0)
 80002324:	0887a703          	lw	a4,136(a5)
 80002328:	fec42783          	lw	a5,-20(s0)
 8000232c:	08e7a423          	sw	a4,136(a5)
 
-    p->status=RUNABLE;
+    p->status = RUNABLE;
 80002330:	fec42783          	lw	a5,-20(s0)
 80002334:	00200713          	li	a4,2
 80002338:	00e7a223          	sw	a4,4(a5)
@@ -3579,12 +3669,12 @@ void userinit(){
 80002344:	00078513          	mv	a0,a5
 80002348:	91dff0ef          	jal	ra,80001c64 <mkstack>
 
-    p->context.ra=(reg_t)usertrapret;
+    p->context.ra = (reg_t)usertrapret;
 8000234c:	800017b7          	lui	a5,0x80001
 80002350:	de878713          	addi	a4,a5,-536 # 80000de8 <memend+0xf8000de8>
 80002354:	fec42783          	lw	a5,-20(s0)
 80002358:	00e7a623          	sw	a4,12(a5)
-    p->context.sp=p->kernelstack;
+    p->context.sp = p->kernelstack;
 8000235c:	fec42783          	lw	a5,-20(s0)
 80002360:	08c7a703          	lw	a4,140(a5)
 80002364:	fec42783          	lw	a5,-20(s0)
@@ -3598,27 +3688,31 @@ void userinit(){
 
 80002380 <schedule>:
 
-void schedule(){
+void schedule()
+{
 80002380:	fe010113          	addi	sp,sp,-32
 80002384:	00112e23          	sw	ra,28(sp)
 80002388:	00812c23          	sw	s0,24(sp)
 8000238c:	02010413          	addi	s0,sp,32
-    struct cpu* c=nowcpu();
+    struct cpu *c = nowcpu();
 80002390:	c95ff0ef          	jal	ra,80002024 <nowcpu>
 80002394:	fea42423          	sw	a0,-24(s0)
-    struct pcb* p;
+    struct pcb *p;
 
-    for( ; ; ){
-        for(p = proc; p < &proc[NPROC]; p++){
+    for (;;)
+    {
+        for (p = proc; p < &proc[NPROC]; p++)
 80002398:	8000d7b7          	lui	a5,0x8000d
 8000239c:	40878793          	addi	a5,a5,1032 # 8000d408 <memend+0xf800d408>
 800023a0:	fef42623          	sw	a5,-20(s0)
 800023a4:	05c0006f          	j	80002400 <schedule+0x80>
-            if(p->status == RUNABLE){
+        {
+            if (p->status == RUNABLE)
 800023a8:	fec42783          	lw	a5,-20(s0)
 800023ac:	0047a703          	lw	a4,4(a5)
 800023b0:	00200793          	li	a5,2
 800023b4:	04f71063          	bne	a4,a5,800023f4 <schedule+0x74>
+            {
                 p->status = RUNNING;
 800023b8:	fec42783          	lw	a5,-20(s0)
 800023bc:	00300713          	li	a4,3
@@ -3628,7 +3722,7 @@ void schedule(){
 800023c8:	fec42703          	lw	a4,-20(s0)
 800023cc:	00e7a023          	sw	a4,0(a5)
                 // 保存当前的上下文到cpu->context中
-                swtch(&c->context,&p->context);
+                swtch(&c->context, &p->context);
 800023d0:	fe842783          	lw	a5,-24(s0)
 800023d4:	00478713          	addi	a4,a5,4
 800023d8:	fec42783          	lw	a5,-20(s0)
@@ -3637,11 +3731,11 @@ void schedule(){
 800023e4:	00070513          	mv	a0,a4
 800023e8:	db5fd0ef          	jal	ra,8000019c <swtch>
                 // swtch ret后跳转到p->context.ra
-                
-                c->proc=0;  // cpu->context.ra 指向这里
+
+                c->proc = 0; // cpu->context.ra 指向这里
 800023ec:	fe842783          	lw	a5,-24(s0)
 800023f0:	0007a023          	sw	zero,0(a5)
-        for(p = proc; p < &proc[NPROC]; p++){
+        for (p = proc; p < &proc[NPROC]; p++)
 800023f4:	fec42783          	lw	a5,-20(s0)
 800023f8:	09078793          	addi	a5,a5,144
 800023fc:	fef42623          	sw	a5,-20(s0)
@@ -3652,30 +3746,31 @@ void schedule(){
 80002410:	f89ff06f          	j	80002398 <schedule+0x18>
 
 80002414 <yield>:
-}
 
 /**
  * @description: 进程放弃 CPU
  */
-void yield(){
+void yield()
+{
 80002414:	fe010113          	addi	sp,sp,-32
 80002418:	00112e23          	sw	ra,28(sp)
 8000241c:	00812c23          	sw	s0,24(sp)
 80002420:	02010413          	addi	s0,sp,32
-    struct pcb* p=nowproc();
+    struct pcb *p = nowproc();
 80002424:	bb9ff0ef          	jal	ra,80001fdc <nowproc>
 80002428:	fea42623          	sw	a0,-20(s0)
-    if(p->status!=RUNNING){
+    if (p->status != RUNNING)
 8000242c:	fec42783          	lw	a5,-20(s0)
 80002430:	0047a703          	lw	a4,4(a5)
 80002434:	00300793          	li	a5,3
 80002438:	00f70863          	beq	a4,a5,80002448 <yield+0x34>
+    {
         panic("proc status error");
 8000243c:	8000c7b7          	lui	a5,0x8000c
 80002440:	51878513          	addi	a0,a5,1304 # 8000c518 <memend+0xf800c518>
 80002444:	d29fe0ef          	jal	ra,8000116c <panic>
     }
-    p->status=RUNABLE;
+    p->status = RUNABLE;
 80002448:	fec42783          	lw	a5,-20(s0)
 8000244c:	00200713          	li	a4,2
 80002450:	00e7a223          	sw	a4,4(a5)
@@ -3691,28 +3786,30 @@ void yield(){
 8000246c <sched>:
 
 /**
- * @description: 
+ * @description:
  */
-void sched(){
+void sched()
+{
 8000246c:	fe010113          	addi	sp,sp,-32
 80002470:	00112e23          	sw	ra,28(sp)
 80002474:	00812c23          	sw	s0,24(sp)
 80002478:	00912a23          	sw	s1,20(sp)
 8000247c:	02010413          	addi	s0,sp,32
-    struct pcb* p=nowproc();
+    struct pcb *p = nowproc();
 80002480:	b5dff0ef          	jal	ra,80001fdc <nowproc>
 80002484:	fea42623          	sw	a0,-20(s0)
-    if(p->status==RUNNING){
+    if (p->status == RUNNING)
 80002488:	fec42783          	lw	a5,-20(s0)
 8000248c:	0047a703          	lw	a4,4(a5)
 80002490:	00300793          	li	a5,3
 80002494:	00f71863          	bne	a4,a5,800024a4 <sched+0x38>
+    {
         panic("proc is running");
 80002498:	8000c7b7          	lui	a5,0x8000c
 8000249c:	52c78513          	addi	a0,a5,1324 # 8000c52c <memend+0xf800c52c>
 800024a0:	ccdfe0ef          	jal	ra,8000116c <panic>
     }
-    swtch(&p->context,&nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
+    swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
 800024a4:	fec42783          	lw	a5,-20(s0)
 800024a8:	00c78493          	addi	s1,a5,12
 800024ac:	b79ff0ef          	jal	ra,80002024 <nowcpu>
@@ -3731,7 +3828,8 @@ void sched(){
 
 800024dc <sys_fork>:
 
-uint32 sys_fork(void){
+uint32 sys_fork(void)
+{
 800024dc:	ff010113          	addi	sp,sp,-16
 800024e0:	00112623          	sw	ra,12(sp)
 800024e4:	00812423          	sw	s0,8(sp)
@@ -3751,7 +3849,8 @@ uint32 sys_fork(void){
 
 80002510 <sys_exec>:
 
-uint32 sys_exec(void){
+uint32 sys_exec(void)
+{
 80002510:	ff010113          	addi	sp,sp,-16
 80002514:	00112623          	sw	ra,12(sp)
 80002518:	00812423          	sw	s0,8(sp)
@@ -3769,24 +3868,25 @@ uint32 sys_exec(void){
 80002540:	00008067          	ret
 
 80002544 <memset>:
- * @FilePath: /los/kernel/string.c
  */
 #include "types.h"
 
 // 初始化内存区域
-void* memset(void* addr,int c,uint n){
+void *memset(void *addr, int c, uint n)
+{
 80002544:	fd010113          	addi	sp,sp,-48
 80002548:	02812623          	sw	s0,44(sp)
 8000254c:	03010413          	addi	s0,sp,48
 80002550:	fca42e23          	sw	a0,-36(s0)
 80002554:	fcb42c23          	sw	a1,-40(s0)
 80002558:	fcc42a23          	sw	a2,-44(s0)
-    char* maddr = (char*)addr;
+    char *maddr = (char *)addr;
 8000255c:	fdc42783          	lw	a5,-36(s0)
 80002560:	fef42423          	sw	a5,-24(s0)
-    for(uint i=0;i<n;i++){
+    for (uint i = 0; i < n; i++)
 80002564:	fe042623          	sw	zero,-20(s0)
 80002568:	0280006f          	j	80002590 <memset+0x4c>
+    {
         maddr[i] = (char)c;
 8000256c:	fe842703          	lw	a4,-24(s0)
 80002570:	fec42783          	lw	a5,-20(s0)
@@ -3794,7 +3894,7 @@ void* memset(void* addr,int c,uint n){
 80002578:	fd842703          	lw	a4,-40(s0)
 8000257c:	0ff77713          	andi	a4,a4,255
 80002580:	00e78023          	sb	a4,0(a5)
-    for(uint i=0;i<n;i++){
+    for (uint i = 0; i < n; i++)
 80002584:	fec42783          	lw	a5,-20(s0)
 80002588:	00178793          	addi	a5,a5,1
 8000258c:	fef42623          	sw	a5,-20(s0)
@@ -3812,10 +3912,11 @@ void* memset(void* addr,int c,uint n){
 
 800025b0 <memmove>:
 
-// 安全的 memcpy 
+// 安全的 memcpy
 // 将 src 的内容复制到dst中 (src和dst可能重叠)
 // 保证 src 全部复制到 dst , src 内容可能改变
-void* memmove(void* dst,const void* src,size_t n){
+void *memmove(void *dst, const void *src, size_t n)
+{
 800025b0:	fd010113          	addi	sp,sp,-48
 800025b4:	02812623          	sw	s0,44(sp)
 800025b8:	03010413          	addi	s0,sp,48
@@ -3823,13 +3924,14 @@ void* memmove(void* dst,const void* src,size_t n){
 800025c0:	fcb42c23          	sw	a1,-40(s0)
 800025c4:	fcc42823          	sw	a2,-48(s0)
 800025c8:	fcd42a23          	sw	a3,-44(s0)
-    const char* s;
-    char* d;
-    if(n==0){
+    const char *s;
+    char *d;
+    if (n == 0)
 800025cc:	fd042783          	lw	a5,-48(s0)
 800025d0:	fd442703          	lw	a4,-44(s0)
 800025d4:	00e7e7b3          	or	a5,a5,a4
 800025d8:	00079663          	bnez	a5,800025e4 <memmove+0x34>
+    {
         return dst;
 800025dc:	fdc42783          	lw	a5,-36(s0)
 800025e0:	1200006f          	j	80002700 <memmove+0x150>
@@ -3841,7 +3943,7 @@ void* memmove(void* dst,const void* src,size_t n){
     d = dst;
 800025ec:	fdc42783          	lw	a5,-36(s0)
 800025f0:	fef42423          	sw	a5,-24(s0)
-    if(s < d && s + n > d){     
+    if (s < d && s + n > d)
 800025f4:	fec42703          	lw	a4,-20(s0)
 800025f8:	fe842783          	lw	a5,-24(s0)
 800025fc:	0cf77263          	bgeu	a4,a5,800026c0 <memmove+0x110>
@@ -3850,6 +3952,7 @@ void* memmove(void* dst,const void* src,size_t n){
 80002608:	00f707b3          	add	a5,a4,a5
 8000260c:	fe842703          	lw	a4,-24(s0)
 80002610:	0af77863          	bgeu	a4,a5,800026c0 <memmove+0x110>
+    {
         // 有重叠区域,从后往前复制
         s += n;
 80002614:	fd042783          	lw	a5,-48(s0)
@@ -3861,8 +3964,9 @@ void* memmove(void* dst,const void* src,size_t n){
 80002628:	fe842703          	lw	a4,-24(s0)
 8000262c:	00f707b3          	add	a5,a4,a5
 80002630:	fef42423          	sw	a5,-24(s0)
-        while(n-- > 0){
+        while (n-- > 0)
 80002634:	02c0006f          	j	80002660 <memmove+0xb0>
+        {
             *--d = *--s;
 80002638:	fec42783          	lw	a5,-20(s0)
 8000263c:	fff78793          	addi	a5,a5,-1
@@ -3874,7 +3978,7 @@ void* memmove(void* dst,const void* src,size_t n){
 80002654:	0007c703          	lbu	a4,0(a5)
 80002658:	fe842783          	lw	a5,-24(s0)
 8000265c:	00e78023          	sb	a4,0(a5)
-        while(n-- > 0){
+        while (n-- > 0)
 80002660:	fd042703          	lw	a4,-48(s0)
 80002664:	fd442783          	lw	a5,-44(s0)
 80002668:	fff00513          	li	a0,-1
@@ -3890,12 +3994,13 @@ void* memmove(void* dst,const void* src,size_t n){
 80002690:	00070693          	mv	a3,a4
 80002694:	00f6e6b3          	or	a3,a3,a5
 80002698:	fa0690e3          	bnez	a3,80002638 <memmove+0x88>
-    if(s < d && s + n > d){     
+    if (s < d && s + n > d)
 8000269c:	0600006f          	j	800026fc <memmove+0x14c>
-        }
-    }else{              
+    else
+    {
         // 无重叠区域,从前往后复制
-        while(n-- >0){
+        while (n-- > 0)
+        {
             *d++ = *s++;
 800026a0:	fec42703          	lw	a4,-20(s0)
 800026a4:	00170793          	addi	a5,a4,1 # 1001 <sz+0x1>
@@ -3905,7 +4010,7 @@ void* memmove(void* dst,const void* src,size_t n){
 800026b4:	fed42423          	sw	a3,-24(s0)
 800026b8:	00074703          	lbu	a4,0(a4)
 800026bc:	00e78023          	sb	a4,0(a5)
-        while(n-- >0){
+        while (n-- > 0)
 800026c0:	fd042703          	lw	a4,-48(s0)
 800026c4:	fd442783          	lw	a5,-44(s0)
 800026c8:	fff00513          	li	a0,-1
@@ -3934,14 +4039,15 @@ void* memmove(void* dst,const void* src,size_t n){
 80002710 <strlen>:
 
 // 字符串长度 包含 '\0'
-size_t strlen(const char* s){
+size_t strlen(const char *s)
+{
 80002710:	fd010113          	addi	sp,sp,-48
 80002714:	02812623          	sw	s0,44(sp)
 80002718:	03010413          	addi	s0,sp,48
 8000271c:	fca42e23          	sw	a0,-36(s0)
     size_t n;
 
-    for(n = 0; s[n] ; n++);
+    for (n = 0; s[n]; n++)
 80002720:	00000793          	li	a5,0
 80002724:	00000813          	li	a6,0
 80002728:	fef42423          	sw	a5,-24(s0)
@@ -3964,7 +4070,8 @@ size_t strlen(const char* s){
 8000276c:	00f707b3          	add	a5,a4,a5
 80002770:	0007c783          	lbu	a5,0(a5)
 80002774:	fc0790e3          	bnez	a5,80002734 <strlen+0x24>
-    
+        ;
+
     return n;
 80002778:	fe842703          	lw	a4,-24(s0)
 8000277c:	fec42783          	lw	a5,-20(s0)
@@ -3975,11 +4082,11 @@ size_t strlen(const char* s){
 80002790:	00008067          	ret
 
 80002794 <r_tp>:
-static inline uint32 r_tp(){
+{
 80002794:	fe010113          	addi	sp,sp,-32
 80002798:	00812e23          	sw	s0,28(sp)
 8000279c:	02010413          	addi	s0,sp,32
-    asm volatile("mv %0 , tp": "=r"(x));
+    asm volatile("mv %0 , tp"
 800027a0:	00020793          	mv	a5,tp
 800027a4:	fef42623          	sw	a5,-20(s0)
     return x;
@@ -3991,22 +4098,22 @@ static inline uint32 r_tp(){
 800027b8:	00008067          	ret
 
 800027bc <clintinit>:
- * @FilePath: /los/kernel/clint.c
  */
 #include "clint.h"
 #include "riscv.h"
 
-void clintinit(){
+void clintinit()
+{
 800027bc:	fe010113          	addi	sp,sp,-32
 800027c0:	00112e23          	sw	ra,28(sp)
 800027c4:	00812c23          	sw	s0,24(sp)
 800027c8:	02010413          	addi	s0,sp,32
-    // 初始化 mtimecmp 
-    int hart=r_tp();
+    // 初始化 mtimecmp
+    int hart = r_tp();
 800027cc:	fc9ff0ef          	jal	ra,80002794 <r_tp>
 800027d0:	00050793          	mv	a5,a0
 800027d4:	fef42623          	sw	a5,-20(s0)
-    *(reg_t*)CLINT_MTIMECMP(hart)=*(reg_t*)CLINT_MTIMECMP(hart) + CLINT_INTERVAL;
+    *(reg_t *)CLINT_MTIMECMP(hart) = *(reg_t *)CLINT_MTIMECMP(hart) + CLINT_INTERVAL;
 800027d8:	fec42703          	lw	a4,-20(s0)
 800027dc:	004017b7          	lui	a5,0x401
 800027e0:	80078793          	addi	a5,a5,-2048 # 400800 <sz+0x3ff800>
@@ -4030,11 +4137,11 @@ void clintinit(){
 80002828:	00008067          	ret
 
 8000282c <r_mstatus>:
-static inline uint32 r_mstatus(){
+{
 8000282c:	fe010113          	addi	sp,sp,-32
 80002830:	00812e23          	sw	s0,28(sp)
 80002834:	02010413          	addi	s0,sp,32
-    asm volatile("csrr %0, mstatus" : "=r" (x) );
+    asm volatile("csrr %0, mstatus"
 80002838:	300027f3          	csrr	a5,mstatus
 8000283c:	fef42623          	sw	a5,-20(s0)
     return x;
@@ -4046,12 +4153,12 @@ static inline uint32 r_mstatus(){
 80002850:	00008067          	ret
 
 80002854 <w_mstatus>:
-static inline void w_mstatus(uint32 x){
+{
 80002854:	fe010113          	addi	sp,sp,-32
 80002858:	00812e23          	sw	s0,28(sp)
 8000285c:	02010413          	addi	s0,sp,32
 80002860:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw mstatus, %0" : : "r" (x) );
+    asm volatile("csrw mstatus, %0"
 80002864:	fec42783          	lw	a5,-20(s0)
 80002868:	30079073          	csrw	mstatus,a5
 }
@@ -4061,12 +4168,12 @@ static inline void w_mstatus(uint32 x){
 80002878:	00008067          	ret
 
 8000287c <w_mtvec>:
-static inline void w_mtvec(uint32 x){
+{
 8000287c:	fe010113          	addi	sp,sp,-32
 80002880:	00812e23          	sw	s0,28(sp)
 80002884:	02010413          	addi	s0,sp,32
 80002888:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw mtvec , %0" : : "r"(x));
+    asm volatile("csrw mtvec , %0"
 8000288c:	fec42783          	lw	a5,-20(s0)
 80002890:	30579073          	csrw	mtvec,a5
 }
@@ -4076,11 +4183,11 @@ static inline void w_mtvec(uint32 x){
 800028a0:	00008067          	ret
 
 800028a4 <r_tp>:
-static inline uint32 r_tp(){
+{
 800028a4:	fe010113          	addi	sp,sp,-32
 800028a8:	00812e23          	sw	s0,28(sp)
 800028ac:	02010413          	addi	s0,sp,32
-    asm volatile("mv %0 , tp": "=r"(x));
+    asm volatile("mv %0 , tp"
 800028b0:	00020793          	mv	a5,tp
 800028b4:	fef42623          	sw	a5,-20(s0)
     return x;
@@ -4092,13 +4199,13 @@ static inline uint32 r_tp(){
 800028c8:	00008067          	ret
 
 800028cc <s_mstatus_intr>:
-static inline void s_mstatus_intr(uint32 m){
+{
 800028cc:	fd010113          	addi	sp,sp,-48
 800028d0:	02112623          	sw	ra,44(sp)
 800028d4:	02812423          	sw	s0,40(sp)
 800028d8:	03010413          	addi	s0,sp,48
 800028dc:	fca42e23          	sw	a0,-36(s0)
-    uint32 x=r_mstatus();
+    uint32 x = r_mstatus();
 800028e0:	f4dff0ef          	jal	ra,8000282c <r_mstatus>
 800028e4:	fea42623          	sw	a0,-20(s0)
     switch (m)
@@ -4175,11 +4282,11 @@ static inline void s_mstatus_intr(uint32 m){
 800029c0:	00008067          	ret
 
 800029c4 <r_sie>:
-static inline uint32 r_sie(){
+{
 800029c4:	fe010113          	addi	sp,sp,-32
 800029c8:	00812e23          	sw	s0,28(sp)
 800029cc:	02010413          	addi	s0,sp,32
-    asm volatile("csrr %0,sie " : "=r"(x));
+    asm volatile("csrr %0,sie "
 800029d0:	104027f3          	csrr	a5,sie
 800029d4:	fef42623          	sw	a5,-20(s0)
     return x;
@@ -4191,12 +4298,12 @@ static inline uint32 r_sie(){
 800029e8:	00008067          	ret
 
 800029ec <w_sie>:
-static inline void w_sie(uint32 x){
+{
 800029ec:	fe010113          	addi	sp,sp,-32
 800029f0:	00812e23          	sw	s0,28(sp)
 800029f4:	02010413          	addi	s0,sp,32
 800029f8:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw sie,%0"::"r"(x));
+    asm volatile("csrw sie,%0"
 800029fc:	fec42783          	lw	a5,-20(s0)
 80002a00:	10479073          	csrw	sie,a5
 }
@@ -4206,17 +4313,19 @@ static inline void w_sie(uint32 x){
 80002a10:	00008067          	ret
 
 80002a14 <r_mie>:
-#define MEIE (1<<11)
-#define MTIE (1<<7)
-#define MSIE (1<<3)
-static inline uint32 r_mie(){
+#define MEIE (1 << 11)
+#define MTIE (1 << 7)
+#define MSIE (1 << 3)
+static inline uint32 r_mie()
+{
 80002a14:	fe010113          	addi	sp,sp,-32
 80002a18:	00812e23          	sw	s0,28(sp)
 80002a1c:	02010413          	addi	s0,sp,32
     uint32 x;
-    asm volatile("csrr %0,mie " : "=r"(x));
+    asm volatile("csrr %0,mie "
 80002a20:	304027f3          	csrr	a5,mie
 80002a24:	fef42623          	sw	a5,-20(s0)
+                 : "=r"(x));
     return x;
 80002a28:	fec42783          	lw	a5,-20(s0)
 }
@@ -4226,14 +4335,17 @@ static inline uint32 r_mie(){
 80002a38:	00008067          	ret
 
 80002a3c <w_mie>:
-static inline void w_mie(uint32 x){
+static inline void w_mie(uint32 x)
+{
 80002a3c:	fe010113          	addi	sp,sp,-32
 80002a40:	00812e23          	sw	s0,28(sp)
 80002a44:	02010413          	addi	s0,sp,32
 80002a48:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw mie,%0"::"r"(x));
+    asm volatile("csrw mie,%0"
 80002a4c:	fec42783          	lw	a5,-20(s0)
 80002a50:	30479073          	csrw	mie,a5
+                 :
+                 : "r"(x));
 }
 80002a54:	00000013          	nop
 80002a58:	01c12403          	lw	s0,28(sp)
@@ -4243,33 +4355,36 @@ static inline void w_mie(uint32 x){
 80002a64 <w_mscratch>:
 
 // mscratch 寄存器 时钟中断时使用
-static inline void w_mscratch(uint32 x){
+static inline void w_mscratch(uint32 x)
+{
 80002a64:	fe010113          	addi	sp,sp,-32
 80002a68:	00812e23          	sw	s0,28(sp)
 80002a6c:	02010413          	addi	s0,sp,32
 80002a70:	fea42623          	sw	a0,-20(s0)
-    asm volatile("csrw mscratch , %0" : :"r"(x));
+    asm volatile("csrw mscratch , %0"
 80002a74:	fec42783          	lw	a5,-20(s0)
 80002a78:	34079073          	csrw	mscratch,a5
+                 :
+                 : "r"(x));
 80002a7c:	00000013          	nop
 80002a80:	01c12403          	lw	s0,28(sp)
 80002a84:	02010113          	addi	sp,sp,32
 80002a88:	00008067          	ret
 
 80002a8c <timerinit>:
-
 // [0] CLINT_MTIMECMP(hart)
 // [1] INTERVAL
 uint64 timer_sscartch[NCPUS][5];
 
-void timerinit(){
+void timerinit()
+{
 80002a8c:	fe010113          	addi	sp,sp,-32
 80002a90:	00112e23          	sw	ra,28(sp)
 80002a94:	00812c23          	sw	s0,24(sp)
 80002a98:	01212a23          	sw	s2,20(sp)
 80002a9c:	01312823          	sw	s3,16(sp)
 80002aa0:	02010413          	addi	s0,sp,32
-    uint hart=r_tp();
+    uint hart = r_tp();
 80002aa4:	e01ff0ef          	jal	ra,800028a4 <r_tp>
 80002aa8:	fea42623          	sw	a0,-20(s0)
     // mscratch 指向 time_sscartch[hart]
@@ -4285,7 +4400,7 @@ void timerinit(){
 80002acc:	00078513          	mv	a0,a5
 80002ad0:	f95ff0ef          	jal	ra,80002a64 <w_mscratch>
     // [0]指向 MTIMECMP 寄存器
-    timer_sscartch[hart][0]=CLINT_MTIMECMP(hart);
+    timer_sscartch[hart][0] = CLINT_MTIMECMP(hart);
 80002ad4:	fec42703          	lw	a4,-20(s0)
 80002ad8:	004017b7          	lui	a5,0x401
 80002adc:	80078793          	addi	a5,a5,-2048 # 400800 <sz+0x3ff800>
@@ -4304,7 +4419,7 @@ void timerinit(){
 80002b10:	0127a023          	sw	s2,0(a5)
 80002b14:	0137a223          	sw	s3,4(a5)
     // [1]存储 INTERCVAL
-    timer_sscartch[hart][1]=CLINT_INTERVAL;
+    timer_sscartch[hart][1] = CLINT_INTERVAL;
 80002b18:	8000e7b7          	lui	a5,0x8000e
 80002b1c:	a5078693          	addi	a3,a5,-1456 # 8000da50 <memend+0xf800da50>
 80002b20:	fec42703          	lw	a4,-20(s0)
@@ -4319,13 +4434,13 @@ void timerinit(){
 80002b44:	00e6a423          	sw	a4,8(a3)
 80002b48:	00f6a623          	sw	a5,12(a3)
 
-    w_mtvec((uint32)tvec);      // 设置 M-mode time trap处理函数
+    w_mtvec((uint32)tvec); // 设置 M-mode time trap处理函数
 80002b4c:	800007b7          	lui	a5,0x80000
 80002b50:	13478793          	addi	a5,a5,308 # 80000134 <memend+0xf8000134>
 80002b54:	00078513          	mv	a0,a5
 80002b58:	d25ff0ef          	jal	ra,8000287c <w_mtvec>
 
-    s_mstatus_intr(INTR_MIE);   // 开启 M-mode 全局中断
+    s_mstatus_intr(INTR_MIE); // 开启 M-mode 全局中断
 80002b5c:	00800513          	li	a0,8
 80002b60:	d6dff0ef          	jal	ra,800028cc <s_mstatus_intr>
 
@@ -4336,14 +4451,14 @@ void timerinit(){
 80002b70:	00078513          	mv	a0,a5
 80002b74:	e79ff0ef          	jal	ra,800029ec <w_sie>
 
-    w_mie(r_mie() | MTIE );      // 开启 M-mode 时钟中断
+    w_mie(r_mie() | MTIE); // 开启 M-mode 时钟中断
 80002b78:	e9dff0ef          	jal	ra,80002a14 <r_mie>
 80002b7c:	00050793          	mv	a5,a0
 80002b80:	0807e793          	ori	a5,a5,128
 80002b84:	00078513          	mv	a0,a5
 80002b88:	eb5ff0ef          	jal	ra,80002a3c <w_mie>
 
-    clintinit();                 // 初始化 CLINT           
+    clintinit(); // 初始化 CLINT
 80002b8c:	c31ff0ef          	jal	ra,800027bc <clintinit>
 80002b90:	00000013          	nop
 80002b94:	01c12083          	lw	ra,28(sp)
@@ -4354,11 +4469,11 @@ void timerinit(){
 80002ba8:	00008067          	ret
 
 80002bac <r_sepc>:
-static inline uint32 r_sepc(){
+{
 80002bac:	fe010113          	addi	sp,sp,-32
 80002bb0:	00812e23          	sw	s0,28(sp)
 80002bb4:	02010413          	addi	s0,sp,32
-    asm volatile("csrr %0, sepc" : "=r" (x) );
+    asm volatile("csrr %0, sepc"
 80002bb8:	141027f3          	csrr	a5,sepc
 80002bbc:	fef42623          	sw	a5,-20(s0)
     return x;
@@ -4370,27 +4485,27 @@ static inline uint32 r_sepc(){
 80002bd0:	00008067          	ret
 
 80002bd4 <syscall>:
-static uint32 (*syscalls[])(void)={
-[SYS_fork]  sys_fork,
-[SYS_exec]  sys_exec,
+    [SYS_fork] sys_fork,
+    [SYS_exec] sys_exec,
 };
 
-void syscall(){
+void syscall()
+{
 80002bd4:	fe010113          	addi	sp,sp,-32
 80002bd8:	00112e23          	sw	ra,28(sp)
 80002bdc:	00812c23          	sw	s0,24(sp)
 80002be0:	00912a23          	sw	s1,20(sp)
 80002be4:	02010413          	addi	s0,sp,32
-    struct pcb* p=nowproc();
+    struct pcb *p = nowproc();
 80002be8:	bf4ff0ef          	jal	ra,80001fdc <nowproc>
 80002bec:	fea42623          	sw	a0,-20(s0)
-    p->trapframe->epc=r_sepc();
+    p->trapframe->epc = r_sepc();
 80002bf0:	fec42783          	lw	a5,-20(s0)
 80002bf4:	0087a483          	lw	s1,8(a5)
 80002bf8:	fb5ff0ef          	jal	ra,80002bac <r_sepc>
 80002bfc:	00050793          	mv	a5,a0
 80002c00:	00f4a623          	sw	a5,12(s1)
-    p->trapframe->epc+=4;
+    p->trapframe->epc += 4;
 80002c04:	fec42783          	lw	a5,-20(s0)
 80002c08:	0087a783          	lw	a5,8(a5)
 80002c0c:	00c7a703          	lw	a4,12(a5)
@@ -4399,12 +4514,12 @@ void syscall(){
 80002c18:	00470713          	addi	a4,a4,4
 80002c1c:	00e7a623          	sw	a4,12(a5)
 
-    uint32 sysnum=p->trapframe->a7;
+    uint32 sysnum = p->trapframe->a7;
 80002c20:	fec42783          	lw	a5,-20(s0)
 80002c24:	0087a783          	lw	a5,8(a5)
 80002c28:	03c7a783          	lw	a5,60(a5)
 80002c2c:	fef42423          	sw	a5,-24(s0)
-    p->trapframe->a0=syscalls[sysnum]();
+    p->trapframe->a0 = syscalls[sysnum]();
 80002c30:	8000b7b7          	lui	a5,0x8000b
 80002c34:	01878713          	addi	a4,a5,24 # 8000b018 <memend+0xf800b018>
 80002c38:	fe842783          	lw	a5,-24(s0)

@@ -1,7 +1,7 @@
 .equ harts,8        # hart 数量
 .equ sz,4096        # 每个 hart 的栈大小
 
-.global _start
+.global _start      # 入口地址
 .section .text
 _start:
     # CSR 指令

@@ -10,13 +10,13 @@
 #define PLIC_BASE 0xc000000
 
 // 设置某一路中断源的优先级,中断源 id = [1:53]
-#define PLIC_PRIORITY(id) (PLIC_BASE + (id)*4) 
+#define PLIC_PRIORITY(id) (PLIC_BASE + (id)*4)
 
 // 包含 2 个 32 位的 Pending 寄存器，每一个 bit 对应
 // 一个中断源，如果为 1 表示该中断源上发生了中断 0xc001000~0xc001008
 #define PLIC_PENDING (PLIC_BASE + 0x1000)
 
-// M-mode 和 S-mode 2 个 Enable 寄存器 
+// M-mode 和 S-mode 2 个 Enable 寄存器
 // 用于针对该 Hart 启动或者关闭某路中断源。
 #define PLIC_MENABLE(hart) (PLIC_BASE + 0x2000 + (hart)*0x100)
 #define PLIC_SENABLE(hart) (PLIC_BASE + 0x2080 + (hart)*0x100)
@@ -35,4 +35,4 @@
 #define PLIC_MCOMPLETE(hart) (PLIC_BASE + 0x200004 + (hart)*0x2000)
 #define PLIC_SCOMPLETE(hart) (PLIC_BASE + 0x201004 + (hart)*0x2000)
 
-#define UART_IRQ 10  // uart中断源
+#define UART_IRQ 10 // uart中断源

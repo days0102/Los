@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-03 13:37:22
+ * @LastEditTime: 2022-08-06 18:40:50
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -10,15 +10,16 @@
 #include "defs.h"
 #include "swtch.h"
 
-void main(){
+void main()
+{
     printf("start run main()\n");
 
-    minit();        // 物理内存管理
-    plicinit();     // PLIC 中断处理
-    
-    kvminit();       // 启动虚拟内存
+    minit();    // 物理内存管理
+    plicinit(); // PLIC 中断处理
 
-    printf("usertrap: %p\n",usertrap);
+    kvminit(); // 启动虚拟内存
+
+    printf("usertrap: %p\n", usertrap);
 
     procinit();
 
@@ -27,4 +28,3 @@ void main(){
     printf("----------------------\n");
     schedule();
 }
-

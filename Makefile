@@ -44,6 +44,7 @@ SRCS_USER = \
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
 
+# 用户进程的依赖文件
 ULIB = user/usyscall.o
 UPROC= $(SRCS_USER:%.c=%.elf)
 
