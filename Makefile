@@ -37,6 +37,7 @@ SRCS_C = \
 	kernel/clint.c \
 	kernel/timer.c \
 	kernel/syscall.c \
+	kernel/mmio.c \
 
 SRCS_USER = \
 	user/initproc.c \
