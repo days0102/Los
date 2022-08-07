@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:34:17
+ * @LastEditTime: 2022-08-07 16:04:58
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -14,6 +14,7 @@
 #include "plic.h"
 #include "proc.h"
 #include "clint.h"
+#include "mmio.h"
 
 addr_t *kpgt;
 
@@ -118,6 +119,9 @@ void kvminit()
 
     // 映射 UART 寄存器
     vmmap(kpgt, UART_BASE, UART_BASE, PGSIZE, PTE_R | PTE_W);
+
+    // 映射 VIRTIO_MMIO
+    vmmap(kpgt, VIRTIO_BASE, VIRTIO_BASE, PGSIZE, PTE_R | PTE_W);
 
     // 映射 内核 指令区
     vmmap(kpgt, (addr_t)textstart, (addr_t)textstart, (textend - textstart), PTE_R | PTE_X);

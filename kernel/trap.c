@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:37:22
+ * @LastEditTime: 2022-08-07 16:03:23
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -171,9 +171,11 @@ void trapvec()
             break;
         case 13:
             printf("Load page fault\n");
+            printf("stval va: %p\n", r_stval());
             break;
         case 15:
             printf("Store/AMO page fault\n");
+            printf("stval va: %p\n", r_stval());
             break;
         default:
             printf("Other\n");
