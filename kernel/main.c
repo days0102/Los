@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-07 16:01:45
+ * @LastEditTime: 2022-08-08 09:37:30
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -18,8 +18,10 @@ void main()
     plicinit(); // PLIC 中断处理
 
     kvminit(); // 启动虚拟内存
-
+    
+#ifdef DEBUG
     printf("usertrap: %p\n", usertrap);
+#endif
 
     procinit();
 

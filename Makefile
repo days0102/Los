@@ -12,6 +12,17 @@ CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit
 CFLAGS += -I.# 包含当前目录
 CFLAGS += -Wall -Wno-main# 显示警告
 
+# debug
+CDEBUG = 0
+ifeq ($(CDEBUG),1)
+	# CFLAGS += -DDEBUG
+endif
+# debug
+D = 
+ifdef D
+	CFLAGS += -DDEBUG
+endif
+
 GDB = gdb-multiarch
 CC = ${CROSS_COMPILE}gcc
 LD = ${CROSS_COMPILE}ld
@@ -91,7 +102,8 @@ zeroproc : user/zeroproc.S
 	$(OBJCOPY) -S -O binary user/zeroproc.o user/zeroproc.bin
 	$(OBJDUMP) -S user/zeroproc.o > user/zeroproc.asm
 
-debug:kernel.elf
+debug: CFLAGS += -D DEBUG
+debug: kernel.elf
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
 	@echo "-------------------------------------------------------"
 	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S 

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:41:24
+ * @LastEditTime: 2022-08-08 07:50:48
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
@@ -21,10 +21,10 @@ struct
 {
     struct pmp *freelist;
 } mem;
-#define _DEBUG
+
 void minit()
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     printf("textstart:%p    ", textstart);
     printf("textend:%p\n", textend);
     printf("datastart:%p    ", datastart);
