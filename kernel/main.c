@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-08 09:37:30
+ * @LastEditTime: 2022-08-09 14:27:50
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -28,6 +28,9 @@ void main()
     userinit();
 
     mmioinit();
+
+    char buf[512];
+    diskrw(0,1,buf);
 
     printf("----------------------\n");
     schedule();

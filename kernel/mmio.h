@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:03:12
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-08 12:57:03
+ * @LastEditTime: 2022-08-09 13:49:09
  * @Description: virtio disk mmio
  * @FilePath: /los/kernel/mmio.h
  */
@@ -63,8 +63,10 @@
 #define MMIO_FEATURES_CONFIG_WCE 11 /* Writeback mode available in config */
 #define MMIO_FEATURES_MQ 12         /* support more than one vq */
 #define MMIO_FEATURES_ANY_LAYOUT 27
-#define MMIO_RING_F_INDIRECT_DESC 28
-#define MMIO_RING_F_EVENT_IDX 29
+#define MMIO_RING_FEATURES_INDIRECT_DESC 28
+#define MMIO_RING_FEATURES_EVENT_IDX 29
+
+#define DNUM 8 // 描述符数量，必须为 2 的次方
 
 /*
 This file is also available at the link https://docs.oasis-open.org/virtio/virtio/v1.1/cs01/listings/virtio_queue.h.
@@ -182,3 +184,25 @@ static inline uint16 *virtq_avail_event(struct virtq *vq)
     return (uint16 *)&vq->used->ring[vq->num];
 }
 #endif /* VIRTQUEUE_H */
+
+/**
+ * @description:
+ * 驱动程序将请求排队到virtqueue,(不一定是按顺序)。
+ * 每项请求的形式如下:
+ */
+struct virtio_blk_req
+{
+#define VIRTIO_BLK_T_IN 0            // 读
+#define VIRTIO_BLK_T_OUT 1           // 写
+#define VIRTIO_BLK_T_FLUSH 4         // 刷新
+#define VIRTIO_BLK_T_DISCARD 11      // 丢弃
+#define VIRTIO_BLK_T_WRITE_ZEROES 13 // 写 0
+    uint32 type;                     // 操作类型
+    uint32 reserved;                 // 保留
+    uint64 sector;                   // 扇区号
+    uint8 data[512];                 // 操作的数据(512字节倍数)
+#define VIRTIO_BLK_S_OK 0            // 成功
+#define VIRTIO_BLK_S_IOERR 1         // 出错
+#define VIRTIO_BLK_S_UNSUPP 2        // 不支持
+    uint8 status;                    // 最终的状态
+};

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-07 16:02:01
+ * @LastEditTime: 2022-08-09 14:26:53
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -97,3 +97,4 @@ void syscall();
 
 // mmio.c
 void mmioinit();
+void diskrw(uint32 sector,uint8 rw,char buf[]);
