@@ -116,7 +116,7 @@ local:
 	@${GDB} kernel.elf -q -x other/localgdbinit
 
 clean:
-	rm -rf *.o *.bin *.elf */*.o */*.d */*.elf */_*
+	rm -rf *.o *.bin *.elf */*.o */*.d */*.elf */_* */*.bin *.asm */*.asm
 
 code: kernel.elf
 	@ # ${OBJDUMP} -S kernel.elf | less
