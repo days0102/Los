@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 14:43:56
+ * @LastEditTime: 2022-08-09 22:26:56
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/mmio.c
  */
@@ -13,12 +13,18 @@
 
 struct disk
 {
-    uint8 pages[3 * PGSIZE];
+    /**
+     * @description: 保存 virtqueue, 2 个或 2 个以上页
+     * layout:                           ALIGN(PAGESIZE)
+     *          [ desc | avail ...(padding)...| used ]
+     */    
+    uint8 pages[2 * PGSIZE];
 
     // 描述符表
     /**
      * @description:
-     * 描述一个缓冲区
+     * virtq_desc描述一个缓冲区
+     * desc 为缓冲区链表
      */
     struct virtq_desc *desc;
 
@@ -30,7 +36,14 @@ struct disk
     struct virtio_blk_req req[DNUM];
 
     uint8 free[DNUM];
-} disk;
+
+    struct
+    {
+        char *data;
+        uint8 status;
+    } info[DNUM];
+
+} __attribute__((aligned(PGSIZE))) disk;
 
 void mmioinit()
 {
@@ -50,7 +63,7 @@ void mmioinit()
         panic("virtio mmio disk!");
     }
 
-    uint32 status = mmio_read(MMIO_Status);
+    uint32 status = 0;
     status |= MMIO_STATUS_ACKNOWLEDGE; // 表明当前已经识别到了设备
     mmio_write(MMIO_Status, status);
 
@@ -81,19 +94,30 @@ void mmioinit()
     mmio_write(MMIO_QueueNum, DNUM); // 设置队列大小
 
     memset(disk.pages, 0, sizeof(disk.pages));
-    disk.desc = (struct virtq_desc *)&disk.pages[0];
-    disk.avail = (struct virtq_avail *)&disk.pages[1];
-    disk.used = (struct virtq_used *)&disk.pages[2];
+    mmio_write(MMIO_QueuePFN, ((uint32)disk.pages) >> 12);
+
+    disk.desc = (struct virtq_desc *)disk.pages;
+    disk.avail = (struct virtq_avail *)(disk.pages + DNUM * sizeof(struct virtq_desc));
+    disk.used = (struct virtq_used *)(disk.pages + PGSIZE);
 
     for (int i = 0; i < DNUM; i++)
         disk.free[i] = 1;
+
+#ifdef DEBUG
+    printf("mmio_disk.pages: %x\n", disk.desc);
+    printf("mmio_disk.pages: %x\n", disk.avail);
+    printf("mmio_disk.pages: %x\n", disk.used);
+#endif
 }
 
 uint8 alloc_desc()
 {
     for (int i = 0; i < DNUM; i++)
         if (disk.free[i])
+        {
+            disk.free[i] = 0;
             return i;
+        }
     return -1;
 }
 
@@ -108,11 +132,13 @@ uint8 alloc3_desc(int idx[])
     return 0;
 }
 
-void diskrw(uint32 sector, uint8 rw, char b[])
+void diskrw(uint32 sector, uint8 rw, char *b)
 {
     int idx[3];
     alloc3_desc(idx);
+
 #ifdef DEBUG
+    printf("disk.desc[3]: ");
     for (int i = 0; i < 3; i++)
         printf("%d ", idx[i]);
     printf("\n");
@@ -120,17 +146,10 @@ void diskrw(uint32 sector, uint8 rw, char b[])
 
     struct virtio_blk_req *buf = &disk.req[idx[0]];
 
-    switch (rw)
-    {
-    case VIRTIO_BLK_T_IN:
-        buf->type = VIRTIO_BLK_T_IN;
-        break;
-    case VIRTIO_BLK_T_OUT:
-        buf->type = VIRTIO_BLK_T_OUT;
-        break;
-    default:
-        break;
-    }
+    if (rw)
+        buf->type = VIRTIO_BLK_T_OUT; // 写磁盘
+    else
+        buf->type = VIRTIO_BLK_T_IN; // 读磁盘
     buf->reserved = 0;
     buf->sector = sector;
 
@@ -141,26 +160,21 @@ void diskrw(uint32 sector, uint8 rw, char b[])
 
     disk.desc[idx[1]].addr = (uint32)b;
     disk.desc[idx[1]].len = 512;
-    switch (rw)
-    {
-    case VIRTIO_BLK_T_IN:
+    if (rw)
         disk.desc[idx[1]].flags = 0;
-        break;
-    case VIRTIO_BLK_T_OUT:
+    else
         disk.desc[idx[1]].flags = VIRTQ_DESC_F_WRITE;
-        break;
-    default:
-        break;
-    }
     disk.desc[idx[1]].flags |= VIRTQ_DESC_F_NEXT;
     disk.desc[idx[1]].next = idx[2];
 
-    buf->status = 0xff;
+    disk.info[idx[0]].status = 0xff;
 
-    disk.desc[idx[2]].addr = (uint32)&buf->status;
+    disk.desc[idx[2]].addr = (uint32)&disk.info[idx[0]].status;
     disk.desc[idx[2]].len = 1;
     disk.desc[idx[2]].flags = VIRTQ_DESC_F_WRITE; // device writes the status
     disk.desc[idx[2]].next = 0;
+
+    disk.info[idx[0]].data = (char *)b;
 
     disk.avail->ring[disk.avail->idx % DNUM] = idx[0];
 
@@ -168,4 +182,8 @@ void diskrw(uint32 sector, uint8 rw, char b[])
     disk.avail->idx += 1; // not % NUM ...
 
     mmio_write(MMIO_QueueNotify, 0); // value is queue number
+
+    while (disk.info[idx[0]].status != 0)
+        ;
+    printf("finish\n");
 }

@@ -2,13 +2,14 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 14:27:50
+ * @LastEditTime: 2022-08-09 22:27:36
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
 #include "riscv.h"
 #include "defs.h"
 #include "swtch.h"
+#include "virtio.h"
 
 void main()
 {
@@ -31,6 +32,10 @@ void main()
 
     char buf[512];
     diskrw(0,1,buf);
+    printf("%s\n",buf);
+    // virtio_disk_init();
+    // struct buf b;
+    // virtio_disk_rw(&b, 1);
 
     printf("----------------------\n");
     schedule();

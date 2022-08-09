@@ -15,6 +15,7 @@
         "riscv.h": "c",
         "clint.h": "c",
         "limits": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "type_traits": "c"
     }
 }

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:41:47
+ * @LastEditTime: 2022-08-09 15:29:02
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -24,16 +24,16 @@ void procinit()
     }
 }
 
-struct pcb *nowproc()
-{
-    int hart = r_tp();
-    return cpus[hart].proc;
-}
-
 struct cpu *nowcpu()
 {
     int hart = r_tp();
-    return &cpus[hart];
+    struct cpu *c = &cpus[hart];
+    return c;
+}
+struct pcb *nowproc()
+{
+    struct cpu *c = nowcpu();
+    return c->proc;
 }
 
 uint pidalloc()
@@ -149,7 +149,7 @@ void schedule()
 void yield()
 {
     struct pcb *p = nowproc();
-    if (p->status != RUNNING)
+    if (p == 0 || p->status != RUNNING)
     {
         panic("proc status error");
     }

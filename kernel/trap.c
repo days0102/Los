@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-07 16:03:23
+ * @LastEditTime: 2022-08-09 15:30:41
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -24,6 +24,9 @@ void externinterrupt()
     {
     case UART_IRQ: // uart 中断(键盘输入)
         printf("recived : %c\n", uartintr());
+        break;
+    case VIRTIO_IRQ:
+        printf("virtio interrupt\n");
         break;
     default:
         break;
@@ -89,7 +92,9 @@ void startproc()
 void timerintr()
 {
     w_sip(r_sip() & ~2); // 清除中断
-    yield();
+    struct pcb *p = nowproc();
+    if (p != 0 && p->status == RUNNING)
+        yield();
 }
 
 void trapvec()

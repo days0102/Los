@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:03:12
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 13:49:09
+ * @LastEditTime: 2022-08-09 22:27:57
  * @Description: virtio disk mmio
  * @FilePath: /los/kernel/mmio.h
  */
@@ -143,7 +143,7 @@ struct virtq_avail
 {
     uint16 flags;
     uint16 idx;
-    uint16 ring[];
+    uint16 ring[DNUM];
     /* Only if VIRTIO_F_EVENT_IDX: uint16 used_event; */
 };
 /* uint32 is used here for ids for padding reasons. */
@@ -158,7 +158,7 @@ struct virtq_used
 {
     uint16 flags;
     uint16 idx;
-    struct virtq_used_elem ring[];
+    struct virtq_used_elem ring[DNUM];
     /* Only if VIRTIO_F_EVENT_IDX: uint16 avail_event; */
 };
 struct virtq
@@ -200,9 +200,9 @@ struct virtio_blk_req
     uint32 type;                     // 操作类型
     uint32 reserved;                 // 保留
     uint64 sector;                   // 扇区号
-    uint8 data[512];                 // 操作的数据(512字节倍数)
-#define VIRTIO_BLK_S_OK 0            // 成功
-#define VIRTIO_BLK_S_IOERR 1         // 出错
-#define VIRTIO_BLK_S_UNSUPP 2        // 不支持
-    uint8 status;                    // 最终的状态
+    // uint8 *data;                 // 操作的数据(512字节倍数)
+#define VIRTIO_BLK_S_OK 0     // 成功
+#define VIRTIO_BLK_S_IOERR 1  // 出错
+#define VIRTIO_BLK_S_UNSUPP 2 // 不支持
+    // uint8 status;                    // 最终的状态
 };
