@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-14 14:49:02
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 14:46:41
+ * @LastEditTime: 2022-08-09 14:45:32
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/plic.h
  */
@@ -36,3 +36,5 @@
 #define PLIC_SCOMPLETE(hart) (PLIC_BASE + 0x201004 + (hart)*0x2000)
 
 #define UART_IRQ 10 // uart中断源
+
+#define VIRTIO_IRQ 1 // virtio_mmio 中断源
