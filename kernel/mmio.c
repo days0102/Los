@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-10 15:34:37
+ * @LastEditTime: 2022-08-10 17:08:15
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/mmio.c
  */
@@ -134,7 +134,6 @@ uint8 alloc3_desc(int idx[])
 
 void diskrw(uint32 sector, uint8 rw, char *b)
 {
-    printf("%s %s %s %s %d\n",__FILE__,__FUNCTION__,__TIME__,__TIMESTAMP__,__LINE__);
 
     /**
      * @description: 磁盘 IO 使用三个描述符

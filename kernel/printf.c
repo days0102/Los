@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-10 16:42:32
+ * @LastEditTime: 2022-08-10 17:11:24
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -12,6 +12,13 @@
 
 void panic(char *s)
 {
+	/* 	预定义宏
+		__FILE__ 		当前文件   %s
+		__LINE__ 		当前行	   %d
+		__TIME__ 		当前时间   %s
+		__TIMESTAMP__ 	当前时间戳 %s
+		__FUNCTION__  	当前函数   %s
+	*/
 	uartputs("panic: ");
 	uartputs(s);
 	uartputs("\n");
