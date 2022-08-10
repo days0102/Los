@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 22:26:56
+ * @LastEditTime: 2022-08-10 15:34:37
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/mmio.c
  */
@@ -17,7 +17,7 @@ struct disk
      * @description: 保存 virtqueue, 2 个或 2 个以上页
      * layout:                           ALIGN(PAGESIZE)
      *          [ desc | avail ...(padding)...| used ]
-     */    
+     */
     uint8 pages[2 * PGSIZE];
 
     // 描述符表
@@ -134,6 +134,14 @@ uint8 alloc3_desc(int idx[])
 
 void diskrw(uint32 sector, uint8 rw, char *b)
 {
+    printf("%s %s %s %s %d\n",__FILE__,__FUNCTION__,__TIME__,__TIMESTAMP__,__LINE__);
+
+    /**
+     * @description: 磁盘 IO 使用三个描述符
+     * [0] 一个包含类型、保留和扇区的8字节描述符，
+     * [1] 用于数据的描述符，
+     * [2] 用于状态的单独的1字节描述符。
+     */    
     int idx[3];
     alloc3_desc(idx);
 

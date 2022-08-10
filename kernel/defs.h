@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 18:52:28
+ * @LastEditTime: 2022-08-10 16:44:01
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -21,8 +21,9 @@ void kvec();
 void tvec();
 
 // printf.c
-void panic(char *);
-int printf(const char *, ...);
+void panic(char *str);
+int printf(const char *fmt, ...);
+char *sprintf(char *str, const char *fmt, ...);
 
 // trap.c
 void trapvec();
@@ -97,7 +98,7 @@ void syscall();
 
 // mmio.c
 void mmioinit();
-void diskrw(uint32 sector,uint8 rw,char buf[]);
+void diskrw(uint32 sector, uint8 rw, char buf[]);
 
 struct buf;
 void virtio_disk_rw(struct buf *b, int write);
