@@ -16,6 +16,8 @@
         "clint.h": "c",
         "limits": "c",
         "cstdint": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "mmio.h": "c",
+        "buf.h": "c"
     }
 }

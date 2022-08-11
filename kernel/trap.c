@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 15:30:41
+ * @LastEditTime: 2022-08-11 08:54:59
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -19,14 +19,15 @@
 void externinterrupt()
 {
     uint32 irq = r_plicclaim();
-    printf("irq : %d\n", irq);
+    // printf("irq : %d\n", irq);
     switch (irq)
     {
     case UART_IRQ: // uart 中断(键盘输入)
         printf("recived : %c\n", uartintr());
         break;
     case VIRTIO_IRQ:
-        printf("virtio interrupt\n");
+        // printf("virtio interrupt\n");
+        diskintr();
         break;
     default:
         break;
@@ -119,7 +120,7 @@ void trapvec()
             printf("Supervisor timer interrupt\n");
             break;
         case 9:
-            printf("Supervisor external interrupt\n");
+            // printf("Supervisor external interrupt\n");
             externinterrupt();
             break;
         default:

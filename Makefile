@@ -51,6 +51,7 @@ SRCS_C = \
 	kernel/timer.c \
 	kernel/syscall.c \
 	kernel/mmio.c \
+	kernel/buf.c \
 
 SRCS_USER = \
 	user/initproc.c \
@@ -73,7 +74,7 @@ user:$(UPROC)
 	@# @echo $(UPROC)
 	@echo "	Make UProc OK! "
 
-all:kernel.elf $(UPROC)
+all:kernel.elf $(UPROC) losfs/mkfs.elf
 	@echo "	Make OK! "
 
 run:kernel.elf
@@ -101,6 +102,12 @@ zeroproc : user/zeroproc.S
 	$(CC) $(CFLAGS) -c user/zeroproc.S -o user/zeroproc.o
 	$(OBJCOPY) -S -O binary user/zeroproc.o user/zeroproc.bin
 	$(OBJDUMP) -S user/zeroproc.o > user/zeroproc.asm
+
+losfs/mkfs.elf: losfs/mkfs.c
+	gcc -g losfs/mkfs.c -o losfs/mkfs.elf
+
+fs.img : losfs/mkfs
+	losfs/mkfs fs.img
 
 debug: CFLAGS += -D DEBUG
 debug: kernel.elf

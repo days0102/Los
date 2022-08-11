@@ -2,17 +2,27 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-10 16:44:01
+ * @LastEditTime: 2022-08-11 14:31:48
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
 
 #include "types.h"
 
+// proc.h
+struct pcb;
+struct trapframe;
+
+// swtch.S
+struct context;
+
+// buf.h
+struct buf;
+
 // uart.c
 void uartinit();
 char uartputc(char c);
-void uartputs(char *);
+void uartputs(char *s);
 void uartgetc();
 char uartintr();
 
@@ -24,6 +34,10 @@ void tvec();
 void panic(char *str);
 int printf(const char *fmt, ...);
 char *sprintf(char *str, const char *fmt, ...);
+void assertfail(const char *__assertion, const char *__file,
+                unsigned int __line, const char *__function);
+
+#define assert(expr) (expr) ?: assertfail(#expr, __FILE__, __LINE__, __FUNCTION__)
 
 // trap.c
 void trapvec();
@@ -32,7 +46,7 @@ void usertrapret();
 // pmm.c
 void minit();
 void *palloc();
-void pfree(void *);
+void pfree(void *pa);
 
 // kernel.ld
 extern uint8 textstart[];
@@ -54,7 +68,7 @@ extern uint stacks[];
 // plic.c
 void plicinit();
 uint32 r_plicclaim();
-void w_pliccomplete(uint32);
+void w_pliccomplete(uint32 irq);
 
 // vm.c
 void kvminit();
@@ -62,9 +76,6 @@ addr_t *pgtcreate();
 void vmmap(addr_t *pgt, addr_t va, addr_t pa, uint sz, uint mode);
 void mkstack(addr_t *pgt);
 
-// proc.h
-struct pcb;
-struct trapframe;
 // proc.c
 void procinit();
 void userinit();
@@ -78,12 +89,10 @@ void *memset(void *, int, uint);
 void *memmove(void *dst, const void *src, size_t n);
 size_t strlen(const char *s);
 
-// swtch.S
-struct context;
 void swtch(struct context *old, struct context *new);
 
 // usertrap.S
-void userret(addr_t *, addr_t pgt);
+void userret(addr_t *tf, addr_t pgt);
 extern char usertrap[];
 extern char uservec[];
 
@@ -98,8 +107,9 @@ void syscall();
 
 // mmio.c
 void mmioinit();
-void diskrw(uint32 sector, uint8 rw, char buf[]);
+void diskrw(struct buf *buf, uint8 rw);
+void diskintr();
 
-struct buf;
-void virtio_disk_rw(struct buf *b, int write);
-void virtio_disk_init(void);
+// buf.c
+void bufinit(void);
+struct buf *bufget(int bno);

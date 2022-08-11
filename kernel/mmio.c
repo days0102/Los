@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-10 17:08:15
+ * @LastEditTime: 2022-08-11 09:22:46
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/mmio.c
  */
@@ -10,6 +10,7 @@
 #include "defs.h"
 #include "mmio.h"
 #include "vm.h"
+#include "buf.h"
 
 struct disk
 {
@@ -39,7 +40,7 @@ struct disk
 
     struct
     {
-        char *data;
+        uint8 *data;
         uint8 status;
     } info[DNUM];
 
@@ -88,7 +89,7 @@ void mmioinit()
 
     mmio_write(MMIO_GusetPAGESIZE, PGSIZE);
 
-    mmio_write(MMIO_QueueSel, 0);
+    mmio_write(MMIO_QueueSel, 0);   // 选择[0]队列作为 disk IO队列
     if (mmio_read(MMIO_QueueNumMax) < DNUM)
         panic("mmio : QueueNumMax");
     mmio_write(MMIO_QueueNum, DNUM); // 设置队列大小
@@ -132,15 +133,16 @@ uint8 alloc3_desc(int idx[])
     return 0;
 }
 
-void diskrw(uint32 sector, uint8 rw, char *b)
+void diskrw(struct buf *b, uint8 rw)
 {
-
+#define SECSIZE 512
+    uint64 sector = b->bno * (BSIZE / SECSIZE);
     /**
      * @description: 磁盘 IO 使用三个描述符
      * [0] 一个包含类型、保留和扇区的8字节描述符，
      * [1] 用于数据的描述符，
      * [2] 用于状态的单独的1字节描述符。
-     */    
+     */
     int idx[3];
     alloc3_desc(idx);
 
@@ -165,8 +167,8 @@ void diskrw(uint32 sector, uint8 rw, char *b)
     disk.desc[idx[0]].flags = VIRTQ_DESC_F_NEXT;
     disk.desc[idx[0]].next = idx[1];
 
-    disk.desc[idx[1]].addr = (uint32)b;
-    disk.desc[idx[1]].len = 512;
+    disk.desc[idx[1]].addr = (uint32)b->data;
+    disk.desc[idx[1]].len = BSIZE;
     if (rw)
         disk.desc[idx[1]].flags = 0;
     else
@@ -181,16 +183,30 @@ void diskrw(uint32 sector, uint8 rw, char *b)
     disk.desc[idx[2]].flags = VIRTQ_DESC_F_WRITE; // device writes the status
     disk.desc[idx[2]].next = 0;
 
-    disk.info[idx[0]].data = (char *)b;
+    // disk.info[idx[0]].data = b->data;
 
     disk.avail->ring[disk.avail->idx % DNUM] = idx[0];
 
     // tell the device another avail ring entry is available.
     disk.avail->idx += 1; // not % NUM ...
 
-    mmio_write(MMIO_QueueNotify, 0); // value is queue number
+    mmio_write(MMIO_QueueNotify, 0); // 写入队列索引，通知设备队列处理新的缓冲区
 
     while (disk.info[idx[0]].status != 0)
         ;
     printf("finish\n");
+}
+
+/**
+ * @description: 处理 virtio_mmio disk IO 中断处理
+ */
+void diskintr()
+{
+#define MMIO_INTR_USED_BUF_BIT 0 // MMIO_InterruptStatus 寄存器使用缓冲位
+#define MMIO_INTR_CHAN_CON_BIT 1 // MMIO_InterruptStatus 配置更改位
+    uint32 intrstatus = mmio_read(MMIO_InterruptStatus);
+    // 通知已注意到中断
+    mmio_write(MMIO_InterruptACK, intrstatus | ~(1 << MMIO_INTR_USED_BUF_BIT));
+
+
 }

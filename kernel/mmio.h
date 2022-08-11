@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:03:12
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 22:27:57
+ * @LastEditTime: 2022-08-11 09:14:17
  * @Description: virtio disk mmio
  * @FilePath: /los/kernel/mmio.h
  */
@@ -32,13 +32,20 @@
                                     *  从这个寄存器读入将返回最后一个写入该寄存器的值。                              \
                                     *  读和写访问都应用于写入QueueSel所选择的队列。                                        \
                                     **/
-#define MMIO_QueueNotify 0x050     // 向该寄存器写入值将通知设备队列中有新的缓冲区要处理。
-#define MMIO_InterruptStatus 0x060 // read-only
-#define MMIO_InterruptACK 0x064    // 将一个在InterruptStatus中定义的位值写入该寄存器，
-                                   // 通知设备引起中断的事件已经被处理。
-#define MMIO_Status 0x070          // 从这个寄存器读取将返回当前设备状态标志。向该寄存器写入非零值
-                                   // 将设置状态标志，指示驱动程序进程。
-                                   // 向这个寄存器写入0 (0x0)会触发设备复位。
+#define MMIO_QueueNotify 0x050     /** 向该寄存器写入值将通知设备队列中有新的缓冲区要处理。 \
+                                    *  当VIRTIO_F_NOTIFICATION_DATA尚未协商时，写入的值是队列索引。             \
+                                    */
+#define MMIO_InterruptStatus 0x060 /** 从该寄存器读取导致设备中断的事件的位掩码。以下事件是可能的:                   \
+                                    *  1.使用缓冲区通知 -第0位 -设备已经在至少一个活动的虚拟队列中使用了缓冲区。 \
+                                    *  2.配置更改 - 第1位 -设备的配置发生了变化。                                                \
+                                    */
+#define MMIO_InterruptACK 0x064    /** 将一个在InterruptStatus中定义的位值写入该寄存器， \
+                                    *  通知设备引起中断的事件已经被处理。                \
+                                    **/
+#define MMIO_Status 0x070          /** 从这个寄存器读取将返回当前设备状态标志。向该寄存器写入非零值 \
+                                    *  将设置状态标志，指示驱动程序进程。                                        \
+                                    *  向这个寄存器写入0 (0x0)会触发设备复位。                                    \
+                                    **/
 
 #define MMIO_REG(reg) ((volatile uint32 *)(VIRTIO_BASE + (reg)))
 #define mmio_read(reg) (*(MMIO_REG(reg)))

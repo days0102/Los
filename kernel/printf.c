@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-10 17:11:24
+ * @LastEditTime: 2022-08-11 14:37:14
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -236,4 +236,10 @@ char *sprintf(char *str, const char *fmt, ...)
 	va_end(vl); // 释法参数
 	str[idx] = '\0';
 	return str;
+}
+
+void assertfail(const char *__assertion, const char *__file,
+				unsigned int __line, const char *__function)
+{
+	printf("\033[1;31mAssertFail \"%s\" at %s %d line in fun %s \n\033[0m",__assertion,__file,__line,__function);
 }
