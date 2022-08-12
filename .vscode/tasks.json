@@ -7,6 +7,11 @@
             "label": "make debug",
             "type": "shell",
             "command": "make debug &"
+        },
+        {
+            "label": "make mkfs",
+            "type": "shell",
+            "command": "make all"
         }
     ]
 }

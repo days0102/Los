@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-11 14:31:48
+ * @LastEditTime: 2022-08-12 14:52:49
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -36,8 +36,11 @@ int printf(const char *fmt, ...);
 char *sprintf(char *str, const char *fmt, ...);
 void assertfail(const char *__assertion, const char *__file,
                 unsigned int __line, const char *__function);
+void printferror(const char *__errmsg, const char *__file,
+                unsigned int __line, const char *__function);
 
-#define assert(expr) (expr) ?: assertfail(#expr, __FILE__, __LINE__, __FUNCTION__)
+#define assert(expr) (expr) ? 0: assertfail(#expr, __FILE__, __LINE__, __FUNCTION__)
+#define error(msg) printferror(#msg, __FILE__, __LINE__, __FUNCTION__)
 
 // trap.c
 void trapvec();

@@ -12,6 +12,7 @@ CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit
 CFLAGS += -I.# 包含当前目录
 CFLAGS += -Wall -Wno-main# 显示警告
 
+GCCFLAGS = -g
 # debug
 CDEBUG = 0
 ifeq ($(CDEBUG),1)
@@ -21,6 +22,7 @@ endif
 D = 
 ifdef D
 	CFLAGS += -DDEBUG
+	GCCFLAGS += -DDEBUG
 endif
 
 GDB = gdb-multiarch
@@ -74,7 +76,7 @@ user:$(UPROC)
 	@# @echo $(UPROC)
 	@echo "	Make UProc OK! "
 
-all:kernel.elf $(UPROC) losfs/mkfs.elf
+all:kernel.elf $(UPROC) fs.img
 	@echo "	Make OK! "
 
 run:kernel.elf
@@ -104,10 +106,10 @@ zeroproc : user/zeroproc.S
 	$(OBJDUMP) -S user/zeroproc.o > user/zeroproc.asm
 
 losfs/mkfs.elf: losfs/mkfs.c
-	gcc -g losfs/mkfs.c -o losfs/mkfs.elf
+	gcc $(GCCFLAGS) losfs/mkfs.c -o losfs/mkfs.elf
 
-fs.img : losfs/mkfs
-	losfs/mkfs fs.img
+fs.img : losfs/mkfs.elf
+	losfs/mkfs.elf fs.img Makefile $(UPROC)
 
 debug: CFLAGS += -D DEBUG
 debug: kernel.elf

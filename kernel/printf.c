@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-11 14:37:14
+ * @LastEditTime: 2022-08-11 14:56:23
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -241,5 +241,13 @@ char *sprintf(char *str, const char *fmt, ...)
 void assertfail(const char *__assertion, const char *__file,
 				unsigned int __line, const char *__function)
 {
-	printf("\033[1;31mAssertFail \"%s\" at %s %d line in fun %s \n\033[0m",__assertion,__file,__line,__function);
+	printf("\033[1;31mAssertFail \"%s\" At %s %d Line In Fun %s\n\033[0m",
+		   __assertion, __file, __line, __function);
+}
+
+void printferror(const char *__errmsg, const char *__file,
+				 unsigned int __line, const char *__function)
+{
+	printf("\033[1;31m%s At %s %d Line In Fun %s\n\033[0m",
+		   __errmsg, __file, __line, __function);
 }
