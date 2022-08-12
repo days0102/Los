@@ -110,6 +110,7 @@ losfs/mkfs.elf: losfs/mkfs.c
 
 fs.img : losfs/mkfs.elf
 	losfs/mkfs.elf fs.img Makefile $(UPROC)
+	@# dd if=[/dev/sda] of=fs.img bs=8M count=1
 
 debug: CFLAGS += -D DEBUG
 debug: kernel.elf
