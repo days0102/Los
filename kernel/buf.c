@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-10 17:35:51
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-10 21:28:58
+ * @LastEditTime: 2022-08-13 13:58:29
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/buf.c
  */
@@ -44,7 +44,7 @@ void bufread(struct buf *b)
 struct buf *bufget(int bno)
 {
     struct buf *b = bcache.next;
-    while (b->next != &bcache)
+    while (b != &bcache)
     {
         if (b->bno == bno && b->vaild == 1)
         {
@@ -53,7 +53,7 @@ struct buf *bufget(int bno)
         }
         b = b->next;
     }
-    if (b->next == &bcache)
+    if (b == &bcache)
     {
         b = bcache.prev;
         while (b->ref != 0) //! b==&bcache

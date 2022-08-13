@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-11 09:22:46
+ * @LastEditTime: 2022-08-13 12:35:17
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/mmio.c
  */
@@ -40,10 +40,11 @@ struct disk
 
     struct
     {
-        uint8 *data;
+        struct buf *buf;
         uint8 status;
     } info[DNUM];
 
+    uint16 last_used;
 } __attribute__((aligned(PGSIZE))) disk;
 
 void mmioinit()
@@ -89,7 +90,7 @@ void mmioinit()
 
     mmio_write(MMIO_GusetPAGESIZE, PGSIZE);
 
-    mmio_write(MMIO_QueueSel, 0);   // 选择[0]队列作为 disk IO队列
+    mmio_write(MMIO_QueueSel, 0); // 选择[0]队列作为 disk IO队列
     if (mmio_read(MMIO_QueueNumMax) < DNUM)
         panic("mmio : QueueNumMax");
     mmio_write(MMIO_QueueNum, DNUM); // 设置队列大小
@@ -100,6 +101,8 @@ void mmioinit()
     disk.desc = (struct virtq_desc *)disk.pages;
     disk.avail = (struct virtq_avail *)(disk.pages + DNUM * sizeof(struct virtq_desc));
     disk.used = (struct virtq_used *)(disk.pages + PGSIZE);
+
+    disk.last_used = 0;
 
     for (int i = 0; i < DNUM; i++)
         disk.free[i] = 1;
@@ -131,6 +134,33 @@ uint8 alloc3_desc(int idx[])
             return -1;
     }
     return 0;
+}
+
+void free_desc(int idx)
+{
+    assert(idx < DNUM);
+    assert(disk.free[idx] == 0);
+    disk.free[idx] = 1;
+    disk.desc[idx].addr = 0;
+    disk.desc[idx].len = 0;
+    disk.desc[idx].flags = 0;
+    disk.desc[idx].next = 0;
+}
+
+void free_all_desc(int idx)
+{
+    int flag;
+    int id;
+    while (1)
+    {
+        flag = disk.desc[idx].flags;
+        id = disk.desc[idx].next;
+        free_desc(idx);
+        if (flag & VIRTQ_DESC_F_NEXT)
+            idx = id;
+        else
+            break;
+    }
 }
 
 void diskrw(struct buf *b, uint8 rw)
@@ -183,18 +213,18 @@ void diskrw(struct buf *b, uint8 rw)
     disk.desc[idx[2]].flags = VIRTQ_DESC_F_WRITE; // device writes the status
     disk.desc[idx[2]].next = 0;
 
-    // disk.info[idx[0]].data = b->data;
+    disk.info[idx[0]].buf = b;
 
+    // 设置首个描述符索引
     disk.avail->ring[disk.avail->idx % DNUM] = idx[0];
 
-    // tell the device another avail ring entry is available.
-    disk.avail->idx += 1; // not % NUM ...
+    disk.avail->idx += 1; // 更新 idx
 
     mmio_write(MMIO_QueueNotify, 0); // 写入队列索引，通知设备队列处理新的缓冲区
 
-    while (disk.info[idx[0]].status != 0)
+    while (disk.info[idx[0]].status)
         ;
-    printf("finish\n");
+    free_all_desc(idx[0]);
 }
 
 /**
@@ -207,6 +237,9 @@ void diskintr()
     uint32 intrstatus = mmio_read(MMIO_InterruptStatus);
     // 通知已注意到中断
     mmio_write(MMIO_InterruptACK, intrstatus | ~(1 << MMIO_INTR_USED_BUF_BIT));
-
-
+    while (disk.last_used != disk.used->idx)
+    {
+        assert((disk.info[disk.used->ring[disk.used->idx % DNUM].id].status) == 0x0);
+        disk.last_used++;
+    }
 }

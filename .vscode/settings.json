@@ -18,6 +18,7 @@
         "cstdint": "c",
         "type_traits": "c",
         "mmio.h": "c",
-        "buf.h": "c"
+        "buf.h": "c",
+        "fs.h": "c"
     }
 }

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:03:12
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-11 09:14:17
+ * @LastEditTime: 2022-08-13 11:37:23
  * @Description: virtio disk mmio
  * @FilePath: /los/kernel/mmio.h
  */
@@ -33,7 +33,7 @@
                                     *  读和写访问都应用于写入QueueSel所选择的队列。                                        \
                                     **/
 #define MMIO_QueueNotify 0x050     /** 向该寄存器写入值将通知设备队列中有新的缓冲区要处理。 \
-                                    *  当VIRTIO_F_NOTIFICATION_DATA尚未协商时，写入的值是队列索引。             \
+                                    *  当VIRTIO_F_NOTIFICATION_DATA尚未协商时，写入的值是队列索引。  \
                                     */
 #define MMIO_InterruptStatus 0x060 /** 从该寄存器读取导致设备中断的事件的位掩码。以下事件是可能的:                   \
                                     *  1.使用缓冲区通知 -第0位 -设备已经在至少一个活动的虚拟队列中使用了缓冲区。 \
@@ -138,19 +138,19 @@ All definitions in this section are for non-normative reference only.
 struct virtq_desc
 {
     /* Address (guest-physical). */
-    uint64 addr;
+    uint64 addr; // 一段内存的起始地址
     /* Length. */
-    uint32 len;
+    uint32 len; // 地址内存的大小
     /* The flags as indicated above. */
-    uint16 flags;
+    uint16 flags; // 内存读写属性
     /* We chain unused descriptors via this, too */
-    uint16 next;
+    uint16 next; // 下一段内存的描述符索引
 };
 struct virtq_avail
 {
-    uint16 flags;
-    uint16 idx;
-    uint16 ring[DNUM];
+    uint16 flags;      // 由设备使用
+    uint16 idx;        // 最新 IO 请求编号，取模后可得 IO 请求在 ring 中的索引
+    uint16 ring[DNUM]; // idx 索引ring, 存放 IO 请求占用的首个描述符
     /* Only if VIRTIO_F_EVENT_IDX: uint16 used_event; */
 };
 /* uint32 is used here for ids for padding reasons. */
@@ -163,8 +163,8 @@ struct virtq_used_elem
 };
 struct virtq_used
 {
-    uint16 flags;
-    uint16 idx;
+    uint16 flags;// 由设备使用
+    uint16 idx;  // 最新 IO 响应编号，取模后可得 IO 响应在 ring 中的索引
     struct virtq_used_elem ring[DNUM];
     /* Only if VIRTIO_F_EVENT_IDX: uint16 avail_event; */
 };

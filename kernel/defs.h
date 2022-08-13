@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 09:57:36
+ * @LastEditTime: 2022-08-13 18:03:15
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -40,9 +40,9 @@ char *sprintf(char *str, const char *fmt, ...);
 void assertfail(const char *__assertion, const char *__file,
                 unsigned int __line, const char *__function);
 void printferror(const char *__errmsg, const char *__file,
-                unsigned int __line, const char *__function);
+                 unsigned int __line, const char *__function);
 
-#define assert(expr) (expr) ? 0: assertfail(#expr, __FILE__, __LINE__, __FUNCTION__)
+#define assert(expr) (expr) ? 0 : assertfail(#expr, __FILE__, __LINE__, __FUNCTION__)
 #define error(msg) printferror(#msg, __FILE__, __LINE__, __FUNCTION__)
 
 // trap.c
@@ -94,6 +94,7 @@ void sched();
 void *memset(void *, int, uint);
 void *memmove(void *dst, const void *src, size_t n);
 size_t strlen(const char *s);
+int strcmp(char *p, char *q);
 
 void swtch(struct context *old, struct context *new);
 
@@ -122,4 +123,5 @@ struct buf *bufget(int bno);
 
 // fs.c
 void fsinit();
-void iread(uint32 inum,struct dinode* inode);
+void iread(uint32 inum, struct dinode *inode);
+uint32 readi(struct dinode *inode, char *b, uint32 offset, uint32 size);
