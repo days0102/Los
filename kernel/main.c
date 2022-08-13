@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-12 14:46:09
+ * @LastEditTime: 2022-08-12 22:05:12
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -31,13 +31,6 @@ void main()
     mmioinit();
 
     bufinit();
-
-    struct buf* b;
-    b=bufget(1);
-    uint16 magic=*(uint16*)b->data;
-    printf("%x\n",magic);
-
-    assert(magic==0xEF53);
 
     printf("----------------------\n");
     schedule();
