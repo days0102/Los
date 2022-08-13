@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 19:12:28
+ * @LastEditTime: 2022-08-13 19:13:45
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -175,6 +175,11 @@ char *sprintf(char *str, const char *fmt, ...)
 				{
 					// 获取参数，将指针指向下一个参数
 					int x = va_arg(vl, int);
+					if (x < 0)
+					{
+						outbuf[idx++] = '-';
+						x = -x;
+					}
 					int len = 0;
 					for (int n = x; n /= 10; len++)
 						;
