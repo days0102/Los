@@ -2,14 +2,13 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-12 22:05:12
+ * @LastEditTime: 2022-08-13 09:56:38
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
 #include "riscv.h"
 #include "defs.h"
 #include "swtch.h"
-#include "buf.h"
 
 void main()
 {
@@ -31,6 +30,8 @@ void main()
     mmioinit();
 
     bufinit();
+
+    fsinit();
 
     printf("----------------------\n");
     schedule();

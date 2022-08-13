@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-06-09 18:34:26
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-12 21:16:59
+ * @LastEditTime: 2022-08-13 08:49:06
  * @Description: In User Settings Edit
  * @FilePath: /los/losfs/mkfs.c
  */
@@ -43,8 +43,9 @@ void printferror(const char *__errmsg, const char *__file,
 #define BPB BLOCKSIZE *NBITMAPBLOCK * 8
 #define IPB (BLOCKSIZE / sizeof(struct dinode))
 
-#define T_FILE 1
-#define T_DIR 2
+#define I_TYPE_NULL 0
+#define I_TYPE_FILE 1
+#define I_TYPE_DIR 2
 
 #define UNAME 6
 #define PSLEN 8
@@ -61,6 +62,8 @@ struct superblock
     uint16_t magic;
     uint16_t direntsize;
     uint16_t dinodesize;
+    uint16_t bitpreblock;
+    uint16_t inodepreblock;
     uint32_t size; // disk-size
     uint32_t nblock;
     uint32_t sbstart;
@@ -85,7 +88,7 @@ struct dinode
     uint8_t own;  // 所有者
     uint8_t mod;  // 权限
     uint32_t size;
-    int32_t addr[NINDEX]; // 一级索引
+    uint32_t addr[NINDEX]; // 一级索引
 };
 
 // dir item
@@ -230,7 +233,7 @@ int ialloc(uint8_t type)
         for (int j = 0; j < IPB; j++)
         {
             memmove(&inode, block.data + sizeof(struct dinode) * j, sizeof(struct dinode));
-            if (inode.type == 0)
+            if (inode.type == I_TYPE_NULL)
             {
                 memset(&inode, 0, sb->dinodesize);
                 inode.type = type;
@@ -413,7 +416,7 @@ int add_file(uint32_t inum, char *name)
 // 创建根目录
 void creatroot()
 {
-    uint16_t inum = ialloc(T_DIR);
+    uint16_t inum = ialloc(I_TYPE_DIR);
     assert(inum == 0);
 
     add_dirent(inum, ".", inum);
@@ -445,6 +448,8 @@ int init(char *name)
     sb->magic = FS_SB_MAGIC;
     sb->direntsize = sizeof(struct dirent);
     sb->dinodesize = sizeof(struct dinode);
+    sb->bitpreblock = BPB;
+    sb->inodepreblock = IPB;
     sb->size = stat.st_size;
     sb->nblock = stat.st_size / 1024;
     sb->sbstart = SUPERBLOCK;
@@ -503,7 +508,7 @@ int main(int argc, char *argv[])
         int fd = open(argv[i], O_RDWR);
         if (fd < 0)
             error("Open File Error");
-        uint32_t inum = ialloc(T_FILE);
+        uint32_t inum = ialloc(I_TYPE_FILE);
         if (strncmp(argv[i], "user/", 5) == 0)
             name = argv[i] + 5;
         else

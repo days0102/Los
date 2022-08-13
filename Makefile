@@ -54,6 +54,7 @@ SRCS_C = \
 	kernel/syscall.c \
 	kernel/mmio.c \
 	kernel/buf.c \
+	kernel/fs.c \
 
 SRCS_USER = \
 	user/initproc.c \

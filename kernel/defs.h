@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-12 14:52:49
+ * @LastEditTime: 2022-08-13 09:57:36
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -18,6 +18,9 @@ struct context;
 
 // buf.h
 struct buf;
+
+// fs.h
+struct dinode;
 
 // uart.c
 void uartinit();
@@ -116,3 +119,7 @@ void diskintr();
 // buf.c
 void bufinit(void);
 struct buf *bufget(int bno);
+
+// fs.c
+void fsinit();
+void iread(uint32 inum,struct dinode* inode);
