@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-19 16:25:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 18:02:45
+ * @LastEditTime: 2022-08-13 19:35:31
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/string.c
  */
@@ -67,7 +67,7 @@ size_t strlen(const char *s)
 
 int strcmp(const char *p, const char *q)
 {
-    char *n = p, *m = q;
+    char *n = (char *)p, *m = (char *)q;
     while (*n == *m && *m && *n)
         ++n, ++m;
     return *n == *m ? 0 : (*n < *m ? -1 : 1);

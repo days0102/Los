@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 18:07:04
+ * @LastEditTime: 2022-08-13 19:48:01
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -33,10 +33,7 @@ void main()
 
     fsinit();
 
-    char* s="hello";
-    char* n="hellp";
-    int res=strcmp(s,n);
-    printf("%d\n",res);
+    initproc();
 
     printf("----------------------\n");
     schedule();

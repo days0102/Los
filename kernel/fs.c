@@ -73,19 +73,21 @@ void dread(struct dinode *inode, char *name, struct dirent *dirent)
         b = bufget(inode->addr[i]);
         for (int j = 0; j < BLOCKSIZE; j += sb.direntsize)
         {
-            readi(inode, dirent, i * BLOCKSIZE + j, sb.direntsize);
+            if (readi(inode,(char*) dirent, i * BLOCKSIZE + j, sb.direntsize) != sb.direntsize)
+                return;
             if (strcmp(dirent->name, name) == 0)
             {
-                
+                return;
             }
         }
+        b->ref--;
     }
 }
 
 char *parse_path(char *path, char *name)
 {
     char *s;
-    while (*path == "/")
+    while (*path == '/')
         path++;
     if (*path == 0)
         return path;
@@ -105,6 +107,8 @@ uint32 findi(char *path)
     {
         memset(name, 0, DIRNAMESIZE);
         path = parse_path(path, name);
+
+        // todo
     }
     return 0;
 }

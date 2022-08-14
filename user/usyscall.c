@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-05 08:47:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:46:20
+ * @LastEditTime: 2022-08-14 08:13:03
  * @Description: In User Settings Edit
  * @FilePath: /los/user/usyscall.c
  */
@@ -14,6 +14,16 @@ int fork()
     asm volatile("ecall");
     uint32 x;
     asm volatile("mv %0,a0"
+                 : "=r"(x));
+    return x;
+}
+
+int exec()
+{
+    asm volatile("li a7,2");
+    asm volatile("ecall");
+    uint32 x;
+    asm volatile("mv %0,a7"
                  : "=r"(x));
     return x;
 }

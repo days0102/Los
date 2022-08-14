@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 18:03:15
+ * @LastEditTime: 2022-08-14 09:14:36
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -21,6 +21,7 @@ struct buf;
 
 // fs.h
 struct dinode;
+struct dirent;
 
 // uart.c
 void uartinit();
@@ -89,6 +90,7 @@ struct pcb *nowproc();
 void schedule();
 void yield();
 void sched();
+void initproc();
 
 // string.c
 void *memset(void *, int, uint);
@@ -125,3 +127,4 @@ struct buf *bufget(int bno);
 void fsinit();
 void iread(uint32 inum, struct dinode *inode);
 uint32 readi(struct dinode *inode, char *b, uint32 offset, uint32 size);
+void dread(struct dinode *inode, char *name, struct dirent *dirent);

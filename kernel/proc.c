@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 15:29:02
+ * @LastEditTime: 2022-08-14 09:13:40
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -11,6 +11,8 @@
 #include "defs.h"
 #include "riscv.h"
 #include "syscall.h"
+#include "elf.h"
+#include "fs.h"
 
 uint nextpid = 0;
 
@@ -180,4 +182,39 @@ uint32 sys_exec(void)
 {
     printf("syscall exec\n");
     return SYS_exec;
+}
+
+void initproc()
+{
+    struct pcb *p = procalloc();
+    struct Elf32_Ehdr elf;
+    struct Elf32_Phdr phdr;
+    struct dinode inode;
+    struct dirent dirent;
+    iread(0, &inode);
+    dread(&inode, "initproc.elf", &dirent);
+    iread(dirent.inum, &inode);
+    readi(&inode, (char *)&elf, 0, sizeof(struct Elf32_Ehdr));
+    assert(*(uint32 *)elf.e_ident == 0x464c457f);
+    for (int i = 0, off = elf.e_phoff; i < elf.e_phnum; i++, off += sizeof(struct Elf32_Phdr))
+    {
+        readi(&inode, (char *)&phdr, off, sizeof(struct Elf32_Phdr));
+        int size = phdr.p_filesz;
+        while (size > 0)
+        {
+            addr_t *pa = (addr_t *)palloc();
+            int cc = size > PGSIZE ? PGSIZE : size;
+            readi(&inode, (char *)pa, phdr.p_offset, cc);
+            size -= PGSIZE;
+            vmmap(p->pagetable, (addr_t)phdr.p_vaddr, (addr_t)pa, cc, PTE_R | PTE_W | PTE_X | PTE_U);
+        }
+    }
+    p->trapframe->epc = (reg_t)elf.e_entry;
+    p->trapframe->sp = PGSIZE;
+    vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
+    vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
+    mkstack(p->pagetable);
+    p->context.ra = (reg_t)usertrapret;
+    p->context.sp = p->kernelstack;
+    p->status = RUNABLE;
 }

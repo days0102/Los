@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-07 16:04:58
+ * @LastEditTime: 2022-08-14 09:13:47
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -149,6 +149,6 @@ addr_t *pgtcreate()
 {
     // 分配页表
     addr_t *pgt = (addr_t *)palloc();
-
+    memset(pgt, 0, PGSIZE);
     return pgt;
 }
