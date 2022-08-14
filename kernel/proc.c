@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 09:13:40
+ * @LastEditTime: 2022-08-14 13:41:07
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -51,7 +51,6 @@ struct pcb *procalloc()
         if (p->status == UNUSED)
         {
             p->trapframe = (struct trapframe *)palloc(sizeof(struct trapframe));
-
             p->pid = pidalloc();
             p->status = USED;
 
@@ -88,14 +87,10 @@ void userinit()
 
     vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
 
-    p->pagetable = (addr_t *)p->pagetable;
-
-    p->status = RUNABLE;
-
-    mkstack(p->pagetable);
-
     p->context.ra = (reg_t)usertrapret;
     p->context.sp = p->kernelstack;
+
+    p->status = RUNABLE;
 
     p = procalloc();
     p->context.ra = (reg_t)usertrapret;
@@ -112,14 +107,9 @@ void userinit()
 
     vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
 
-    p->pagetable = (addr_t *)p->pagetable;
-
-    p->status = RUNABLE;
-
-    mkstack(p->pagetable);
-
     p->context.ra = (reg_t)usertrapret;
     p->context.sp = p->kernelstack;
+    p->status = RUNABLE;
 }
 
 void schedule()
@@ -213,7 +203,6 @@ void initproc()
     p->trapframe->sp = PGSIZE;
     vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
     vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
-    mkstack(p->pagetable);
     p->context.ra = (reg_t)usertrapret;
     p->context.sp = p->kernelstack;
     p->status = RUNABLE;

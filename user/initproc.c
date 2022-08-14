@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-03 16:37:00
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 21:36:20
+ * @LastEditTime: 2022-08-14 11:11:59
  * @Description: In User Settings Edit
  * @FilePath: /los/user/initproc.c
  */
@@ -10,9 +10,8 @@
 
 int main()
 {
-    exec();
+    fork();
     while (1)
         ;
 
-    return 0;
 }

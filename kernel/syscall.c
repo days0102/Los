@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-02 16:44:07
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 08:12:23
+ * @LastEditTime: 2022-08-14 11:09:19
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.c
  */
@@ -20,7 +20,7 @@ static uint32 (*syscalls[])(void) = {
 void syscall()
 {
     struct pcb *p = nowproc();
-    p->trapframe->epc = r_sepc();
+    
     p->trapframe->epc += 4;
 
     uint32 sysnum = p->trapframe->a7;

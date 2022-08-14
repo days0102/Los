@@ -72,6 +72,8 @@ UPROC= $(SRCS_USER:%.c=%.elf)
 .PRECIOUS: %.o # 保留中间过程的 .o 文件
 %.elf :%.o $(ULIB)
 	$(CC) $(CFLAGS) -N -e main -Ttext 0 -o $@ $^
+	@$(OBJDUMP) -S $@ > $*.asm
+	@$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $*.sym
 
 user:$(UPROC)
 	@# @echo $(UPROC)
@@ -127,9 +129,14 @@ local:
 	@${GDB} kernel.elf -q -x other/localgdbinit
 
 clean:
-	rm -rf *.o *.bin *.elf */*.o */*.d */*.elf */_* */*.bin *.asm */*.asm
+	rm -rf *.o *.bin *.elf */*.o */*.d */*.elf */_* */*.bin *.asm */*.asm */*.sym
 
-code: kernel.elf
+ELF = kernel.elf
+ELFCODETARGET = $(ELF:.elf=.asm)
+ELFBINTARGET = $(ELF:.elf=.bin)
+code: $(ELF)
 	@ # ${OBJDUMP} -S kernel.elf | less
-	@${OBJDUMP} -S kernel.elf > kernel.asm # -M no-aliases,numeric显示原始信息
+	@${OBJDUMP} -S $(ELF) > $(ELFCODETARGET) # -M no-aliases,numeric显示原始信息
 	
+bin: $(ELF)
+	@${OBJCOPY} -O binary $(ELF) $(ELFBINTARGET)

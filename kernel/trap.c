@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-11 08:54:59
+ * @LastEditTime: 2022-08-14 11:10:59
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -101,6 +101,9 @@ void timerintr()
 void trapvec()
 {
     int where = r_sstatus() & S_SPP_SET;
+    struct pcb *p = nowproc();
+    if (!where && p)
+        p->trapframe->epc = r_sepc();
     w_stvec((reg_t)kvec);
 
     uint32 scause = r_scause();

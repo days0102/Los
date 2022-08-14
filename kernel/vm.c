@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 09:13:47
+ * @LastEditTime: 2022-08-14 13:40:19
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -148,7 +148,12 @@ void kvminit()
 addr_t *pgtcreate()
 {
     // 分配页表
-    addr_t *pgt = (addr_t *)palloc();
-    memset(pgt, 0, PGSIZE);
-    return pgt;
+    addr_t *pagetable = (addr_t *)palloc();
+    memset(pagetable, 0, PGSIZE);
+    return pagetable;
+}
+
+void upgtinit(addr_t *pagtable)
+{
+    
 }
