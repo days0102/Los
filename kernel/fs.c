@@ -65,23 +65,25 @@ uint32 readi(struct dinode *inode, char *buffer, uint32 offset, uint32 size)
     return size;
 }
 
-void dread(struct dinode *inode, char *name, struct dirent *dirent)
+uint32 dread(struct dinode *inode, char *name)
 {
+    struct dirent dirent;
     struct buf *b;
     for (int i = 0; i < NDIRET && inode->addr[i] != 0; i++)
     {
         b = bufget(inode->addr[i]);
         for (int j = 0; j < BLOCKSIZE; j += sb.direntsize)
         {
-            if (readi(inode,(char*) dirent, i * BLOCKSIZE + j, sb.direntsize) != sb.direntsize)
-                return;
-            if (strcmp(dirent->name, name) == 0)
+            if (readi(inode, (char *)&dirent, i * BLOCKSIZE + j, sb.direntsize) != sb.direntsize)
+                return 0;
+            if (strcmp(dirent.name, name) == 0)
             {
-                return;
+                return dirent.inum;
             }
         }
         b->ref--;
     }
+    return 0;
 }
 
 char *parse_path(char *path, char *name)

@@ -14,7 +14,7 @@ usertrap:
     sw sp,20(a0)
     sw gp,24(a0)
     sw tp,28(a0)
-    sw a0,32(a0)
+    # sw a0,32(a0)
     sw a1,36(a0)
     sw a2,40(a0)
     sw a3,44(a0)
@@ -42,6 +42,9 @@ usertrap:
     sw t4,128(a0)
     sw t5,132(a0)
     sw t6,136(a0)
+
+    csrr t6,sscratch // 借助 t6 保存用户态 a0
+    sw t6,32(a0)
 
     lw sp,8(a0)    // 内核栈
 

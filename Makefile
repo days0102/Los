@@ -55,9 +55,11 @@ SRCS_C = \
 	kernel/mmio.c \
 	kernel/buf.c \
 	kernel/fs.c \
+	kernel/exec.c \
 
 SRCS_USER = \
 	user/initproc.c \
+	user/sh.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
@@ -103,15 +105,16 @@ kernel.elf: ${OBJS}
 %.o : %.S
 	${CC} ${CFLAGS} -c -o $@ $<
 
-zeroproc : user/zeroproc.S
-	$(CC) $(CFLAGS) -c user/zeroproc.S -o user/zeroproc.o
-	$(OBJCOPY) -S -O binary user/zeroproc.o user/zeroproc.bin
-	$(OBJDUMP) -S user/zeroproc.o > user/zeroproc.asm
+initcode : user/initcode.S
+	$(CC) $(CFLAGS) -c user/initcode.S -o user/initcode.o
+	$(OBJCOPY) -S -O binary user/initcode.o user/initcode.bin
+	$(OBJDUMP) -S user/initcode.o > user/initcode.asm
 
 losfs/mkfs.elf: losfs/mkfs.c
 	gcc $(GCCFLAGS) losfs/mkfs.c -o losfs/mkfs.elf
 
-fs.img : losfs/mkfs.elf
+.PRECIOUS: fs.img	# 生成失败时不删除fs.img
+fs.img : losfs/mkfs.elf $(UPROC)
 	losfs/mkfs.elf fs.img Makefile $(UPROC)
 	@# dd if=[/dev/sda] of=fs.img bs=8M count=1
 

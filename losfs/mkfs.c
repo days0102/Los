@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-06-09 18:34:26
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 08:49:06
+ * @LastEditTime: 2022-08-14 14:14:14
  * @Description: In User Settings Edit
  * @FilePath: /los/losfs/mkfs.c
  */
@@ -19,8 +19,7 @@ void assertfail(const char *__assertion, const char *__file,
 {
     printf("\033[1;31mAssertFail \"%s\" At %s %d Line In Fun %s\n\033[0m",
            __assertion, __file, __line, __function);
-    while (1)
-        ;
+    exit(1);
 }
 #define assert(expr) (expr) ? 0 : assertfail(#expr, __FILE__, __LINE__, __FUNCTION__)
 void printferror(const char *__errmsg, const char *__file,
@@ -28,8 +27,7 @@ void printferror(const char *__errmsg, const char *__file,
 {
     printf("\033[1;31m%s At %s %d Line In Fun %s\n\033[0m",
            __errmsg, __file, __line, __function);
-    while (1)
-        ;
+    exit(1);
 }
 #define error(msg) printferror(#msg, __FILE__, __LINE__, __FUNCTION__)
 
@@ -510,7 +508,12 @@ int main(int argc, char *argv[])
             error("Open File Error");
         uint32_t inum = ialloc(I_TYPE_FILE);
         if (strncmp(argv[i], "user/", 5) == 0)
+        {
             name = argv[i] + 5;
+            while (*argv[i] != '.')
+                argv[i]++;
+            *argv[i] = '\0';
+        }
         else
             name = argv[i];
         add_dirent(0, name, inum);

@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/losfs/mkfs.elf",
-            "args": ["fs.img"],
+            "args": ["fs.img","user/initproc.elf"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",// ${fileDirname}
             "environment": [],

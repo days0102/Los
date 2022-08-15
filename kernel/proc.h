@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-03 13:28:53
+ * @LastEditTime: 2022-08-15 16:19:30
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
@@ -62,6 +62,7 @@ struct trapframe
 	reg_t t6;  // 136
 };
 
+#define PCBNAME 24
 struct pcb
 {
 	int pid;
@@ -70,6 +71,8 @@ struct pcb
 	struct context context;
 	addr_t *pagetable;
 	addr_t kernelstack;
+	uint32 size;
+	char name[PCBNAME];
 };
 
 struct pcb proc[NPROC];

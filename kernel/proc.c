@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 13:41:07
+ * @LastEditTime: 2022-08-15 16:20:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -10,7 +10,6 @@
 #include "vm.h"
 #include "defs.h"
 #include "riscv.h"
-#include "syscall.h"
 #include "elf.h"
 #include "fs.h"
 
@@ -24,6 +23,13 @@ void procinit()
         p = &proc[i];
         p->kernelstack = (addr_t)(KSTACK + (i)*2 * PGSIZE);
     }
+#ifdef DEBUG
+    for (int i = 0; i < NPROC; i++)
+    {
+        p = &proc[i];
+        printf("proc %d ksp : %p\n", i, p->kernelstack);
+    }
+#endif
 }
 
 struct cpu *nowcpu()
@@ -62,14 +68,15 @@ struct pcb *procalloc()
     return 0;
 }
 
-uint8 zeroproc[] = {
+uint8 initcode[] = {
     0x93, 0x08, 0x10, 0x00,
+    0x13, 0x05, 0x00, 0x01,
     0x73, 0x00, 0x00, 0x00,
-    0x6f, 0x00, 0x00, 0x00};
-uint8 firstproc[] = {
-    0x93, 0x08, 0x20, 0x00,
-    0x73, 0x00, 0x00, 0x00,
-    0x6f, 0x00, 0x00, 0x00};
+    0x6f, 0x00, 0x00, 0x00,
+
+    0x69, 0x6e, 0x69, 0x74,
+    0x70, 0x72, 0x6f, 0x63,
+    0x00, 0x00, 0x00, 0x00};
 
 // 初始化第一个进程
 void userinit()
@@ -80,7 +87,7 @@ void userinit()
     p->trapframe->sp = PGSIZE;
 
     char *m = (char *)palloc();
-    memmove(m, zeroproc, sizeof(zeroproc));
+    memmove(m, initcode, sizeof(initcode));
 
     vmmap(p->pagetable, 0, (addr_t)m, PGSIZE, PTE_R | PTE_W | PTE_X | PTE_U);
     vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
@@ -90,25 +97,8 @@ void userinit()
     p->context.ra = (reg_t)usertrapret;
     p->context.sp = p->kernelstack;
 
-    p->status = RUNABLE;
+    p->size = PGSIZE;
 
-    p = procalloc();
-    p->context.ra = (reg_t)usertrapret;
-    p->context.sp = p->kernelstack;
-
-    p->trapframe->epc = 0;
-    p->trapframe->sp = PGSIZE;
-
-    m = (char *)palloc();
-    memmove(m, firstproc, sizeof(zeroproc));
-
-    vmmap(p->pagetable, 0, (addr_t)m, PGSIZE, PTE_R | PTE_W | PTE_X | PTE_U);
-    vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
-
-    vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
-
-    p->context.ra = (reg_t)usertrapret;
-    p->context.sp = p->kernelstack;
     p->status = RUNABLE;
 }
 
@@ -160,50 +150,4 @@ void sched()
         panic("proc is running");
     }
     swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
-}
-
-uint32 sys_fork(void)
-{
-    printf("syscall fork\n");
-    return SYS_fork;
-}
-
-uint32 sys_exec(void)
-{
-    printf("syscall exec\n");
-    return SYS_exec;
-}
-
-void initproc()
-{
-    struct pcb *p = procalloc();
-    struct Elf32_Ehdr elf;
-    struct Elf32_Phdr phdr;
-    struct dinode inode;
-    struct dirent dirent;
-    iread(0, &inode);
-    dread(&inode, "initproc.elf", &dirent);
-    iread(dirent.inum, &inode);
-    readi(&inode, (char *)&elf, 0, sizeof(struct Elf32_Ehdr));
-    assert(*(uint32 *)elf.e_ident == 0x464c457f);
-    for (int i = 0, off = elf.e_phoff; i < elf.e_phnum; i++, off += sizeof(struct Elf32_Phdr))
-    {
-        readi(&inode, (char *)&phdr, off, sizeof(struct Elf32_Phdr));
-        int size = phdr.p_filesz;
-        while (size > 0)
-        {
-            addr_t *pa = (addr_t *)palloc();
-            int cc = size > PGSIZE ? PGSIZE : size;
-            readi(&inode, (char *)pa, phdr.p_offset, cc);
-            size -= PGSIZE;
-            vmmap(p->pagetable, (addr_t)phdr.p_vaddr, (addr_t)pa, cc, PTE_R | PTE_W | PTE_X | PTE_U);
-        }
-    }
-    p->trapframe->epc = (reg_t)elf.e_entry;
-    p->trapframe->sp = PGSIZE;
-    vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
-    vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
-    p->context.ra = (reg_t)usertrapret;
-    p->context.sp = p->kernelstack;
-    p->status = RUNABLE;
 }

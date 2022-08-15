@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 09:14:36
+ * @LastEditTime: 2022-08-15 08:27:59
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -82,6 +82,8 @@ void kvminit();
 addr_t *pgtcreate();
 void vmmap(addr_t *pgt, addr_t va, addr_t pa, uint sz, uint mode);
 void mkstack(addr_t *pgt);
+void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa);
+void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max);
 
 // proc.c
 void procinit();
@@ -90,7 +92,6 @@ struct pcb *nowproc();
 void schedule();
 void yield();
 void sched();
-void initproc();
 
 // string.c
 void *memset(void *, int, uint);
@@ -127,4 +128,7 @@ struct buf *bufget(int bno);
 void fsinit();
 void iread(uint32 inum, struct dinode *inode);
 uint32 readi(struct dinode *inode, char *b, uint32 offset, uint32 size);
-void dread(struct dinode *inode, char *name, struct dirent *dirent);
+uint32 dread(struct dinode *inode, char *name);
+
+// exec.c
+void exec(char *path);

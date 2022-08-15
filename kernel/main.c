@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 19:48:01
+ * @LastEditTime: 2022-08-15 08:27:49
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -32,8 +32,6 @@ void main()
     bufinit();
 
     fsinit();
-
-    initproc();
 
     printf("----------------------\n");
     schedule();

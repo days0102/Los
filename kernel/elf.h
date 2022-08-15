@@ -2,13 +2,15 @@
  * @Author: Outsider
  * @Date: 2022-08-13 08:07:54
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 20:50:07
+ * @LastEditTime: 2022-08-15 14:46:05
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/elf.h
  */
 #include "types.h"
 
 #define EI_NIDENT (16)
+
+#define ELF_MAGIC 0x464c457f
 
 typedef unsigned short Elf32_Half;
 typedef unsigned int Elf32_Word;

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 13:40:19
+ * @LastEditTime: 2022-08-14 22:01:12
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -99,7 +99,7 @@ void mkstack(addr_t *pgt)
     for (int i = 0; i < NPROC; i++)
     {
         addr_t va = (addr_t)(KSPACE + PGSIZE + (i)*2 * PGSIZE);
-        addr_t pa = (addr_t)palloc(); //! 待处理
+        addr_t pa = (addr_t)palloc();
         // printf("%p %p\n",va,pa);
         vmmap(pgt, va, pa, PGSIZE, PTE_R | PTE_W);
     }
@@ -108,8 +108,7 @@ void mkstack(addr_t *pgt)
 // 初始化虚拟内存
 void kvminit()
 {
-    kpgt = (addr_t *)palloc();
-    memset(kpgt, 0, PGSIZE);
+    kpgt = (addr_t *)pgtcreate();
 
     // 映射 CLINT
     vmmap(kpgt, CLINT_BASE, CLINT_BASE, 0xc000, PTE_R | PTE_W);
@@ -155,5 +154,69 @@ addr_t *pgtcreate()
 
 void upgtinit(addr_t *pagtable)
 {
-    
+}
+
+void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa)
+{
+    pte_t *pte;
+
+    // PPN
+    addr_t start = ((va >> 12) << 12);
+    addr_t end = (((va + (size - 1)) >> 12) << 12);
+
+    addr_t pa;
+    while (1)
+    {
+        pte = acquriepte(pagetable, start);
+        if (*pte & PTE_V)
+        {
+            pa = PTE2PA(*pte);
+            if (freepa)
+                pfree((addr_t *)pa);
+            *pte &= ~PTE_V;
+            if (start == end)
+                break;
+            start += PGSIZE;
+        }
+    }
+}
+
+void pgtfree(addr_t *pagetable)
+{
+#define NPTEPG 1024
+    pte_t pte;
+    for (int i = 0; i < NPTEPG; i++)
+    {
+        pte = pagetable[i];
+        if ((pte & PTE_V) && (pte & (PTE_R | PTE_W | PTE_X)))
+            pfree((addr_t *)PTE2PA(pte));
+    }
+    pfree(pagetable);
+}
+
+void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max)
+{
+    pte_t *pte;
+    addr_t pa;
+    uint32 off = ((vaddr << 20) >> 20);
+    addr_t start = ((vaddr >> 12) << 12);
+    addr_t end = (((vaddr + (max - 1)) >> 12) << 12);
+    int cnt = 0;
+    while (1)
+    {
+        pte = acquriepte(pagetable, start);
+        if (*pte & PTE_V)
+        {
+            pa = PTE2PA(*pte);
+            int cc = max - cnt < PGSIZE - off ? max - cnt : PGSIZE - off;
+            memmove(buf + cnt, pa + off, cc);
+            cnt += cc;
+            off = (off + cc) % PGSIZE;
+            if (start == end || cnt >= max)
+                break;
+            start += PGSIZE;
+        }
+        else
+            error("unmap");
+    }
 }
