@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 22:01:12
+ * @LastEditTime: 2022-08-15 16:30:37
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -209,7 +209,7 @@ void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max)
         {
             pa = PTE2PA(*pte);
             int cc = max - cnt < PGSIZE - off ? max - cnt : PGSIZE - off;
-            memmove(buf + cnt, pa + off, cc);
+            memmove(buf + cnt, (void *)(pa + off), cc);
             cnt += cc;
             off = (off + cc) % PGSIZE;
             if (start == end || cnt >= max)

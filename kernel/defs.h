@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 08:27:59
+ * @LastEditTime: 2022-08-15 16:27:19
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -98,6 +98,7 @@ void *memset(void *, int, uint);
 void *memmove(void *dst, const void *src, size_t n);
 size_t strlen(const char *s);
 int strcmp(char *p, char *q);
+int strcpy(char *dst, char *src);
 
 void swtch(struct context *old, struct context *new);
 

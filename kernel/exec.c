@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-14 13:42:37
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 14:51:17
+ * @LastEditTime: 2022-08-15 16:33:55
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/exec.c
  */
@@ -43,6 +43,8 @@ void exec(char *path)
         }
         p->size += phdr.p_memsz;
     }
+    memset(p->name, 0, PCBNAME);
+    strcpy(p->name, path);
     p->trapframe->epc = (reg_t)elf.e_entry;
     p->trapframe->sp = PGSIZE;
     p->context.ra = (reg_t)usertrapret;

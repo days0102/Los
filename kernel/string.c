@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-19 16:25:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 19:35:31
+ * @LastEditTime: 2022-08-15 16:31:26
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/string.c
  */
@@ -71,4 +71,16 @@ int strcmp(const char *p, const char *q)
     while (*n == *m && *m && *n)
         ++n, ++m;
     return *n == *m ? 0 : (*n < *m ? -1 : 1);
+}
+
+// 不安全的 copy
+int strcpy(const char *dst, const char *src)
+{
+    char *s = (char *)src, *d = (char *)dst;
+    int cnt = 0;
+
+    while ((*d++ = *s++) != 0)
+        cnt++;
+
+    return cnt;
 }

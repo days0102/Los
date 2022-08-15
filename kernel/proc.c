@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 16:20:39
+ * @LastEditTime: 2022-08-15 16:28:57
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -98,6 +98,7 @@ void userinit()
     p->context.sp = p->kernelstack;
 
     p->size = PGSIZE;
+    strcpy(p->name, "initcode");
 
     p->status = RUNABLE;
 }
