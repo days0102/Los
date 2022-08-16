@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 16:30:37
+ * @LastEditTime: 2022-08-16 09:53:40
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -72,6 +72,7 @@ void vmmap(addr_t *pgt, addr_t va, addr_t pa, uint size, uint mode)
 
 void printpgt(addr_t *pgt)
 {
+    printf("pagetable : pa %p\n", pgt);
     for (int i = 0; i < 1024; i++)
     {
         pte_t pte = pgt[i];
@@ -84,7 +85,8 @@ void printpgt(addr_t *pgt)
                 pte_t pte2 = pgt2[j];
                 if (pte2 & PTE_V)
                 {
-                    printf(".. ..%d: pte %p pa %p\n", j, pte2, PTE2PA(pte2));
+                    addr_t va =(addr_t) (i << 22) + (j << 12);
+                    printf(".. ..%d: pte %p va %p pa %p\n", j, pte2, va, PTE2PA(pte2));
                 }
             }
         }
@@ -183,7 +185,6 @@ void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa)
 
 void pgtfree(addr_t *pagetable)
 {
-#define NPTEPG 1024
     pte_t pte;
     for (int i = 0; i < NPTEPG; i++)
     {

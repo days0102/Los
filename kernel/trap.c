@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 11:10:59
+ * @LastEditTime: 2022-08-16 10:41:26
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -79,6 +79,7 @@ void usertrapret()
     p->trapframe->kernel_tvec = (addr_t)trapvec;
     p->trapframe->kernel_sp = (addr_t)p->kernelstack;
 
+    // printpgt(p->pagetable);
     // printf("%p\n",p->kernelstack);
     userret((addr_t *)TRAPFRAME, satp);
 }

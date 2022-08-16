@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 16:35:56
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:45:47
+ * @LastEditTime: 2022-08-15 18:42:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/vm.h
  */
@@ -39,3 +39,5 @@
 
 #define VPN(level, va) (((addr_t)va >> (12 + (level)*10)) & VPN_MASK)
 #define PPN(level, pa) ((pa >> (12 + (level)*10)) & VPN_MASK)
+
+#define NPTEPG 1024

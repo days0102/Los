@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-14 13:42:37
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 16:33:55
+ * @LastEditTime: 2022-08-16 14:48:13
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/exec.c
  */
@@ -27,7 +27,10 @@ void exec(char *path)
         return;
     readi(&inode, (char *)&elf, 0, sizeof(struct Elf32_Ehdr));
     assert(*(uint32 *)elf.e_ident == ELF_MAGIC);
+    // printpgt(p->pagetable);
     vmunmap(p->pagetable, 0, p->size, 1);
+    // printpgt(p->pagetable);
+
     p->size = 0;
     for (int i = 0, off = elf.e_phoff; i < elf.e_phnum; i++, off += sizeof(struct Elf32_Phdr))
     {
@@ -49,5 +52,5 @@ void exec(char *path)
     p->trapframe->sp = PGSIZE;
     p->context.ra = (reg_t)usertrapret;
     p->context.sp = p->kernelstack;
-    p->status = RUNABLE;
+    // printpgt(p->pagetable);
 }

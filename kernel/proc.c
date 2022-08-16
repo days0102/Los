@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 16:28:57
+ * @LastEditTime: 2022-08-16 12:49:50
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -58,10 +58,12 @@ struct pcb *procalloc()
         {
             p->trapframe = (struct trapframe *)palloc(sizeof(struct trapframe));
             p->pid = pidalloc();
-            p->status = USED;
 
             p->pagetable = pgtcreate();
 
+            p->context.ra = (reg_t)usertrapret;
+            p->context.sp = p->kernelstack;
+            p->status = USED;
             return p;
         }
     }
@@ -77,6 +79,16 @@ uint8 initcode[] = {
     0x69, 0x6e, 0x69, 0x74,
     0x70, 0x72, 0x6f, 0x63,
     0x00, 0x00, 0x00, 0x00};
+// uint8 initcode[] = {
+//     0x93, 0x08, 0x10, 0x00,
+//     0x17, 0x05, 0x00, 0x00,
+//     0x13, 0x05, 0x05, 0x00,
+//     0x73, 0x00, 0x00, 0x00,
+//     0x6f, 0x00, 0x00, 0x00,
+
+//     0x69, 0x6e, 0x69, 0x74,
+//     0x70, 0x72, 0x6f, 0x63,
+//     0x00, 0x00, 0x00, 0x00};
 
 // 初始化第一个进程
 void userinit()
@@ -90,12 +102,12 @@ void userinit()
     memmove(m, initcode, sizeof(initcode));
 
     vmmap(p->pagetable, 0, (addr_t)m, PGSIZE, PTE_R | PTE_W | PTE_X | PTE_U);
-    vmmap(p->pagetable, (uint32)usertrap, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
+    vmmap(p->pagetable, (uint32)uservec, (uint32)uservec, PGSIZE, PTE_R | PTE_X);
 
     vmmap(p->pagetable, (addr_t)TRAPFRAME, (addr_t)p->trapframe, PGSIZE, PTE_R | PTE_W);
 
-    p->context.ra = (reg_t)usertrapret;
-    p->context.sp = p->kernelstack;
+    // p->context.ra = (reg_t)usertrapret;
+    // p->context.sp = p->kernelstack;
 
     p->size = PGSIZE;
     strcpy(p->name, "initcode");

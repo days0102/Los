@@ -2,7 +2,6 @@
 
 int main()
 {
-    fork();
     while (1)
         ;
 }

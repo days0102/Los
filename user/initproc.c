@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-03 16:37:00
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 11:32:38
+ * @LastEditTime: 2022-08-16 09:13:31
  * @Description: In User Settings Edit
  * @FilePath: /los/user/initproc.c
  */
@@ -10,9 +10,13 @@
 
 int main()
 {
-    exec("sh");
-    
+    int pid = fork();
+    if (pid == 0)
+        exec("sh");
+    else
+        while (1)
+            ;
+
     while (1)
         ;
-
 }

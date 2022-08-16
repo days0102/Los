@@ -56,6 +56,7 @@ SRCS_C = \
 	kernel/buf.c \
 	kernel/fs.c \
 	kernel/exec.c \
+	kernel/fork.c \
 
 SRCS_USER = \
 	user/initproc.c \
@@ -84,7 +85,7 @@ user:$(UPROC)
 all:kernel.elf $(UPROC) fs.img
 	@echo "	Make OK! "
 
-run:kernel.elf
+run:kernel.elf $(UPROC) fs.img
 	@echo "Press Ctrl-A and then X to exit QEMU"
 	${QEMU} ${QFLAGS} -kernel kernel.elf
 	@# @rm -rf *.o *.bin */*.o */*.d
@@ -106,7 +107,7 @@ kernel.elf: ${OBJS}
 	${CC} ${CFLAGS} -c -o $@ $<
 
 initcode : user/initcode.S
-	$(CC) $(CFLAGS) -c user/initcode.S -o user/initcode.o
+	$(CC) $(CFLAGS) -N -e main -Ttext 0 -z max-page-size=4096 -c user/initcode.S -o user/initcode.o
 	$(OBJCOPY) -S -O binary user/initcode.o user/initcode.bin
 	$(OBJDUMP) -S user/initcode.o > user/initcode.asm
 
