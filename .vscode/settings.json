@@ -19,6 +19,8 @@
         "type_traits": "c",
         "mmio.h": "c",
         "buf.h": "c",
-        "fs.h": "c"
+        "fs.h": "c",
+        "file.h": "c",
+        "syscall.h": "c"
     }
 }

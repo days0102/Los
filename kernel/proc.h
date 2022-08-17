@@ -2,14 +2,15 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 20:42:25
+ * @LastEditTime: 2022-08-17 13:42:51
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
 #include "types.h"
 #include "swtch.h"
+#include "file.h"
 
-#define NPROC 4
+#define NPROC 16
 
 enum procstatus
 {
@@ -72,6 +73,7 @@ struct pcb
 	addr_t *pagetable;
 	addr_t kernelstack;
 	struct pcb *parent;
+	struct file* file[NFILE];
 	uint32 size;
 	char name[PCBNAME];
 };

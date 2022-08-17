@@ -2,6 +2,9 @@
 #include "fs.h"
 #include "defs.h"
 
+#define NINODE 200
+struct inode itable[NINODE];
+
 #define IBLOCK(inum, istart) ((inum) / IPB + istart)
 struct superblock sb;
 
@@ -29,6 +32,26 @@ void iwrite(uint32 inum, struct dinode *inode)
     uint32 off = inum - (inum / IPB) * IPB;
     memmove(b->data + off * sb.dinodesize, inode, sb.dinodesize);
     b->ref--;
+}
+
+struct inode *r_inode(uint32 inum)
+{
+    struct inode *inode;
+    struct dinode dinode;
+    inode = &itable[inum];
+    if (inode->vaild == 0)
+    {
+        iread(inum, &dinode);
+        inode->vaild = 1;
+        inode->ref = 0;
+        inode->type = dinode.type;
+        inode->mod = dinode.mod;
+        inode->own = dinode.own;
+        inode->size = dinode.size;
+        memmove(inode->addr, dinode.addr, sizeof(inode->addr));
+    }
+    inode->ref++;
+    return inode;
 }
 
 uint32 readi(struct dinode *inode, char *buffer, uint32 offset, uint32 size)

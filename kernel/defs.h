@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-16 09:20:36
+ * @LastEditTime: 2022-08-17 19:56:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -118,6 +118,10 @@ void timerinit();
 
 // syscall.c
 void syscall();
+uint32 sysreg(int n);
+void argint(int n, int *r);
+void argaddr(int n, addr_t *r);
+void argstr(int n, char *b, int cc);
 
 // mmio.c
 void mmioinit();
@@ -138,3 +142,6 @@ uint32 dread(struct dinode *inode, char *name);
 void exec(char *path);
 // fork.c
 int fork();
+
+// file.c
+struct file *filealloc();

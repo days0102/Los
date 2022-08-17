@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-02 16:44:07
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-16 09:08:09
+ * @LastEditTime: 2022-08-17 16:42:03
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.c
  */
@@ -11,6 +11,7 @@
 #include "proc.h"
 #include "defs.h"
 #include "syscall.h"
+#include "fs.h"
 
 uint32 sysreg(int n)
 {
@@ -57,7 +58,6 @@ void argstr(int n, char *b, int cc)
 
 uint32 sys_exec(void)
 {
-#define MAXPATH 64
     char path[MAXPATH];
     memset(path, 0, MAXPATH);
     argstr(0, path, MAXPATH);
@@ -72,9 +72,11 @@ uint32 sys_fork(void)
     return r;
 }
 
+extern uint32 sys_open();
 static uint32 (*syscalls[])(void) = {
     [SYS_exec] sys_exec,
     [SYS_fork] sys_fork,
+    [SYS_open] sys_open,
 };
 
 void syscall()

@@ -57,6 +57,8 @@ SRCS_C = \
 	kernel/fs.c \
 	kernel/exec.c \
 	kernel/fork.c \
+	kernel/file.c \
+	kernel/sysfile.c \
 
 SRCS_USER = \
 	user/initproc.c \
