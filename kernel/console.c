@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-19 10:40:38
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 15:14:06
+ * @LastEditTime: 2022-08-20 07:50:11
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/console.c
  */
@@ -51,25 +51,45 @@ void consolewrite(char *vsrc, int size)
 void consoleread(char *vdst, int size)
 {
     while (console.r == console.w)
-        ;
+        sleep(&console.r);
+    int cc = (console.w - console.r) > size ? size : (console.w - console.r);
+    copyout(nowproc()->pagetable, (addr_t)vdst, console.conbuf + console.r, cc);
+    console.r += cc;
 }
 
+int consolechar;
 void consoleintr(char c)
 {
     switch (c)
     {
     case Ctrl_x('H'):
     case '\x7f':
-        console.e--;
-        consoleputc(BACKSPACE);
+        if (console.e != console.w)
+        {
+            console.e--;
+            consoleputc(BACKSPACE);
+        }
         break;
-
     default:
         if (c != 0)
         {
             c = ((c == '\r') ? '\n' : c);
-
+            /** 在Linux下，方向键由三字符组成
+             * '\033','[','A'   -  UP
+             * '\033','[','B'   -  DOWN
+             * '\033','[','C'   -  RIGHT
+             * '\033','[','D'   -  LEFT
+             **/
             consoleputc(c);
+
+            console.conbuf[console.e++ % MAXCONSOLEBUF] = c;
+            if (c == '\n' || console.e == console.r + MAXCONSOLEBUF)
+            {
+                // wake up consoleread() if a whole line (or end-of-file)
+                // has arrived.
+                console.w = console.e;
+                wakeup(&console.r);
+            }
         }
         break;
     }

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-17 11:04:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 11:20:59
+ * @LastEditTime: 2022-08-19 17:18:55
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/sysfile.c
  */
@@ -117,5 +117,23 @@ int sys_write()
         return -1;
 
     int cc = filewrite(f, addr, size);
+    return cc;
+}
+
+int sys_read()
+{
+    int fd;
+    addr_t addr;
+    int size;
+    argint(0, &fd);
+    argaddr(1, &addr);
+    argint(2, &size);
+
+    struct pcb *p = nowproc();
+    struct file *f;
+    if ((f = p->file[fd]) == 0)
+        return -1;
+
+    int cc = fileread(f, addr, size);
     return cc;
 }

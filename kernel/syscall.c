@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-02 16:44:07
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 12:11:40
+ * @LastEditTime: 2022-08-19 17:18:12
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.c
  */
@@ -76,6 +76,7 @@ extern uint32 sys_open();
 extern uint32 sys_mknod();
 extern uint32 sys_dup();
 extern uint32 sys_write();
+extern uint32 sys_read();
 static uint32 (*syscalls[])(void) = {
     [SYS_exec] sys_exec,
     [SYS_fork] sys_fork,
@@ -83,6 +84,7 @@ static uint32 (*syscalls[])(void) = {
     [SYS_mknod] sys_mknod,
     [SYS_dup] sys_dup,
     [SYS_write] sys_write,
+    [SYS_read] sys_read,
 };
 
 void syscall()

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-16 09:53:40
+ * @LastEditTime: 2022-08-20 07:44:24
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -85,7 +85,7 @@ void printpgt(addr_t *pgt)
                 pte_t pte2 = pgt2[j];
                 if (pte2 & PTE_V)
                 {
-                    addr_t va =(addr_t) (i << 22) + (j << 12);
+                    addr_t va = (addr_t)(i << 22) + (j << 12);
                     printf(".. ..%d: pte %p va %p pa %p\n", j, pte2, va, PTE2PA(pte2));
                 }
             }
@@ -211,6 +211,33 @@ void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max)
             pa = PTE2PA(*pte);
             int cc = max - cnt < PGSIZE - off ? max - cnt : PGSIZE - off;
             memmove(buf + cnt, (void *)(pa + off), cc);
+            cnt += cc;
+            off = (off + cc) % PGSIZE;
+            if (start == end || cnt >= max)
+                break;
+            start += PGSIZE;
+        }
+        else
+            error("unmap");
+    }
+}
+
+void copyout(addr_t *pagetable, addr_t vaddr, char *buf, int max)
+{
+    pte_t *pte;
+    addr_t pa;
+    uint32 off = ((vaddr << 20) >> 20);
+    addr_t start = ((vaddr >> 12) << 12);
+    addr_t end = (((vaddr + (max - 1)) >> 12) << 12);
+    int cnt = 0;
+    while (1)
+    {
+        pte = acquriepte(pagetable, start);
+        if (*pte & PTE_V)
+        {
+            pa = PTE2PA(*pte);
+            int cc = max - cnt < PGSIZE - off ? max - cnt : PGSIZE - off;
+            memmove((void *)(pa + off), buf + cnt, cc);
             cnt += cc;
             off = (off + cc) % PGSIZE;
             if (start == end || cnt >= max)

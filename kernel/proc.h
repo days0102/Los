@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-18 11:12:48
+ * @LastEditTime: 2022-08-19 20:52:13
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
@@ -75,6 +75,7 @@ struct pcb
 	struct pcb *parent;
 	struct file *file[NFILE];
 	uint32 size;
+	void *chan;
 	struct inode *cwd;
 	char name[PCBNAME];
 };

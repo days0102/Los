@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-18 12:02:43
+ * @LastEditTime: 2022-08-19 20:57:45
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -165,4 +165,30 @@ void sched()
         panic("proc is running");
     }
     swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
+}
+
+void sleep(void *chan)
+{
+    struct pcb *p = nowproc();
+    if (p->status != RUNNING)
+        panic("sleep : status");
+    p->chan = chan;
+    p->status = SLEEPING;
+    sched();
+
+    p->chan = 0;
+    p->status = RUNABLE;
+}
+
+void wakeup(void *chan)
+{
+    struct pcb *p = nowproc();
+
+    for (p = proc; p < &proc[NPROC]; p++)
+    {
+        if (p->status == SLEEPING &&p->chan == chan)
+        {
+            p->status = RUNABLE;
+        }
+    }
 }

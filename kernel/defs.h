@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 14:36:42
+ * @LastEditTime: 2022-08-20 07:45:26
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -85,6 +85,7 @@ void mkstack(addr_t *pgt);
 void printpgt(addr_t *pgt);
 void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa);
 void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max);
+void copyout(addr_t *pagetable, addr_t vaddr, char *buf, int max);
 pte_t *acquriepte(addr_t *pgt, addr_t va);
 
 // proc.c
@@ -95,6 +96,8 @@ struct pcb *procalloc();
 void schedule();
 void yield();
 void sched();
+void sleep(void *chan);
+void wakeup(void *chan);
 
 // string.c
 void *memset(void *, int, uint);
@@ -151,6 +154,7 @@ int fork();
 // file.c
 struct file *filealloc();
 int filewrite(struct file *file, addr_t addr, int size);
+int fileread(struct file *file, addr_t addr, int size);
 
 // console.c
 void consolewrite(char *vsrc, int size);
