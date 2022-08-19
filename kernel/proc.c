@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-16 12:49:50
+ * @LastEditTime: 2022-08-18 12:02:43
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -111,6 +111,8 @@ void userinit()
 
     p->size = PGSIZE;
     strcpy(p->name, "initcode");
+
+    p->cwd = find_inode(-1, "/");
 
     p->status = RUNABLE;
 }

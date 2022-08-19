@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-06-09 18:34:26
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-14 14:14:14
+ * @LastEditTime: 2022-08-18 20:12:17
  * @Description: In User Settings Edit
  * @FilePath: /los/losfs/mkfs.c
  */
@@ -85,6 +85,8 @@ struct dinode
     uint8_t type; // 类型，文件 - 目录
     uint8_t own;  // 所有者
     uint8_t mod;  // 权限
+    uint8_t major;
+    uint8_t minor;
     uint32_t size;
     uint32_t addr[NINDEX]; // 一级索引
 };

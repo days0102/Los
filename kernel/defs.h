@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-17 19:56:39
+ * @LastEditTime: 2022-08-19 07:52:36
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -134,9 +134,14 @@ struct buf *bufget(int bno);
 
 // fs.c
 void fsinit();
+int ialloc(uint8 type);
 void iread(uint32 inum, struct dinode *inode);
 uint32 readi(struct dinode *inode, char *b, uint32 offset, uint32 size);
 uint32 dread(struct dinode *inode, char *name);
+struct inode *rinum_inode(uint32 inum);
+void winum_inode(uint32 inum);
+int add_dirent(struct inode *inode, char *name, uint32 dinum);
+struct inode *find_inode(uint32 inum, char *path);
 
 // exec.c
 void exec(char *path);

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-15 18:29:54
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-16 12:19:04
+ * @LastEditTime: 2022-08-18 12:14:54
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/fork.c
  */
@@ -40,6 +40,7 @@ int fork()
     np->trapframe->a0 = 0; // 子进程返回 0
 
     np->parent = p;
+    np->cwd = p->cwd;
     // np->trapframe->kernel_sp = p->kernelstack;
     vmmap(np->pagetable, (uint32)uservec, (uint32)uservec, PGSIZE, PTE_R | PTE_X);
 

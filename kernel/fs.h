@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-13 08:39:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-17 14:13:46
+ * @LastEditTime: 2022-08-18 21:59:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/fs.h
  */
@@ -15,6 +15,7 @@
 #define I_TYPE_NULL 0
 #define I_TYPE_FILE 1
 #define I_TYPE_DIR 2
+#define I_TYPE_DEVICE 3
 
 #define MAXPATH 64
 
@@ -44,6 +45,8 @@ struct dinode
     uint8 type; // 类型，文件 - 目录
     uint8 own;  // 所有者
     uint8 mod;  // 权限
+    uint8 major;
+    uint8 minor;
     uint32 size;
 #define NDIRET 11
 #define NINDIRET 1
@@ -66,9 +69,12 @@ struct inode
     uint8 type; // 类型，文件 - 目录
     uint8 own;  // 所有者
     uint8 mod;  // 权限
+    uint8 major;
+    uint8 minor;
     uint32 size;
 #define NDIRET 11
 #define NINDIRET 1
 #define NINDEX (NDIRET + NINDIRET)
     uint32 addr[NINDEX]; // 索引
 };
+#define MAXFILE (NDIRET * BLOCKSIZE + NINDIRET * (BLOCKSIZE / 4) * BLOCKSIZE)

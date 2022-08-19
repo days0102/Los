@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-10 17:35:51
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 13:58:29
+ * @LastEditTime: 2022-08-18 21:32:23
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/buf.c
  */
@@ -64,6 +64,7 @@ struct buf *bufget(int bno)
             bufwrite(b); //# 不一定要写(如果数据没修改)
         b->bno = bno;
         bufread(b);
+        b->vaild = 1;
         b->ref = 1;
         return b;
     }

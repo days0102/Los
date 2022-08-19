@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-15 16:27:50
+ * @LastEditTime: 2022-08-18 12:01:05
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -25,13 +25,13 @@ void main()
 
     procinit();
 
-    userinit();
-
     mmioinit();
 
     bufinit();
 
     fsinit();
+    
+    userinit();
 
     printf("----------------------\n");
     schedule();

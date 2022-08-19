@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-17 11:04:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-17 20:00:24
+ * @LastEditTime: 2022-08-19 07:53:31
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/sysfile.c
  */
@@ -27,6 +27,22 @@ int fdalloc(struct file *file)
     return -1;
 }
 
+struct inode *create(char *name, int type, int major, int minor)
+{
+    struct inode *inode = find_inode(-1, name);
+    if (inode->type != I_TYPE_DIR)
+        return 0;
+    uint32 inum = ialloc(type);
+    if (inum == (uint32)-1)
+        return 0;
+    struct inode *ip = rinum_inode(inum);
+    ip->major = major;
+    ip->minor = minor;
+    add_dirent(inode, name, inum);
+    winum_inode(inum);
+    return ip;
+}
+
 // user open(path,mode)
 int sys_open()
 {
@@ -36,11 +52,40 @@ int sys_open()
     argstr(0, name, MAXPATH);
     argint(1, &mode);
 
-    struct inode inode;
+    struct inode *inode = find_inode(-1, name);
+    if (inode == 0 || inode->type == I_TYPE_DIR || inode->type == I_TYPE_NULL)
+        return -1;
 
-    struct file *f = filealloc();
-
-
+    struct file *f;
+    int fd;
+    if ((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0)
+        return -1;
+    if (inode->type == I_TYPE_DEVICE)
+    {
+        f->type = FT_DEVICE;
+    }
+    else
+    {
+        f->type = FT_INODE;
+        f->offset = 0;
+    }
+    f->fd = fd;
+    f->inode = inode;
+    f->ref = 1;
     printf("%s %d\n", name, mode);
-    return -1;
+    return fd;
+}
+
+int sys_mknod()
+{
+    char path[MAXPATH];
+    int major, minor;
+    argstr(0, path, MAXPATH);
+    argint(1, &major);
+    argint(2, &minor);
+
+    struct inode *inode = create(path, I_TYPE_DEVICE, major, minor);
+    if (inode == 0)
+        return -1;
+    return 0;
 }

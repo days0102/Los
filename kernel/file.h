@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-17 10:12:49
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-17 16:40:06
+ * @LastEditTime: 2022-08-18 16:52:52
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/file.h
  */
@@ -11,6 +11,12 @@
 
 #ifndef FILE
 #define FILE
+
+#define O_RDONLY 0x000
+#define O_WRONLY 0x001
+#define O_RDWR 0x002
+#define O_CREAT 0x100
+#define O_TRUNC 0x1000
 
 #define NFILE 16
 

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-02 16:44:07
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-17 16:42:03
+ * @LastEditTime: 2022-08-18 18:41:19
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.c
  */
@@ -73,10 +73,12 @@ uint32 sys_fork(void)
 }
 
 extern uint32 sys_open();
+extern uint32 sys_mknod();
 static uint32 (*syscalls[])(void) = {
     [SYS_exec] sys_exec,
     [SYS_fork] sys_fork,
     [SYS_open] sys_open,
+    [SYS_mknod] sys_mknod,
 };
 
 void syscall()
@@ -86,6 +88,6 @@ void syscall()
     p->trapframe->epc += 4;
 
     uint32 sysnum = p->trapframe->a7;
-    printf("syscall : %d\n", sysnum);
     p->trapframe->a0 = syscalls[sysnum]();
+    printf("syscall : %d return %d\n", sysnum, p->trapframe->a0);
 }

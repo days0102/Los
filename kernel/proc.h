@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-17 13:42:51
+ * @LastEditTime: 2022-08-18 11:12:48
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
@@ -73,8 +73,9 @@ struct pcb
 	addr_t *pagetable;
 	addr_t kernelstack;
 	struct pcb *parent;
-	struct file* file[NFILE];
+	struct file *file[NFILE];
 	uint32 size;
+	struct inode *cwd;
 	char name[PCBNAME];
 };
 
