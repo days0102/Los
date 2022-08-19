@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-16 10:41:26
+ * @LastEditTime: 2022-08-19 14:38:53
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -23,7 +23,7 @@ void externinterrupt()
     switch (irq)
     {
     case UART_IRQ: // uart 中断(键盘输入)
-        printf("recived : %c\n", uartintr());
+        consoleintr(uartintr());
         break;
     case VIRTIO_IRQ:
         // printf("virtio interrupt\n");
@@ -135,60 +135,60 @@ void trapvec()
     }
     else
     {
-        printf("Exception : ");
+        // printf("Exception : ");
         switch (code)
         {
         case 0:
-            printf("Instruction address misaligned\n");
+            printf("Exception : Instruction address misaligned\n");
             break;
         case 1:
-            printf("Instruction access fault\n");
+            printf("Exception : Instruction access fault\n");
             break;
         case 2:
-            printf("Illegal instruction\n");
+            printf("Exception : Illegal instruction\n");
             break;
         case 3:
-            printf("Breakpoint\n");
+            printf("Exception : Breakpoint\n");
             break;
         case 4:
-            printf("Load address misaligned\n");
+            printf("Exception : Load address misaligned\n");
             break;
         case 5:
-            printf("Load access fault\n");
+            printf("Exception : Load access fault\n");
             // ex : int a = *(int *)0x00000000;
             printf("stval va: %p\n", r_stval());
             break;
         case 6:
-            printf("Store/AMO address misaligned\n");
+            printf("Exception : Store/AMO address misaligned\n");
             break;
         case 7:
-            printf("Store/AMO access fault\n");
+            printf("Exception : Store/AMO access fault\n");
             // ex : *(int *)0x00000000 = 100;
             printf("stval va: %p\n", r_stval());
             break;
         case 8: // 来自 U-mode 的系统调用
-            printf("Environment call from U-mode\n");
+            // printf("Environment call from U-mode\n");
             syscall();
             usertrapret();
             break;
         case 9: // 来自 S-mode 的系统调用
-            printf("Environment call from S-mode\n");
+            printf("Exception : Environment call from S-mode\n");
             first ? usertrapret() : startproc();
             break;
         case 12:
-            printf("Instruction page fault\n");
+            printf("Exception : Instruction page fault\n");
             printf("stval va: %p\n", r_stval());
             break;
         case 13:
-            printf("Load page fault\n");
+            printf("Exception : Load page fault\n");
             printf("stval va: %p\n", r_stval());
             break;
         case 15:
-            printf("Store/AMO page fault\n");
+            printf("Exception : Store/AMO page fault\n");
             printf("stval va: %p\n", r_stval());
             break;
         default:
-            printf("Other\n");
+            printf("Exception : Other\n");
             break;
         }
         panic("Trap Exception");

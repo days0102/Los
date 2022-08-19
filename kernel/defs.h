@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 07:52:36
+ * @LastEditTime: 2022-08-19 14:36:42
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -150,3 +150,9 @@ int fork();
 
 // file.c
 struct file *filealloc();
+int filewrite(struct file *file, addr_t addr, int size);
+
+// console.c
+void consolewrite(char *vsrc, int size);
+void consoleread(char *vdst, int size);
+void consoleintr(char c);

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-04 21:45:34
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-18 18:43:15
+ * @LastEditTime: 2022-08-19 11:50:40
  * @Description: In User Settings Edit
  * @FilePath: /los/user/user.h
  */
@@ -15,8 +15,13 @@
 #define O_CREAT 0x100
 #define O_TRUNC 0x1000
 
+// user/printf.c
+int printf(const char *fmt, ...);
+
 // syscall
 int fork();
 int exec(char *path);
-int open(char* path,int mode);
-int mknod(char* path,int major,int minor);
+int open(char *path, int mode);
+int mknod(char *path, int major, int minor);
+int dup(int fd);
+int write(int fd, char *src, int size);

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-15 11:27:46
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-17 14:29:11
+ * @LastEditTime: 2022-08-19 17:11:09
  * @Description: In User Settings Edit
  * @FilePath: /los/user/sh.c
  */
@@ -10,7 +10,7 @@
 
 int main()
 {
-    open("Makefile", 0);
+    printf("start run sh\n");
     while (1)
         ;
 }

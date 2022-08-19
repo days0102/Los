@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 18:04:42
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:45:26
+ * @LastEditTime: 2022-08-19 14:39:30
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/uart.c
  */
@@ -52,13 +52,9 @@ void uartputs(char *s)
 int uartgetc()
 {
     if (uart_read(UART_LSR) & (1 << 0))
-    {
         return uart_read(UART_RHR);
-    }
     else
-    {
         return -1;
-    }
 }
 
 // 键盘输入中断

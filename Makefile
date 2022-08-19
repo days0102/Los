@@ -59,6 +59,7 @@ SRCS_C = \
 	kernel/fork.c \
 	kernel/file.c \
 	kernel/sysfile.c \
+	kernel/console.c \
 
 SRCS_USER = \
 	user/initproc.c \
@@ -68,7 +69,7 @@ OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
 
 # 用户进程的依赖文件
-ULIB = user/usyscall.o
+ULIB = user/usyscall.o user/printf.o
 UPROC= $(SRCS_USER:%.c=%.elf)
 
 # LDFLAGS = -z max-page-size=4096

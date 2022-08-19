@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-05 08:47:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-18 18:42:39
+ * @LastEditTime: 2022-08-19 11:11:58
  * @Description: In User Settings Edit
  * @FilePath: /los/user/usyscall.c
  */
@@ -41,6 +41,26 @@ int open(char* path,int mode)
 int mknod(char* path,int major,int minor)
 {
     asm volatile("li a7,4");
+    asm volatile("ecall");
+    uint32 x;
+    asm volatile("mv %0,a0"
+                 : "=r"(x));
+    return x;
+}
+
+int dup(int fd)
+{
+    asm volatile("li a7,5");
+    asm volatile("ecall");
+    uint32 x;
+    asm volatile("mv %0,a0"
+                 : "=r"(x));
+    return x;
+}
+
+int write(int fd,char* src,int size)
+{
+    asm volatile("li a7,6");
     asm volatile("ecall");
     uint32 x;
     asm volatile("mv %0,a0"

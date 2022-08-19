@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-17 11:04:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 07:53:31
+ * @LastEditTime: 2022-08-19 11:20:59
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/sysfile.c
  */
@@ -88,4 +88,34 @@ int sys_mknod()
     if (inode == 0)
         return -1;
     return 0;
+}
+
+int sys_dup()
+{
+    int fd;
+    argint(0, &fd);
+    struct pcb *p = nowproc();
+    struct file *f;
+    if ((f = p->file[fd]) == 0)
+        return -1;
+    fd = fdalloc(f);
+    return fd;
+}
+
+int sys_write()
+{
+    int fd;
+    addr_t addr;
+    int size;
+    argint(0, &fd);
+    argaddr(1, &addr);
+    argint(2, &size);
+
+    struct pcb *p = nowproc();
+    struct file *f;
+    if ((f = p->file[fd]) == 0)
+        return -1;
+
+    int cc = filewrite(f, addr, size);
+    return cc;
 }
