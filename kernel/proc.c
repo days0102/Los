@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 20:57:45
+ * @LastEditTime: 2022-08-20 08:16:56
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -177,7 +177,7 @@ void sleep(void *chan)
     sched();
 
     p->chan = 0;
-    p->status = RUNABLE;
+    p->status = RUNNING;
 }
 
 void wakeup(void *chan)

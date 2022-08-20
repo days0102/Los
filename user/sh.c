@@ -2,18 +2,34 @@
  * @Author: Outsider
  * @Date: 2022-08-15 11:27:46
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-20 07:51:06
+ * @LastEditTime: 2022-08-20 08:19:08
  * @Description: In User Settings Edit
  * @FilePath: /los/user/sh.c
  */
 #include "user.h"
 
+#define MAXCMD 16
+
+int getcmd(char *buf, int maxx)
+{
+    char *b = (char *)buf;
+    printf("los:$ ");
+    while (read(0, b, 1))
+    {
+        if (*b == '\n' || (b - buf) >= maxx)
+            break;
+        b++;
+    }
+    *(++b) = 0;
+    return (b - buf);
+}
+
 int main()
 {
     printf("start run sh\n");
-    char buf[23];
-    read(0, buf, 5);
-    printf("%s\n", buf);
-    while (1)
-        ;
+    char cmd[16];
+    while (getcmd(cmd, MAXCMD))
+    {
+        printf("cmd :%s", cmd);
+    }
 }
