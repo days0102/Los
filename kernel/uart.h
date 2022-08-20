@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 15:25:13
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:45:33
+ * @LastEditTime: 2022-08-20 14:01:08
  * @Description: RISC-V vir uart通信
  * @FilePath: /los/kernel/uart.h
  */

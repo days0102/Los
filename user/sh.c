@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-15 11:27:46
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-20 08:19:08
+ * @LastEditTime: 2022-08-20 12:50:38
  * @Description: In User Settings Edit
  * @FilePath: /los/user/sh.c
  */
@@ -24,7 +24,7 @@ int getcmd(char *buf, int maxx)
     return (b - buf);
 }
 
-int main()
+void main()
 {
     printf("start run sh\n");
     char cmd[16];
