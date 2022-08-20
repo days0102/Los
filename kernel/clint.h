@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-23 07:49:10
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:40:30
+ * @LastEditTime: 2022-08-20 08:21:17
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/clint.h
  */
@@ -19,4 +19,4 @@
 #define CLINT_MTIME (CLINT_BASE + 0xbff8)
 
 // 中断间隔
-#define CLINT_INTERVAL 10000000
+#define CLINT_INTERVAL 1000000
