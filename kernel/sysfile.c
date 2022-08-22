@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-17 11:04:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 17:18:55
+ * @LastEditTime: 2022-08-22 09:44:16
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/sysfile.c
  */
@@ -72,7 +72,7 @@ int sys_open()
     f->fd = fd;
     f->inode = inode;
     f->ref = 1;
-    printf("%s %d\n", name, mode);
+    // printf("%s %d\n", name, mode);
     return fd;
 }
 

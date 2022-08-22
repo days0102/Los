@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-19 10:40:38
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-20 07:50:11
+ * @LastEditTime: 2022-08-21 15:51:49
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/console.c
  */
@@ -11,7 +11,7 @@
 #include "uart.h"
 #include "proc.h"
 
-#define MAXCONSOLEBUF 128
+#define MAXCONSOLEBUF 256
 
 #define Ctrl_x(x) ((x) - '@') // Control-x
 

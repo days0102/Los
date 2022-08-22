@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-03 16:37:00
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 17:10:52
+ * @LastEditTime: 2022-08-22 09:43:10
  * @Description: In User Settings Edit
  * @FilePath: /los/user/initproc.c
  */
@@ -19,6 +19,7 @@ int main()
         dup(fd);
         dup(fd);
         exec("sh");
+        printf("exec sh fail!\n");
     }
     else
         while (1)

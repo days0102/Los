@@ -14,7 +14,7 @@ CFLAGS += -Wall# 显示警告
 # CFLAGS +=  -Wno-main # 关闭 mian 函数警告
 CFLAGS += -ffreestanding#按独立环境编译;他隐含声明了`-fno-builtin'选项,而且对 main 函数没有特别要求.
 
-GCCFLAGS = -g
+GCCFLAGS = -g -MD
 # debug
 CDEBUG = 0
 ifeq ($(CDEBUG),1)
@@ -92,6 +92,7 @@ all:kernel.elf $(UPROC) fs.img
 	@echo "	Make OK! "
 
 run:kernel.elf $(UPROC) fs.img
+	@echo "-------------------------------------------------------"
 	@echo "Press Ctrl-A and then X to exit QEMU"
 	${QEMU} ${QFLAGS} -kernel kernel.elf
 	@# @rm -rf *.o *.bin */*.o */*.d
@@ -102,7 +103,7 @@ kernel.elf: ${OBJS}
 	@${OBJCOPY} -O binary kernel.elf kernel.bin
 	@${OBJDUMP} -S kernel.elf > kernel.asm
 
--include kernel/*.d user/*.d # 包含依赖文件
+-include kernel/*.d user/*.d initos/*.d# 包含依赖文件
 # $@  表示目标文件
 # $^  表示所有的依赖文件
 # $<  表示第一个依赖文件
@@ -127,7 +128,7 @@ fs.img : losfs/mkfs.elf $(UPROC)
 	@# dd if=[/dev/sda] of=fs.img bs=8M count=1
 
 debug: CFLAGS += -D DEBUG
-debug: kernel.elf
+debug: kernel.elf $(UPROC) fs.img
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
 	@echo "-------------------------------------------------------"
 	@${QEMU} ${QFLAGS} -kernel kernel.elf -s -S 

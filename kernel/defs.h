@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-20 07:45:26
+ * @LastEditTime: 2022-08-21 14:26:33
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -22,6 +22,7 @@ struct buf;
 // fs.h
 struct dinode;
 struct dirent;
+struct inode;
 
 // uart.c
 void uartinit();
@@ -138,7 +139,10 @@ struct buf *bufget(int bno);
 // fs.c
 void fsinit();
 int ialloc(uint8 type);
-void iread(uint32 inum, struct dinode *inode);
+void read_dinode(uint32 inum, struct dinode *inode);
+void write_dinode(uint32 inum, struct dinode *inode);
+void read_dirent(struct inode *inode, struct dirent *dirent, uint32 offset);
+uint32 read_data(struct inode *inode, char *buffer, uint32 offset, uint32 size);
 uint32 readi(struct dinode *inode, char *b, uint32 offset, uint32 size);
 uint32 dread(struct dinode *inode, char *name);
 struct inode *rinum_inode(uint32 inum);

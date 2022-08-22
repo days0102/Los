@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-15 18:29:54
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-18 12:14:54
+ * @LastEditTime: 2022-08-22 09:04:55
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/fork.c
  */
@@ -27,6 +27,11 @@ void uvmcopy(addr_t *oldpgt, addr_t *newpgt, uint32 size)
             vmmap(newpgt, (addr_t)i, (addr_t)npa, PGSIZE, PTE_R | PTE_W | PTE_U | PTE_X);
         }
     }
+    addr_t stack = (addr_t)palloc();
+    pte = acquriepte(oldpgt, USTACKBASE);
+    addr_t oldstack = PTE2PA(*pte);
+    memmove((void *)stack, (void *)oldstack, PGSIZE);
+    vmmap(newpgt, USTACKBASE, stack, PGSIZE, PTE_R | PTE_W | PTE_U);
 }
 
 int fork()

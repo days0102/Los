@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-20 08:16:56
+ * @LastEditTime: 2022-08-22 09:07:16
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -96,6 +96,8 @@ void userinit()
     struct pcb *p = procalloc();
 
     p->trapframe->epc = 0;
+    addr_t stack = (addr_t)palloc();
+    vmmap(p->pagetable, USTACKBASE, stack, PGSIZE, PTE_R | PTE_W | PTE_U);
     p->trapframe->sp = PGSIZE;
 
     char *m = (char *)palloc();
@@ -177,7 +179,7 @@ void sleep(void *chan)
     sched();
 
     p->chan = 0;
-    p->status = RUNNING;
+    // p->status = RUNNING;
 }
 
 void wakeup(void *chan)
@@ -185,10 +187,6 @@ void wakeup(void *chan)
     struct pcb *p = nowproc();
 
     for (p = proc; p < &proc[NPROC]; p++)
-    {
-        if (p->status == SLEEPING &&p->chan == chan)
-        {
+        if (p->status == SLEEPING && p->chan == chan)
             p->status = RUNABLE;
-        }
-    }
 }

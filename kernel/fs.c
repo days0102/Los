@@ -16,6 +16,29 @@ void fsinit()
     memmove(&sb, b->data, sizeof(struct superblock));
     b->ref--;
 }
+
+int ialloc(uint8 type)
+{
+    struct dinode inode;
+    for (int i = 0; i < sb.ninodeblock; i++)
+    {
+        struct buf *b = bufget(IBLOCK(i, sb.inodestart));
+        for (int j = 0; j < IPB; j++)
+        {
+            memmove(&inode, b->data + sizeof(struct dinode) * j, sizeof(struct dinode));
+            if (inode.type == I_TYPE_NULL)
+            {
+                memset(&inode, 0, sb.dinodesize);
+                inode.type = type;
+                int inum = i * IPB + j;
+                write_dinode(inum, &inode);
+                return inum;
+            }
+        }
+    }
+    return -1;
+}
+
 uint32 balloc()
 {
     struct buf *b = bufget(sb.bitmapstart);
@@ -36,7 +59,7 @@ uint32 balloc()
     return 0;
 }
 
-void iread(uint32 inum, struct dinode *inode)
+void read_dinode(uint32 inum, struct dinode *inode)
 {
     struct buf *b;
     b = bufget(IBLOCK(inum, sb.inodestart));
@@ -45,7 +68,7 @@ void iread(uint32 inum, struct dinode *inode)
     b->ref--;
 }
 
-void iwrite(uint32 inum, struct dinode *inode)
+void write_dinode(uint32 inum, struct dinode *inode)
 {
     struct buf *b;
     b = bufget(IBLOCK(inum, sb.inodestart));
@@ -54,102 +77,7 @@ void iwrite(uint32 inum, struct dinode *inode)
     b->ref--;
 }
 
-int ialloc(uint8 type)
-{
-    struct dinode inode;
-    for (int i = 0; i < sb.ninodeblock; i++)
-    {
-        struct buf *b = bufget(IBLOCK(i, sb.inodestart));
-        for (int j = 0; j < IPB; j++)
-        {
-            memmove(&inode, b->data + sizeof(struct dinode) * j, sizeof(struct dinode));
-            if (inode.type == I_TYPE_NULL)
-            {
-                memset(&inode, 0, sb.dinodesize);
-                inode.type = type;
-                int inum = i * IPB + j;
-                iwrite(inum, &inode);
-                return inum;
-            }
-        }
-    }
-    return -1;
-}
-
-struct inode *rinum_inode(uint32 inum)
-{
-    struct inode *inode;
-    struct dinode dinode;
-    inode = &itable[inum];
-    if (inode->vaild == 0)
-    {
-        iread(inum, &dinode);
-        inode->vaild = 1;
-        inode->ref = 0;
-        inode->type = dinode.type;
-        inode->mod = dinode.mod;
-        inode->own = dinode.own;
-        inode->major = dinode.major;
-        inode->minor = dinode.minor;
-        inode->size = dinode.size;
-        memmove(inode->addr, dinode.addr, sizeof(inode->addr));
-    }
-    inode->ref++;
-    return inode;
-}
-
-void winum_inode(uint32 inum)
-{
-    struct inode *inode;
-    struct dinode dinode;
-    inode = &itable[inum];
-    if (inode->vaild == 0)
-        return;
-    dinode.type = inode->type;
-    dinode.mod = inode->mod;
-    dinode.own = inode->own;
-    dinode.major = inode->major;
-    dinode.minor = inode->minor;
-    dinode.size = inode->size;
-    memmove(dinode.addr, inode->addr, sizeof(inode->addr));
-    iwrite(inum, &dinode);
-}
-
-uint32 readi(struct dinode *inode, char *buffer, uint32 offset, uint32 size)
-{
-    struct buf *buf;
-    if (offset > inode->size || size <= 0)
-        return 0;
-    size = size > inode->size - offset ? inode->size - offset : size;
-    uint32 cnt = offset;
-    while (offset - cnt < size)
-    {
-        uint32 bno = offset / BLOCKSIZE;
-        uint32 off = offset % BLOCKSIZE;
-        if (bno < NDIRET)
-        {
-            buf = bufget(inode->addr[bno]);
-            uint32 cc = (offset - cnt) + BLOCKSIZE - off < size ? BLOCKSIZE - off : (cnt + size - offset);
-            memmove(buffer + (offset - cnt), buf->data + off, cc);
-            offset += BLOCKSIZE - off;
-            buf->ref--;
-        }
-        else
-        {
-            buf = bufget(inode->addr[bno]);
-            bno -= NDIRET;
-            bno = ((uint32 *)buf->data)[bno];
-            buf = bufget(bno);
-            uint32 cc = (offset - cnt) + BLOCKSIZE - off < size ? BLOCKSIZE - off : (cnt + size - offset);
-            memmove(buffer + (offset - cnt), buf->data + off, cc);
-            offset += BLOCKSIZE - off;
-            buf->ref--;
-        }
-    }
-    return size;
-}
-
-uint32 writei(struct inode *inode, char *buffer, uint32 offset, uint32 size)
+uint32 write_data(struct inode *inode, char *buffer, uint32 offset, uint32 size)
 {
     struct buf *buf;
     if (size <= 0)
@@ -229,26 +157,78 @@ uint32 read_data(struct inode *inode, char *buffer, uint32 offset, uint32 size)
             buf = bufget(inode->addr[bno]);
             uint32 cc = (offset - cnt) + BLOCKSIZE - off < size ? BLOCKSIZE - off : (cnt + size - offset);
             memmove(buffer + (offset - cnt), buf->data + off, cc);
-            offset += BLOCKSIZE - off;
+            offset += cc;
             buf->ref--;
         }
         else
         {
-            buf = bufget(inode->addr[bno]);
+            buf = bufget(inode->addr[NDIRET]);
             bno -= NDIRET;
             bno = ((uint32 *)buf->data)[bno];
             buf = bufget(bno);
             uint32 cc = (offset - cnt) + BLOCKSIZE - off < size ? BLOCKSIZE - off : (cnt + size - offset);
             memmove(buffer + (offset - cnt), buf->data + off, cc);
-            offset += BLOCKSIZE - off;
+            offset += cc;
             buf->ref--;
         }
     }
     return size;
 }
 
-uint32 read_dirent(struct inode *inode, char *name)
+void read_dirent(struct inode *inode, struct dirent *dirent, uint32 offset)
 {
+    struct buf *b;
+    uint32 bno = offset / BLOCKSIZE;
+    uint32 off = offset % BLOCKSIZE;
+    if (bno < NDIRET)
+    {
+        if ((bno = inode->addr[bno]) == 0)
+            return;
+        b = bufget(bno);
+        memmove(dirent, b->data + off, sb.direntsize);
+        return;
+    }
+    if (bno < NINDEX)
+    {
+        bno -= NDIRET;
+        if ((bno = inode->addr[bno]) == 0)
+            return;
+        b = bufget(bno);
+        memmove(dirent, b->data + off, sb.direntsize);
+        b->ref--;
+        return;
+    }
+}
+
+void write_dirent(struct inode *inode, struct dirent *dirent, uint32 offset)
+{
+    struct buf *b;
+    uint32 bno = offset / BLOCKSIZE;
+    uint32 off = offset % BLOCKSIZE;
+    if (bno < NDIRET)
+    {
+        if ((bno = inode->addr[bno]) == 0)
+            bno = inode->addr[bno] = balloc();
+        b = bufget(bno);
+        memmove(b->data + off, dirent, sb.direntsize);
+        b->ref--;
+    }
+    if (bno < NINDEX)
+    {
+        bno -= NDIRET;
+        if ((bno = inode->addr[bno]) == 0)
+            bno = inode->addr[bno] = balloc();
+        b = bufget(bno);
+        memmove(b->data + off, dirent, sb.direntsize);
+        b->ref--;
+    }
+}
+
+uint32 find_dirent(struct inode *inode, char *name)
+{
+    if (inode->type != I_TYPE_DIR)
+        return -1;
+
     struct dirent dirent;
     struct buf *b;
     for (int i = 0; i < NDIRET && inode->addr[i] != 0; i++)
@@ -256,11 +236,10 @@ uint32 read_dirent(struct inode *inode, char *name)
         b = bufget(inode->addr[i]);
         for (int j = 0; j < BLOCKSIZE; j += sb.direntsize)
         {
+            // read_dirent(inode, &find_dirent, i * BLOCKSIZE + j);
             memmove(&dirent, b->data + j, sb.direntsize);
             if (strcmp(dirent.name, name) == 0)
-            {
                 return dirent.inum;
-            }
         }
         b->ref--;
     }
@@ -293,6 +272,7 @@ int add_dirent(struct inode *inode, char *name, uint32 dinum)
                 return 0;
             }
         }
+        buf->ref--;
     }
     for (int i = NDIRET; i < NINDEX; i++)
     {
@@ -315,14 +295,37 @@ int add_dirent(struct inode *inode, char *name, uint32 dinum)
                     strcpy(dirent.name, name);
                     dirent.inum = dinum;
                     inode->size += sb.direntsize;
-                    writei(inode, (char *)&dirent, k, sb.direntsize);
+                    write_data(inode, (char *)&dirent, k, sb.direntsize);
                     winum_inode(dirent.inum);
                     return 0;
                 }
             }
         }
+        buf->ref--;
     }
     return -1;
+}
+
+struct inode *rinum_inode(uint32 inum)
+{
+    struct inode *inode;
+    struct dinode dinode;
+    inode = &itable[inum];
+    if (inode->vaild == 0)
+    {
+        read_dinode(inum, &dinode);
+        inode->vaild = 1;
+        inode->ref = 0;
+        inode->type = dinode.type;
+        inode->mod = dinode.mod;
+        inode->own = dinode.own;
+        inode->major = dinode.major;
+        inode->minor = dinode.minor;
+        inode->size = dinode.size;
+        memmove(inode->addr, dinode.addr, sizeof(inode->addr));
+    }
+    inode->ref++;
+    return inode;
 }
 
 char *parse_path(char *path, char *name)
@@ -343,7 +346,6 @@ char *parse_path(char *path, char *name)
         path++;
     return path;
 }
-
 struct inode *rname_inode(char *path)
 {
     struct inode *inode;
@@ -359,18 +361,67 @@ struct inode *rname_inode(char *path)
         {
             if (*name == 0)
                 return inode;
-            uint32 inum = read_dirent(inode, name);
+            uint32 inum = find_dirent(inode, name);
             if ((int)inum == -1)
                 return inode;
             inode = rinum_inode(inum);
         }
         if (inode->type == I_TYPE_FILE || inode->type == I_TYPE_DEVICE)
             return inode;
-        memset(name, 0, MAXPATH);
     }
     return 0;
 }
 
+void winum_inode(uint32 inum)
+{
+    struct inode *inode;
+    struct dinode dinode;
+    inode = &itable[inum];
+    if (inode->vaild == 0)
+        return;
+    dinode.type = inode->type;
+    dinode.mod = inode->mod;
+    dinode.own = inode->own;
+    dinode.major = inode->major;
+    dinode.minor = inode->minor;
+    dinode.size = inode->size;
+    memmove(dinode.addr, inode->addr, sizeof(inode->addr));
+    write_dinode(inum, &dinode);
+}
+
+uint32 readi(struct dinode *inode, char *buffer, uint32 offset, uint32 size)
+{
+    struct buf *buf;
+    if (offset > inode->size || size <= 0)
+        return 0;
+    size = size > inode->size - offset ? inode->size - offset : size;
+    uint32 cnt = offset;
+    while (offset - cnt < size)
+    {
+        uint32 bno = offset / BLOCKSIZE;
+        uint32 off = offset % BLOCKSIZE;
+        if (bno < NDIRET)
+        {
+            buf = bufget(inode->addr[bno]);
+            uint32 cc = (offset - cnt) + BLOCKSIZE - off < size ? BLOCKSIZE - off : (cnt + size - offset);
+            memmove(buffer + (offset - cnt), buf->data + off, cc);
+            offset += BLOCKSIZE - off;
+            buf->ref--;
+        }
+        else
+        {
+            buf = bufget(inode->addr[bno]);
+            bno -= NDIRET;
+            bno = ((uint32 *)buf->data)[bno];
+            buf = bufget(bno);
+            uint32 cc = (offset - cnt) + BLOCKSIZE - off < size ? BLOCKSIZE - off : (cnt + size - offset);
+            memmove(buffer + (offset - cnt), buf->data + off, cc);
+            offset += BLOCKSIZE - off;
+            buf->ref--;
+        }
+    }
+    return size;
+}
 // inum != -1 , inum->inode
 // inum == -1 , path->inode
 struct inode *find_inode(uint32 inum, char *path)

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-06-09 18:34:26
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-18 20:12:17
+ * @LastEditTime: 2022-08-22 09:29:13
  * @Description: In User Settings Edit
  * @FilePath: /los/losfs/mkfs.c
  */
@@ -272,14 +272,23 @@ uint8_t iappent(uint32_t inum, char *buf, int size)
     {
         uint32_t index = inode.size / BLOCKSIZE;
         uint64_t off = inode.size % BLOCKSIZE;
-        assert(index < NINDEX);
-
-        if ((bno = inode.addr[index]) == 0)
-            bno = inode.addr[index] = balloc();
-        if (index >= NDIRET)
+        // assert(index < NINDEX);
+        if (index < NDIRET)
         {
-            index -= NDIRET;
+            if ((bno = inode.addr[index]) == 0)
+                bno = inode.addr[index] = balloc();
+        }
+        else
+        {
+            if (index < NINDEX)
+            {
+                if ((bno = inode.addr[index]) == 0)
+                    bno = inode.addr[index] = balloc();
+            }
+            else
+                bno = inode.addr[NDIRET];
             bread(bno, &block);
+            index -= NDIRET;
             if ((bno = ((uint32_t *)block.data)[index]) == 0)
             {
                 bno = ((uint32_t *)block.data)[index] = balloc();
