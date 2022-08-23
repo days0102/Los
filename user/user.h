@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-04 21:45:34
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 20:59:44
+ * @LastEditTime: 2022-08-22 15:32:00
  * @Description: In User Settings Edit
  * @FilePath: /los/user/user.h
  */
@@ -26,3 +26,5 @@ int mknod(char *path, int major, int minor);
 int dup(int fd);
 int write(int fd, char *src, int size);
 int read(int fd, char *dst, int size);
+int recycle();
+void yeid();

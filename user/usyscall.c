@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-05 08:47:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 17:17:49
+ * @LastEditTime: 2022-08-22 15:30:06
  * @Description: In User Settings Edit
  * @FilePath: /los/user/usyscall.c
  */
@@ -76,4 +76,20 @@ int read(int fd,char* dst,int size)
     asm volatile("mv %0,a0"
                  : "=r"(x));
     return x;
+}
+
+int recycle()
+{
+    asm volatile("li a7,8");
+    asm volatile("ecall");
+    uint32 x;
+    asm volatile("mv %0,a0"
+                 : "=r"(x));
+    return x;
+}
+
+void yeid()
+{
+    asm volatile("li a7,9");
+    asm volatile("ecall");
 }

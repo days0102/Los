@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-02 16:44:07
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 17:18:12
+ * @LastEditTime: 2022-08-22 15:33:00
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.c
  */
@@ -72,6 +72,18 @@ uint32 sys_fork(void)
     return r;
 }
 
+uint32 sys_recycle(void)
+{
+    int m = bufauto();
+    return m;
+}
+
+uint32 sys_yeid(void)
+{
+    yield();
+    return 0;
+}
+
 extern uint32 sys_open();
 extern uint32 sys_mknod();
 extern uint32 sys_dup();
@@ -85,6 +97,8 @@ static uint32 (*syscalls[])(void) = {
     [SYS_dup] sys_dup,
     [SYS_write] sys_write,
     [SYS_read] sys_read,
+    [SYS_recycle] sys_recycle,
+    [SYS_yeid] sys_yeid,
 };
 
 void syscall()

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-14 13:42:37
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 09:07:43
+ * @LastEditTime: 2022-08-23 15:22:14
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/exec.c
  */
@@ -20,8 +20,11 @@ void exec(char *path)
     struct Elf32_Phdr phdr;
 
     struct inode *inode = find_inode(-1, path);
-    if (inode == 0 || inode->type != I_TYPE_FILE)
+    if (inode == 0 || inode->dinode.type != I_TYPE_FILE)
+    {
+        irelse(inode);
         return;
+    }
 
     read_data(inode, (char *)&elf, 0, sizeof(struct Elf32_Ehdr));
     assert(*(uint32 *)elf.e_ident == ELF_MAGIC);
@@ -58,4 +61,6 @@ void exec(char *path)
     p->context.ra = (reg_t)usertrapret;
     p->context.sp = p->kernelstack;
     // printpgt(p->pagetable);
+
+    irelse(inode);
 }

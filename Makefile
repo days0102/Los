@@ -1,10 +1,10 @@
 CPUS = 1
 
-QEMU = qemu-system-riscv32 # 32bit
+QEMU = qemu-system-riscv32# 32bit
 # QEMU = qemu-system-riscv64	#64bit
 QFLAGS = -nographic -smp $(CPUS) -machine virt -bios none
-QFLAGS += -drive file=fs.img,if=none,format=raw,id=x0 # file system
-QFLAGS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 #MMIO
+QFLAGS += -drive file=fs.img,if=none,format=raw,id=x0# file system
+QFLAGS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0#MMIO
 
 CROSS_COMPILE = riscv64-unknown-elf-
 CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit 
@@ -66,6 +66,7 @@ SRCS_C = \
 SRCS_USER = \
 	user/initproc.c \
 	user/sh.c \
+	user/sysrecycle.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-13 08:39:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-18 21:59:39
+ * @LastEditTime: 2022-08-23 15:14:41
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/fs.h
  */
@@ -42,16 +42,16 @@ struct superblock
 struct dinode
 {
     /* data */
-    uint8 type; // 类型，文件 - 目录
-    uint8 own;  // 所有者
-    uint8 mod;  // 权限
-    uint8 major;
-    uint8 minor;
-    uint32 size;
+    uint8 type;  // disk-inode type
+    uint8 own;   // disk-inode owner
+    uint8 mod;   // disk-inode mode
+    uint8 major; // disk-inode device major num
+    uint8 minor; // disk-inode device minor num
+    uint32 size; // size
 #define NDIRET 11
 #define NINDIRET 1
 #define NINDEX (NDIRET + NINDIRET)
-    uint32 addr[NINDEX]; // 索引
+    uint32 addr[NINDEX]; // block index
 };
 
 struct dirent
@@ -64,17 +64,10 @@ struct dirent
 struct inode
 {
     uint8 vaild;
+    uint8 dirty;
     uint32 ref;
+    uint32 inum;
 
-    uint8 type; // 类型，文件 - 目录
-    uint8 own;  // 所有者
-    uint8 mod;  // 权限
-    uint8 major;
-    uint8 minor;
-    uint32 size;
-#define NDIRET 11
-#define NINDIRET 1
-#define NINDEX (NDIRET + NINDIRET)
-    uint32 addr[NINDEX]; // 索引
+    struct dinode dinode;
 };
 #define MAXFILE (NDIRET * BLOCKSIZE + NINDIRET * (BLOCKSIZE / 4) * BLOCKSIZE)

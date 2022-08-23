@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-17 11:04:03
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 09:44:16
+ * @LastEditTime: 2022-08-23 15:15:30
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/sysfile.c
  */
@@ -30,17 +30,17 @@ int fdalloc(struct file *file)
 struct inode *create(char *name, int type, int major, int minor)
 {
     struct inode *inode = find_inode(-1, name);
-    if (inode->type != I_TYPE_DIR)
+    if (inode->dinode.type != I_TYPE_DIR)
         return 0;
     uint32 inum = ialloc(type);
     if (inum == (uint32)-1)
         return 0;
-    struct inode *ip = rinum_inode(inum);
-    ip->major = major;
-    ip->minor = minor;
     add_dirent(inode, name, inum);
-    winum_inode(inum);
-    return ip;
+    irelse(inode);
+    inode = iget(inum);
+    inode->dinode.major = major;
+    inode->dinode.minor = minor;
+    return inode;
 }
 
 // user open(path,mode)
@@ -53,14 +53,17 @@ int sys_open()
     argint(1, &mode);
 
     struct inode *inode = find_inode(-1, name);
-    if (inode == 0 || inode->type == I_TYPE_DIR || inode->type == I_TYPE_NULL)
+    if (inode == 0 || inode->dinode.type == I_TYPE_DIR || inode->dinode.type == I_TYPE_NULL)
+    {
+        irelse(inode);
         return -1;
+    }
 
     struct file *f;
     int fd;
     if ((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0)
         return -1;
-    if (inode->type == I_TYPE_DEVICE)
+    if (inode->dinode.type == I_TYPE_DEVICE)
     {
         f->type = FT_DEVICE;
     }
