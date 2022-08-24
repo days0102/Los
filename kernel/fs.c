@@ -322,6 +322,8 @@ struct inode *iget(uint32 inum)
 
 void irelse(struct inode *inode)
 {
+    if (inode == 0)
+        panic("relse null inode");
     if (inode->vaild == 0)
         panic("relse invaild inode");
     inode->ref--;

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-13 08:39:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-23 15:14:41
+ * @LastEditTime: 2022-08-23 16:38:38
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/fs.h
  */
@@ -69,5 +69,8 @@ struct inode
     uint32 inum;
 
     struct dinode dinode;
+
+    struct inode *prev;
+    struct inode *next;
 };
 #define MAXFILE (NDIRET * BLOCKSIZE + NINDIRET * (BLOCKSIZE / 4) * BLOCKSIZE)
