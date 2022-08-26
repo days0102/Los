@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 14:38:53
+ * @LastEditTime: 2022-08-25 19:45:45
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -66,6 +66,7 @@ void usertrapret()
 {
     struct pcb *p = nowproc();
     s_sstatus_xpp(RISCV_U);
+    s_sstatus_intr(INTR_SPIE);
     w_stvec((uint32)usertrap);
     addr_t satp = (SATP_SV32 | (addr_t)(p->pagetable) >> 12);
     // ptf(p->trapframe);
@@ -84,10 +85,11 @@ void usertrapret()
     userret((addr_t *)TRAPFRAME, satp);
 }
 
-static int first = 0;
+static int initfirst = 0;
 void startproc()
 {
-    first = 1;
+    initfirst = 1;
+    // fsinit();
     usertrapret();
 }
 
@@ -106,6 +108,11 @@ void trapvec()
     if (!where && p)
         p->trapframe->epc = r_sepc();
     w_stvec((reg_t)kvec);
+
+#ifdef DEBUG
+    printf("trap intr %d\n", a_sstatus_intr(INTR_SIE));
+#endif
+    // s_sstatus_intr(INTR_SIE);
 
     uint32 scause = r_scause();
 
@@ -173,7 +180,7 @@ void trapvec()
             break;
         case 9: // 来自 S-mode 的系统调用
             printf("Exception : Environment call from S-mode\n");
-            first ? usertrapret() : startproc();
+            initfirst ? usertrapret() : startproc();
             break;
         case 12:
             printf("Exception : Instruction page fault\n");

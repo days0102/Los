@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-23 16:08:20
+ * @LastEditTime: 2022-08-26 10:16:04
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -23,6 +23,9 @@ struct buf;
 struct dinode;
 struct dirent;
 struct inode;
+
+// lock.h
+struct spinlock;
 
 // uart.c
 void uartinit();
@@ -80,6 +83,7 @@ void w_pliccomplete(uint32 irq);
 
 // vm.c
 void kvminit();
+void kvmstart();
 addr_t *pgtcreate();
 void vmmap(addr_t *pgt, addr_t va, addr_t pa, uint sz, uint mode);
 void mkstack(addr_t *pgt);
@@ -93,11 +97,12 @@ pte_t *acquriepte(addr_t *pgt, addr_t va);
 void procinit();
 void userinit();
 struct pcb *nowproc();
+struct cpu *nowcpu();
 struct pcb *procalloc();
 void schedule();
 void yield();
 void sched();
-void sleep(void *chan);
+void sleep(void *chan, struct spinlock *spinlock);
 void wakeup(void *chan);
 
 // string.c
@@ -164,3 +169,9 @@ int fileread(struct file *file, addr_t addr, int size);
 void consolewrite(char *vsrc, int size);
 void consoleread(char *vdst, int size);
 void consoleintr(char c);
+
+// lock.c
+void initspinlock(struct spinlock *spinlock, char *name);
+void acquirespinlock(struct spinlock *spinlock);
+void releasespinlock(struct spinlock *spinlock);
+int checkspinlock(struct spinlock *spinlock);

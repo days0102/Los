@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 12:08:12
+ * @LastEditTime: 2022-08-25 11:16:02
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -142,6 +142,11 @@ void kvminit()
     vmmap(kpgt, USERVEC, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
 
     // printpgt(pgt);
+}
+
+// 启动内存映射
+void kvmstart()
+{
     w_satp(SATP_SV32 | (((uint32)kpgt) >> 12)); // 页表 PPN 写入Satp
     sfence_vma();                               // 刷新页表
 }

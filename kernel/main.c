@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 12:08:06
+ * @LastEditTime: 2022-08-25 17:16:19
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -10,29 +10,44 @@
 #include "defs.h"
 #include "swtch.h"
 
+static int start = 1;
+
 void main()
 {
-    printf("start run main()\n");
+    if (r_tp() == 0)
+    {
+        printf("start run main()\n");
 
-    minit();    // 物理内存管理
-    plicinit(); // PLIC 中断处理
+        minit();    // 物理内存管理
+        plicinit(); // PLIC 中断处理
 
-    kvminit(); // 启动虚拟内存
+        kvminit(); // 启动虚拟内存
+        kvmstart();
 
 #ifdef DEBUG
-    printf("usertrap: %p\n", usertrap);
+        printf("usertrap: %p\n", usertrap);
 #endif
 
-    procinit();
+        procinit();
 
-    mmioinit();
+        mmioinit();
 
-    bufinit();
+        bufinit();
 
-    fsinit();
-    
-    userinit();
-    
-    printf("----------------------\n");
+        fsinit();
+
+        userinit();
+
+        start = 0;
+    }
+    else
+    {
+        while (start)
+            ;
+        kvmstart();
+        plicinit();
+    }
+    printf("start %d hart\n", r_tp());
+
     schedule();
 }

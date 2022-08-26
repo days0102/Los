@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-19 10:40:38
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-21 15:51:49
+ * @LastEditTime: 2022-08-26 10:18:13
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/console.c
  */
@@ -51,7 +51,7 @@ void consolewrite(char *vsrc, int size)
 void consoleread(char *vdst, int size)
 {
     while (console.r == console.w)
-        sleep(&console.r);
+        sleep(&console.r, 0);
     int cc = (console.w - console.r) > size ? size : (console.w - console.r);
     copyout(nowproc()->pagetable, (addr_t)vdst, console.conbuf + console.r, cc);
     console.r += cc;

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 20:52:13
+ * @LastEditTime: 2022-08-25 09:23:30
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
@@ -86,6 +86,8 @@ struct cpu
 {
 	struct pcb *proc;		// CPU 持有的进程
 	struct context context; // CPU 上下文(正在执行的上下文)
+
+	int lockdepth; // 自旋锁关中断深度
 };
 
 #define NCPUS 8

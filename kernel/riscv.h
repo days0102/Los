@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:43:37
+ * @LastEditTime: 2022-08-26 10:32:14
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -482,7 +482,7 @@ static inline void s_sstatus_intr(uint32 m)
         x |= INTR_SIE; // 开
         break;
     case ~INTR_SIE:
-        x &= INTR_SIE; // 关
+        x &= ~INTR_SIE; // 关
     default:
         break;
     }

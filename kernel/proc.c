@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 09:07:16
+ * @LastEditTime: 2022-08-26 10:46:54
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -163,19 +163,25 @@ void sched()
 {
     struct pcb *p = nowproc();
     if (p->status == RUNNING)
-    {
         panic("proc is running");
-    }
     swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
 }
 
-void sleep(void *chan)
+void sleep(void *chan, struct spinlock *spinlock)
 {
     struct pcb *p = nowproc();
+    if (p == 0 || chan == 0)
+        return;
     if (p->status != RUNNING)
         panic("sleep : status");
     p->chan = chan;
     p->status = SLEEPING;
+    if (spinlock != 0)
+    {
+        if (!checkspinlock(spinlock))
+            panic("sleep no hold spinlock");
+        releasespinlock(spinlock);
+    }
     sched();
 
     p->chan = 0;
@@ -185,7 +191,8 @@ void sleep(void *chan)
 void wakeup(void *chan)
 {
     struct pcb *p = nowproc();
-
+    if (p == 0 || chan == 0)
+        return;
     for (p = proc; p < &proc[NPROC]; p++)
         if (p->status == SLEEPING && p->chan == chan)
             p->status = RUNABLE;

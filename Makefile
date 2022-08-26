@@ -62,6 +62,7 @@ SRCS_C = \
 	kernel/file.c \
 	kernel/sysfile.c \
 	kernel/console.c \
+	kernel/lock.c \
 
 SRCS_USER = \
 	user/initproc.c \

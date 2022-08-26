@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 12:35:17
+ * @LastEditTime: 2022-08-26 10:43:25
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/mmio.c
  */
@@ -11,6 +11,7 @@
 #include "mmio.h"
 #include "vm.h"
 #include "buf.h"
+#include "lock.h"
 
 struct disk
 {
@@ -45,6 +46,8 @@ struct disk
     } info[DNUM];
 
     uint16 last_used;
+
+    struct spinlock spinlock;
 } __attribute__((aligned(PGSIZE))) disk;
 
 void mmioinit()
@@ -56,6 +59,7 @@ void mmioinit()
     printf("mmio_deviceID: %x\n", mmio_read(MMIO_DeviceID));
     printf("mmio_disk.pages: %x\n", &disk);
 #endif
+    initspinlock(&disk.spinlock, "disk_spinlock");
 
     if (mmio_read(MMIO_MagicValue) != 0x74726976 ||
         mmio_read(MMIO_Version) != 0x01 ||
@@ -167,6 +171,10 @@ void diskrw(struct buf *b, uint8 rw)
 {
 #define SECSIZE 512
     uint64 sector = b->bno * (BSIZE / SECSIZE);
+
+    if (nowproc() != 0)
+        acquirespinlock(&disk.spinlock);
+
     /**
      * @description: 磁盘 IO 使用三个描述符
      * [0] 一个包含类型、保留和扇区的8字节描述符，
@@ -176,7 +184,7 @@ void diskrw(struct buf *b, uint8 rw)
     int idx[3];
     alloc3_desc(idx);
 
-#ifdef DEBUG
+#ifdef DEBUG_MMIO
     printf("disk.desc[3]: ");
     for (int i = 0; i < 3; i++)
         printf("%d ", idx[i]);
@@ -213,17 +221,29 @@ void diskrw(struct buf *b, uint8 rw)
     disk.desc[idx[2]].flags = VIRTQ_DESC_F_WRITE; // device writes the status
     disk.desc[idx[2]].next = 0;
 
+    b->disk = 1;
     disk.info[idx[0]].buf = b;
 
     // 设置首个描述符索引
     disk.avail->ring[disk.avail->idx % DNUM] = idx[0];
 
+    __sync_synchronize();
+
     disk.avail->idx += 1; // 更新 idx
+
+    __sync_synchronize();
 
     mmio_write(MMIO_QueueNotify, 0); // 写入队列索引，通知设备队列处理新的缓冲区
 
-    while (disk.info[idx[0]].status)
-        ;
+    if (nowproc() == 0)
+        while (disk.info[idx[0]].status != 0x0)
+            ;
+    else
+        while (b->disk == 1)
+            sleep(b, &disk.spinlock);
+
+    disk.info[idx[0]].buf = 0;
+
     free_all_desc(idx[0]);
 }
 
@@ -232,14 +252,35 @@ void diskrw(struct buf *b, uint8 rw)
  */
 void diskintr()
 {
+    if (nowproc() != 0)
+        acquirespinlock(&disk.spinlock);
+
 #define MMIO_INTR_USED_BUF_BIT 0 // MMIO_InterruptStatus 寄存器使用缓冲位
 #define MMIO_INTR_CHAN_CON_BIT 1 // MMIO_InterruptStatus 配置更改位
     uint32 intrstatus = mmio_read(MMIO_InterruptStatus);
     // 通知已注意到中断
     mmio_write(MMIO_InterruptACK, intrstatus | ~(1 << MMIO_INTR_USED_BUF_BIT));
+
+    __sync_synchronize();
+
     while (disk.last_used != disk.used->idx)
     {
-        assert((disk.info[disk.used->ring[disk.used->idx % DNUM].id].status) == 0x0);
+        __sync_synchronize();
+
+        int id = disk.used->ring[disk.last_used % DNUM].id;
+
+        __sync_synchronize();
+
+        assert((disk.info[id].status) == 0x0);
+
+        struct buf *b = disk.info[id].buf;
+        b->disk = 0;
+
+        wakeup(b);
+
         disk.last_used++;
     }
+
+    if (nowproc() != 0)
+        releasespinlock(&disk.spinlock);
 }

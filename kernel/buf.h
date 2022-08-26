@@ -17,6 +17,7 @@ struct buf
     int dirty;         // buffer modify ?
     int bno;           // disk block num
     uint8 ref;         // buf ref count
+    uint8 disk;        // read ?
     uint8 data[BSIZE]; // disk block data;
     struct buf *prev;  // prev pointer
     struct buf *next;  // next pointer
