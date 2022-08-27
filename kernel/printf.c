@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-13 19:13:45
+ * @LastEditTime: 2022-08-26 13:37:41
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
@@ -253,6 +253,8 @@ void assertfail(const char *__assertion, const char *__file,
 {
 	printf("\033[1;31mAssertFail \"%s\" At %s %d Line In Fun %s\n\033[0m",
 		   __assertion, __file, __line, __function);
+	while (1)
+		;
 }
 
 void printferror(const char *__errmsg, const char *__file,
@@ -260,4 +262,6 @@ void printferror(const char *__errmsg, const char *__file,
 {
 	printf("\033[1;31m%s At %s %d Line In Fun %s\n\033[0m",
 		   __errmsg, __file, __line, __function);
+	while (1)
+		;
 }

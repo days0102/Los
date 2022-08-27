@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-25 19:45:45
+ * @LastEditTime: 2022-08-27 11:18:28
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -86,9 +86,12 @@ void usertrapret()
 }
 
 static int initfirst = 0;
-void startproc()
+void forkret()
 {
-    initfirst = 1;
+    struct pcb *p = nowproc();
+    releasespinlock(&p->spinlock);
+    if (initfirst == 0)
+        initfirst = 1;
     // fsinit();
     usertrapret();
 }
@@ -175,12 +178,13 @@ void trapvec()
             break;
         case 8: // 来自 U-mode 的系统调用
             // printf("Environment call from U-mode\n");
+            s_sstatus_intr(INTR_SIE);
             syscall();
             usertrapret();
             break;
         case 9: // 来自 S-mode 的系统调用
             printf("Exception : Environment call from S-mode\n");
-            initfirst ? usertrapret() : startproc();
+            initfirst ? usertrapret() : forkret();
             break;
         case 12:
             printf("Exception : Instruction page fault\n");

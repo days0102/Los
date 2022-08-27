@@ -2,13 +2,14 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:35:47
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-25 09:23:30
+ * @LastEditTime: 2022-08-27 11:01:58
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.h
  */
 #include "types.h"
 #include "swtch.h"
 #include "file.h"
+#include "lock.h"
 
 #define NPROC 16
 
@@ -78,12 +79,15 @@ struct pcb
 	void *chan;
 	struct inode *cwd;
 	char name[PCBNAME];
+
+	struct spinlock spinlock;
 };
 
 struct pcb proc[NPROC];
 
 struct cpu
 {
+	uint id;
 	struct pcb *proc;		// CPU 持有的进程
 	struct context context; // CPU 上下文(正在执行的上下文)
 

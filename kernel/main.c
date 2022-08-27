@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-25 17:16:19
+ * @LastEditTime: 2022-08-27 11:41:54
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -29,6 +29,7 @@ void main()
 #endif
 
         procinit();
+        cpuinit();
 
         mmioinit();
 
@@ -44,6 +45,7 @@ void main()
     {
         while (start)
             ;
+        w_stvec((reg_t)kvec);
         kvmstart();
         plicinit();
     }

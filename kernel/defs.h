@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 10:16:04
+ * @LastEditTime: 2022-08-27 11:03:18
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -96,9 +96,11 @@ pte_t *acquriepte(addr_t *pgt, addr_t va);
 // proc.c
 void procinit();
 void userinit();
+void cpuinit();
 struct pcb *nowproc();
 struct cpu *nowcpu();
 struct pcb *procalloc();
+void forkret();
 void schedule();
 void yield();
 void sched();

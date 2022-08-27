@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-14 13:42:37
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-23 15:22:14
+ * @LastEditTime: 2022-08-26 19:52:03
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/exec.c
  */
@@ -58,7 +58,7 @@ void exec(char *path)
     strcpy(p->name, path);
     p->trapframe->epc = (reg_t)elf.e_entry;
     p->trapframe->sp = KSPACE;
-    p->context.ra = (reg_t)usertrapret;
+    // p->context.ra = (reg_t)usertrapret;
     p->context.sp = p->kernelstack;
     // printpgt(p->pagetable);
 

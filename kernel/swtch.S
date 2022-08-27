@@ -7,7 +7,11 @@ swtch:
     sw ra,0(a0)
     sw sp,4(a0)
     sw gp,8(a0)
-    sw tp,12(a0)
+    // The tp register is not saved 
+    // because the HART of the last execution may be
+    // different from the HART of this execution,
+    // and the save load may wait for the wrong HART ID (lock use) 
+    # sw tp,12(a0)
     sw a0,16(a0)
     sw a1,20(a0)
     sw a2,24(a0)
@@ -40,7 +44,7 @@ swtch:
     lw ra,0(a1)
     lw sp,4(a1)
     lw gp,8(a1)
-    lw tp,12(a1)
+    # lw tp,12(a1)
     lw a0,16(a1)
     // a1
     lw a2,24(a1)

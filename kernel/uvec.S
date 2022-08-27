@@ -13,7 +13,11 @@ usertrap:
     sw ra,16(a0)
     sw sp,20(a0)
     sw gp,24(a0)
-    sw tp,28(a0)
+    // The tp register is not saved 
+    // because the HART of the last execution may be
+    // different from the HART of this execution,
+    // and the save load may wait for the wrong HART ID (lock use) 
+    # sw tp,28(a0)
     # sw a0,32(a0)
     sw a1,36(a0)
     sw a2,40(a0)
@@ -68,7 +72,7 @@ userret:
     lw ra,16(a0)
     lw sp,20(a0)
     lw gp,24(a0)
-    lw tp,28(a0)
+    # lw tp,28(a0)
 
     lw a1,36(a0)
     lw a2,40(a0)

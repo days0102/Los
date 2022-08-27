@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 10:43:25
+ * @LastEditTime: 2022-08-27 10:34:18
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/mmio.c
  */
@@ -245,6 +245,9 @@ void diskrw(struct buf *b, uint8 rw)
     disk.info[idx[0]].buf = 0;
 
     free_all_desc(idx[0]);
+
+    if (nowproc() != 0)
+        releasespinlock(&disk.spinlock);
 }
 
 /**

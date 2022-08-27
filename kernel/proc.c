@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 10:46:54
+ * @LastEditTime: 2022-08-27 12:19:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -22,6 +22,7 @@ void procinit()
     {
         p = &proc[i];
         p->kernelstack = (addr_t)(KSTACK + (i)*2 * PGSIZE);
+        initspinlock(&p->spinlock, "proc_spinlock");
     }
 #ifdef DEBUG
     for (int i = 0; i < NPROC; i++)
@@ -30,6 +31,14 @@ void procinit()
         printf("proc %d ksp : %p\n", i, p->kernelstack);
     }
 #endif
+}
+
+void cpuinit()
+{
+    struct cpu *c;
+    int i;
+    for (c = cpus, i = 0; c < &cpus[NCPUS]; c++, i++)
+        c->id = i;
 }
 
 struct cpu *nowcpu()
@@ -61,7 +70,7 @@ struct pcb *procalloc()
 
             p->pagetable = pgtcreate();
 
-            p->context.ra = (reg_t)usertrapret;
+            p->context.ra = (reg_t)forkret;
             p->context.sp = p->kernelstack;
             p->status = USED;
             return p;
@@ -128,6 +137,7 @@ void schedule()
     {
         for (p = proc; p < &proc[NPROC]; p++)
         {
+            acquirespinlock(&p->spinlock);
             if (p->status == RUNABLE)
             {
                 p->status = RUNNING;
@@ -138,6 +148,7 @@ void schedule()
 
                 c->proc = 0; // cpu->context.ra 指向这里
             }
+            releasespinlock(&p->spinlock);
         }
     }
 }
@@ -152,8 +163,10 @@ void yield()
     {
         panic("proc status error");
     }
+    acquirespinlock(&p->spinlock);
     p->status = RUNABLE;
     sched();
+    releasespinlock(&p->spinlock);
 }
 
 /**
@@ -174,26 +187,35 @@ void sleep(void *chan, struct spinlock *spinlock)
         return;
     if (p->status != RUNNING)
         panic("sleep : status");
-    p->chan = chan;
-    p->status = SLEEPING;
+    acquirespinlock(&p->spinlock);
     if (spinlock != 0)
     {
         if (!checkspinlock(spinlock))
             panic("sleep no hold spinlock");
         releasespinlock(spinlock);
     }
+    p->chan = chan;
+    p->status = SLEEPING;
     sched();
 
     p->chan = 0;
-    // p->status = RUNNING;
+    releasespinlock(&p->spinlock);
+    acquirespinlock(spinlock);
 }
 
 void wakeup(void *chan)
 {
-    struct pcb *p = nowproc();
-    if (p == 0 || chan == 0)
+    struct pcb *p;
+    if (chan == 0)
         return;
     for (p = proc; p < &proc[NPROC]; p++)
-        if (p->status == SLEEPING && p->chan == chan)
-            p->status = RUNABLE;
+    {
+        if (p != nowproc())
+        {
+            acquirespinlock(&p->spinlock);
+            if (p->status == SLEEPING && p->chan == chan)
+                p->status = RUNABLE;
+            releasespinlock(&p->spinlock);
+        }
+    }
 }
