@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-19 10:40:38
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 10:18:13
+ * @LastEditTime: 2022-08-28 08:37:50
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/console.c
  */
@@ -23,6 +23,7 @@ struct console
     uint w;
     uint e;
     char conbuf[MAXCONSOLEBUF];
+    struct spinlock spinlock;
 } console;
 
 void consoleputc(int c)
@@ -35,6 +36,8 @@ void consoleputc(int c)
 
 void consolewrite(char *vsrc, int size)
 {
+    acquirespinlock(&console.spinlock);
+
     char buf[MAXCONSOLEBUF + 1];
     struct pcb *p = nowproc();
     int cnt = 0;
@@ -46,6 +49,8 @@ void consolewrite(char *vsrc, int size)
         uartputs(buf);
         size -= cc;
     }
+
+    releasespinlock(&console.spinlock);
 }
 
 void consoleread(char *vdst, int size)
@@ -93,4 +98,9 @@ void consoleintr(char c)
         }
         break;
     }
+}
+
+void consoleinit()
+{
+    initspinlock(&console.spinlock, "console");
 }

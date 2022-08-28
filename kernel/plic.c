@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-14 15:33:00
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-09 15:28:02
+ * @LastEditTime: 2022-08-27 22:37:52
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/plic.c
  */
@@ -34,5 +34,6 @@ uint32 r_plicclaim()
 // 写complete寄存器，表示irq中断处理完成
 void w_pliccomplete(uint32 irq)
 {
-    *(uint32 *)PLIC_MCOMPLETE(r_tp()) = irq;
+    // *(uint32 *)PLIC_MCOMPLETE(r_tp()) = irq;
+    *(uint32 *)PLIC_SCOMPLETE(r_tp()) = irq;
 }

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-24 11:03:29
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-06 18:45:11
+ * @LastEditTime: 2022-08-28 13:17:07
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/timer.c
  */
@@ -29,7 +29,7 @@ void timerinit()
 
     s_mstatus_intr(INTR_MIE); // 开启 M-mode 全局中断
 
-    w_sie(r_sie() | SSIE | STIE | SEIE); // 开 S-mode中断
+    // w_sie(r_sie() | SSIE | STIE | SEIE); // 开 S-mode中断
 
     w_mie(r_mie() | MTIE); // 开启 M-mode 时钟中断
 

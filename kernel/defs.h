@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-27 11:03:18
+ * @LastEditTime: 2022-08-28 08:43:51
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -31,7 +31,7 @@ struct spinlock;
 void uartinit();
 char uartputc(char c);
 void uartputs(char *s);
-void uartgetc();
+int uartgetc();
 char uartintr();
 
 // kvec.S
@@ -171,6 +171,7 @@ int fileread(struct file *file, addr_t addr, int size);
 void consolewrite(char *vsrc, int size);
 void consoleread(char *vdst, int size);
 void consoleintr(char c);
+void consoleinit();
 
 // lock.c
 void initspinlock(struct spinlock *spinlock, char *name);

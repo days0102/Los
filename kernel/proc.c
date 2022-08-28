@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-27 12:19:39
+ * @LastEditTime: 2022-08-28 20:19:52
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -200,7 +200,8 @@ void sleep(void *chan, struct spinlock *spinlock)
 
     p->chan = 0;
     releasespinlock(&p->spinlock);
-    acquirespinlock(spinlock);
+    if (spinlock != 0)
+        acquirespinlock(spinlock);
 }
 
 void wakeup(void *chan)

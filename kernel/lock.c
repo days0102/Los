@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-25 08:07:30
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-27 16:07:16
+ * @LastEditTime: 2022-08-28 08:47:37
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/lock.c
  */
@@ -60,9 +60,7 @@ void acquirespinlock(struct spinlock *spinlock)
 
 void releasespinlock(struct spinlock *spinlock)
 {
-    int r = checkspinlock(spinlock);
-    struct cpu *c = nowcpu();
-    if (!r)
+    if (!checkspinlock(spinlock))
         panic("releasespinlock - no hold spinlock");
 
     spinlock->cpu = 0;

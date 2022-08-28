@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-27 11:18:28
+ * @LastEditTime: 2022-08-28 13:21:18
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -65,8 +65,9 @@ void ptf(struct trapframe *tf)
 void usertrapret()
 {
     struct pcb *p = nowproc();
+    // 关闭中断, 保证顺利返回用户态
+    s_sstatus_intr(~INTR_SIE);
     s_sstatus_xpp(RISCV_U);
-    s_sstatus_intr(INTR_SPIE);
     w_stvec((uint32)usertrap);
     addr_t satp = (SATP_SV32 | (addr_t)(p->pagetable) >> 12);
     // ptf(p->trapframe);
@@ -166,7 +167,7 @@ void trapvec()
         case 5:
             printf("Exception : Load access fault\n");
             // ex : int a = *(int *)0x00000000;
-            printf("stval va: %p\n", r_stval());
+            printf("stval va: %p, sepc: %p, hart:%d\n", r_stval(), r_sepc(), r_tp());
             break;
         case 6:
             printf("Exception : Store/AMO address misaligned\n");
@@ -174,7 +175,7 @@ void trapvec()
         case 7:
             printf("Exception : Store/AMO access fault\n");
             // ex : *(int *)0x00000000 = 100;
-            printf("stval va: %p\n", r_stval());
+            printf("stval va: %p, sepc: %p, hart:%d\n", r_stval(), r_sepc(), r_tp());
             break;
         case 8: // 来自 U-mode 的系统调用
             // printf("Environment call from U-mode\n");
@@ -188,15 +189,15 @@ void trapvec()
             break;
         case 12:
             printf("Exception : Instruction page fault\n");
-            printf("stval va: %p\n", r_stval());
+            printf("stval va: %p, sepc: %p, hart:%d\n", r_stval(), r_sepc(), r_tp());
             break;
         case 13:
             printf("Exception : Load page fault\n");
-            printf("stval va: %p\n", r_stval());
+            printf("stval va: %p, sepc: %p, hart:%d\n", r_stval(), r_sepc(), r_tp());
             break;
         case 15:
             printf("Exception : Store/AMO page fault\n");
-            printf("stval va: %p\n", r_stval());
+            printf("stval va: %p, sepc: %p, hart:%d\n", r_stval(), r_sepc(), r_tp());
             break;
         default:
             printf("Exception : Other\n");
