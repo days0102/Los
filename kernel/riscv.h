@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 11:52:16
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 10:32:14
+ * @LastEditTime: 2022-08-28 20:48:09
  * @Description: RISCV 汇编指令内联汇编
  * @FilePath: /los/kernel/riscv.h
  */
@@ -425,20 +425,28 @@ static inline void s_mstatus_intr(uint32 m)
     switch (m)
     {
     case INTR_MPIE:
-        x &= ~INTR_MPIE;
         x |= INTR_MPIE;
         break;
+    case ~INTR_MPIE:
+        x &= ~INTR_MPIE;
+        break;
     case INTR_SPIE:
-        x &= ~INTR_SPIE;
         x |= INTR_SPIE;
         break;
+    case ~INTR_SPIE:
+        x &= ~INTR_SPIE;
+        break;
     case INTR_MIE:
-        x &= ~INTR_MIE;
         x |= INTR_MIE;
         break;
+    case ~INTR_MIE:
+        x &= ~INTR_MIE;
+        break;
     case INTR_SIE:
-        x &= ~INTR_SIE;
         x |= INTR_SIE;
+        break;
+    case ~INTR_SIE:
+        x &= ~INTR_SIE;
         break;
     default:
         break;
