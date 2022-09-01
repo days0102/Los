@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-28 20:42:09
+ * @LastEditTime: 2022-09-01 19:11:37
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -68,6 +68,7 @@ void usertrapret()
     // 关闭中断, 保证顺利返回用户态
     s_sstatus_intr(~INTR_SIE);
     s_sstatus_xpp(RISCV_U);
+    s_sstatus_intr(INTR_SPIE);
     w_stvec((uint32)usertrap);
     addr_t satp = (SATP_SV32 | (addr_t)(p->pagetable) >> 12);
     // ptf(p->trapframe);
@@ -109,12 +110,17 @@ void trapvec()
 {
     int where = r_sstatus() & S_SPP_SET;
     struct pcb *p = nowproc();
-    if (!where && p)
+    /** 记录 sepc 和 sstatus
+     *  如果 trap 来自内核态处理 trap 时可能会改变 sepc 和 sstatus (yield)
+     * */
+    int sepc = r_sepc();
+    int status = r_sstatus();
+    if (p)
         p->trapframe->epc = r_sepc();
     w_stvec((reg_t)kvec);
 
 #ifdef DEBUG
-    printf("trap intr %d\n", a_sstatus_intr(INTR_SIE));
+    printf("trap intr: %d\n", a_sstatus_intr(INTR_SIE));
 #endif
     // s_sstatus_intr(INTR_SIE);
 
@@ -142,7 +148,7 @@ void trapvec()
             printf("Other interrupt\n");
             break;
         }
-        where ?: usertrapret();
+        where ? w_sepc(sepc), w_sstatus(status) : usertrapret();
     }
     else
     {

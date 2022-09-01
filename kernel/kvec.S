@@ -42,7 +42,7 @@ kvec:
     lw ra,0(sp)
     lw sp,4(sp)
     lw gp,8(sp)
-    lw tp,12(sp)
+    # lw tp,12(sp)
     lw a0,16(sp)
     lw a1,20(sp)
     lw a2,24(sp)

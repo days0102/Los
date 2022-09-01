@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-25 08:07:30
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-28 08:47:37
+ * @LastEditTime: 2022-09-01 19:50:20
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/lock.c
  */
@@ -14,18 +14,21 @@
 
 void beforelock()
 {
+    int sintr = a_sstatus_intr(INTR_SIE);
     struct cpu *c = nowcpu();
     s_sstatus_intr(~INTR_SIE);
-    c->lockdepth += 1;
+    if (c->nlock == 0)
+        c->sintr = sintr;
+    c->nlock += 1;
 }
 
 void afterlock()
 {
     struct cpu *c = nowcpu();
-    if (c->lockdepth < 0)
+    if (c->nlock < 0)
         panic("afterlock");
-    c->lockdepth -= 1;
-    if (c->lockdepth == 0)
+    c->nlock -= 1;
+    if (c->nlock == 0 && c->sintr)
         s_sstatus_intr(INTR_SIE);
 }
 

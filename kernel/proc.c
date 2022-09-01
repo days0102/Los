@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-28 20:19:52
+ * @LastEditTime: 2022-09-01 19:24:57
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -177,6 +177,7 @@ void sched()
     struct pcb *p = nowproc();
     if (p->status == RUNNING)
         panic("proc is running");
+    //? intrrupt enable ?
     swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
 }
 

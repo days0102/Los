@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-19 10:40:38
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-28 08:37:50
+ * @LastEditTime: 2022-09-01 19:52:40
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/console.c
  */
@@ -67,7 +67,7 @@ void consoleintr(char c)
 {
     switch (c)
     {
-    case Ctrl_x('H'):
+    case Ctrl_x('H'):   // BACKSPACE
     case '\x7f':
         if (console.e != console.w)
         {

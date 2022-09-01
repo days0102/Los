@@ -2,12 +2,13 @@
  * @Author: Outsider
  * @Date: 2022-07-11 22:29:05
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-08 07:50:48
+ * @LastEditTime: 2022-09-01 18:34:50
  * @Description: 物理内存管理 Physical Memory Management
  * @FilePath: /los/kernel/pmm.c
  */
 #include "types.h"
 #include "defs.h"
+#include "lock.h"
 
 #define PGSIZE 4096
 
@@ -20,6 +21,7 @@ struct pmp
 struct
 {
     struct pmp *freelist;
+    struct spinlock lock;
 } mem;
 
 void minit()
@@ -37,6 +39,7 @@ void minit()
     printf("mend:%p\n", mend);
     printf("stack:%p\n", stacks);
 #endif
+    initspinlock(&mem.lock, "mem_lock");
 
     char *p = (char *)mstart;
     struct pmp *m;
@@ -50,17 +53,21 @@ void minit()
 
 void *palloc()
 {
+    acquirespinlock(&mem.lock);
     struct pmp *p = (struct pmp *)mem.freelist;
     if (p)
         mem.freelist = mem.freelist->next;
     if (p)
         memset(p, 0, PGSIZE);
+    releasespinlock(&mem.lock);
     return (void *)p;
 }
 
 void pfree(void *addr)
 {
     struct pmp *p = (struct pmp *)addr;
+    acquirespinlock(&mem.lock);
     p->next = mem.freelist;
     mem.freelist = p;
+    releasespinlock(&mem.lock);
 }

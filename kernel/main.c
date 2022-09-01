@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-27 11:41:54
+ * @LastEditTime: 2022-09-01 09:30:13
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -39,6 +39,7 @@ void main()
 
         userinit();
 
+        __sync_synchronize();
         start = 0;
     }
     else
