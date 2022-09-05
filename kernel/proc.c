@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 19:24:57
+ * @LastEditTime: 2022-09-05 17:49:16
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -178,7 +178,9 @@ void sched()
     if (p->status == RUNNING)
         panic("proc is running");
     //? intrrupt enable ?
+    int enable = nowcpu()->sintr; // save intrrupt
     swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
+    nowcpu()->sintr = enable;
 }
 
 void sleep(void *chan, struct spinlock *spinlock)

@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-19 10:40:38
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 19:52:40
+ * @LastEditTime: 2022-09-05 19:08:46
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/console.c
  */
@@ -55,11 +55,13 @@ void consolewrite(char *vsrc, int size)
 
 void consoleread(char *vdst, int size)
 {
+    acquirespinlock(&console.spinlock);
     while (console.r == console.w)
-        sleep(&console.r, 0);
+        sleep(&console.r, &console.spinlock);
     int cc = (console.w - console.r) > size ? size : (console.w - console.r);
     copyout(nowproc()->pagetable, (addr_t)vdst, console.conbuf + console.r, cc);
     console.r += cc;
+    releasespinlock(&console.spinlock);
 }
 
 int consolechar;
@@ -67,7 +69,7 @@ void consoleintr(char c)
 {
     switch (c)
     {
-    case Ctrl_x('H'):   // BACKSPACE
+    case Ctrl_x('H'): // BACKSPACE
     case '\x7f':
         if (console.e != console.w)
         {

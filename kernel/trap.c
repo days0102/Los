@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 19:11:37
+ * @LastEditTime: 2022-09-05 20:22:14
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -35,30 +35,32 @@ void externinterrupt()
     w_pliccomplete(irq);
 }
 
-void ptf(struct trapframe *tf)
+void ptf(struct trapframe *tf, int hart)
 {
-    printf("kernel_sp: %d \n", tf->kernel_sp);
-    printf("kernel_satp: %d \n", tf->kernel_satp);
-    printf("kernel_tvec: %d \n", tf->kernel_tvec);
+    if (r_tp() != hart)
+        return;
+    printf("kernel_sp: %p \n", tf->kernel_sp);
+    printf("kernel_satp: %p \n", tf->kernel_satp);
+    printf("kernel_tvec: %p \n", tf->kernel_tvec);
 
-    printf("ra: %d \n", tf->ra);
-    printf("sp: %d \n", tf->sp);
-    printf("tp: %d \n", tf->tp);
-    printf("t0: %d \n", tf->t0);
-    printf("t1: %d \n", tf->t1);
-    printf("t2: %d \n", tf->t2);
-    printf("t3: %d \n", tf->t3);
-    printf("t4: %d \n", tf->t4);
-    printf("t5: %d \n", tf->t5);
-    printf("t6: %d \n", tf->t6);
-    printf("a0: %d \n", tf->a0);
-    printf("a1: %d \n", tf->a1);
-    printf("a2: %d \n", tf->a2);
-    printf("a3: %d \n", tf->a3);
-    printf("a4: %d \n", tf->a4);
-    printf("a5: %d \n", tf->a5);
-    printf("a6: %d \n", tf->a6);
-    printf("a7: %d \n", tf->a7);
+    printf("ra: %p \n", tf->ra);
+    printf("sp: %p \n", tf->sp);
+    printf("tp: %p \n", tf->tp);
+    printf("t0: %p \n", tf->t0);
+    printf("t1: %p \n", tf->t1);
+    printf("t2: %p \n", tf->t2);
+    printf("t3: %p \n", tf->t3);
+    printf("t4: %p \n", tf->t4);
+    printf("t5: %p \n", tf->t5);
+    printf("t6: %p \n", tf->t6);
+    printf("a0: %p \n", tf->a0);
+    printf("a1: %p \n", tf->a1);
+    printf("a2: %p \n", tf->a2);
+    printf("a3: %p \n", tf->a3);
+    printf("a4: %p \n", tf->a4);
+    printf("a5: %p \n", tf->a5);
+    printf("a6: %p \n", tf->a6);
+    printf("a7: %p \n", tf->a7);
 }
 
 // 返回用户空间
@@ -71,7 +73,7 @@ void usertrapret()
     s_sstatus_intr(INTR_SPIE);
     w_stvec((uint32)usertrap);
     addr_t satp = (SATP_SV32 | (addr_t)(p->pagetable) >> 12);
-    // ptf(p->trapframe);
+    // ptf(p->trapframe, 1);
 
     // printf("%p\n",p->trapframe);
     // printf("sepc: %p\n",r_sepc());
@@ -113,8 +115,8 @@ void trapvec()
     /** 记录 sepc 和 sstatus
      *  如果 trap 来自内核态处理 trap 时可能会改变 sepc 和 sstatus (yield)
      * */
-    int sepc = r_sepc();
-    int status = r_sstatus();
+    uint sepc = r_sepc();
+    uint status = r_sstatus();
     if (p)
         p->trapframe->epc = r_sepc();
     w_stvec((reg_t)kvec);
@@ -185,7 +187,6 @@ void trapvec()
             break;
         case 8: // 来自 U-mode 的系统调用
             // printf("Environment call from U-mode\n");
-            s_sstatus_intr(INTR_SIE);
             syscall();
             usertrapret();
             break;

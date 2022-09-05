@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-03 16:37:00
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 20:37:37
+ * @LastEditTime: 2022-09-03 10:01:25
  * @Description: In User Settings Edit
  * @FilePath: /los/user/initproc.c
  */
@@ -23,7 +23,6 @@ int main()
     }
     else
         ;
-
     while (1)
         ;
 }

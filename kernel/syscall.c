@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-02 16:44:07
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 13:49:16
+ * @LastEditTime: 2022-09-05 20:06:10
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.c
  */
@@ -108,6 +108,9 @@ void syscall()
     p->trapframe->epc += 4;
 
     uint32 sysnum = p->trapframe->a7;
+
+    s_sstatus_intr(INTR_SIE);
+
     p->trapframe->a0 = syscalls[sysnum]();
     // printf("syscall : %d return %d\n", sysnum, p->trapframe->a0);
 }
