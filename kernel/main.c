@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-06 10:53:42
+ * @LastEditTime: 2022-09-06 16:41:33
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -16,6 +16,10 @@ void main()
 {
     if (r_tp() == 0)
     {
+        cpuinit();
+        uartinit();
+        printinit();
+        r_sstatus();
         uartputs("Hello Los!\n");
 
         printf("start run main()\n");

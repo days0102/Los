@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-06 08:53:00
+ * @LastEditTime: 2022-09-06 16:53:09
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -135,6 +135,7 @@ void schedule()
 
     for (;;)
     {
+        //? intrrupt enable ?
         for (p = proc; p < &proc[NPROC]; p++)
         {
             acquirespinlock(&p->spinlock);

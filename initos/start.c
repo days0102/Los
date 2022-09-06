@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 10:52:32
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-06 10:53:53
+ * @LastEditTime: 2022-09-06 16:47:05
  * @Description: In User Settings Edit
  * @FilePath: /los/initos/start.c
  */
@@ -13,8 +13,7 @@ extern void main(); // 定义在main.c
 
 void start()
 {
-    uartinit();
-    cpuinit();
+    // uartinit();
     // uartputs("Hello Los!\n");
 
     s_mstatus_xpp(RISCV_S); // 设置特权模式为 S-mode
@@ -24,7 +23,7 @@ void start()
     w_mideleg((uint32)0xffff); // 16项中断委托给S-mode
     w_medeleg((uint32)0xffff); // 16项异常委托给S-mode
 
-    s_sstatus_intr(INTR_SIE); // S-mode 开全局中断
+    // s_sstatus_intr(INTR_SIE); // S-mode 开全局中断
 
     w_stvec((uint32)kvec); // 设置 S-mode trap处理函数
 

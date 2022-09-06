@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-06 11:59:30
+ * @LastEditTime: 2022-09-06 16:39:48
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -117,12 +117,17 @@ void trapvec()
      * */
     uint sepc = r_sepc();
     uint status = r_sstatus();
+    /**
+     *  Only traps from user mode save the sepc.
+     *  Otherwise, the sepc of the process will be
+     *  set to the pc of the kernel, resulting in an error.
+     **/
     if (!where && p)
         p->trapframe->epc = r_sepc();
     w_stvec((reg_t)kvec);
 
 #ifdef DEBUG
-    printf("trap intr: %d\n", a_sstatus_intr(INTR_SIE));
+    printf("trap intrrupt enable: %d\n", a_sstatus_intr(INTR_SIE));
 #endif
     // s_sstatus_intr(INTR_SIE);
 
@@ -165,6 +170,7 @@ void trapvec()
             break;
         case 2:
             printf("Exception : Illegal instruction\n");
+            printf("sepc: %p, hart:%d\n", r_sepc(), r_tp());
             break;
         case 3:
             printf("Exception : Breakpoint\n");

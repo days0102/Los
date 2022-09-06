@@ -2,13 +2,14 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:42:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 13:37:41
+ * @LastEditTime: 2022-09-06 15:38:48
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/printf.c
  */
 #include "defs.h"
 #include "types.h"
 #include "stdarg.h"
+#include "lock.h"
 
 void panic(char *s)
 {
@@ -27,6 +28,11 @@ void panic(char *s)
 }
 
 static char outbuf[1024];
+struct spinlock printlock;
+void printinit()
+{
+	initspinlock(&printlock, "printf");
+}
 // 简易版 printf
 // 未处理异常
 int printf(const char *fmt, ...)
@@ -37,6 +43,7 @@ int printf(const char *fmt, ...)
 	const char *s = fmt;
 	int tt = 0;
 	int idx = 0;
+	acquirespinlock(&printlock);
 	while ((ch = *(s)))
 	{
 		if (ch == '%')
@@ -136,6 +143,7 @@ int printf(const char *fmt, ...)
 	va_end(vl); // 释法参数
 	outbuf[idx] = '\0';
 	uartputs(outbuf);
+	releasespinlock(&printlock);
 	return idx;
 }
 

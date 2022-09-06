@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-28 08:43:51
+ * @LastEditTime: 2022-09-06 14:33:35
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -39,6 +39,7 @@ void kvec();
 void tvec();
 
 // printf.c
+void printinit();
 void panic(char *str);
 int printf(const char *fmt, ...);
 char *sprintf(char *str, const char *fmt, ...);
