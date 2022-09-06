@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-11 10:39:43
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-05 20:22:14
+ * @LastEditTime: 2022-09-06 11:59:30
  * @Description: trap handle
  * @FilePath: /los/kernel/trap.c
  */
@@ -117,7 +117,7 @@ void trapvec()
      * */
     uint sepc = r_sepc();
     uint status = r_sstatus();
-    if (p)
+    if (!where && p)
         p->trapframe->epc = r_sepc();
     w_stvec((reg_t)kvec);
 
