@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-25 08:07:30
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-05 19:29:23
+ * @LastEditTime: 2022-09-06 10:07:53
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/lock.c
  */
@@ -15,8 +15,8 @@
 void beforelock()
 {
     int sintr = a_sstatus_intr(INTR_SIE);
-    struct cpu *c = nowcpu();
     s_sstatus_intr(~INTR_SIE);
+    struct cpu *c = nowcpu();
     if (c->nlock == 0)
         c->sintr = sintr;
     c->nlock += 1;
@@ -41,6 +41,10 @@ void initspinlock(struct spinlock *spinlock, char *name)
 
 int checkspinlock(struct spinlock *spinlock)
 {
+#ifdef DEBUG
+    struct cpu *c = nowcpu();
+    printf("checksipn - cpu: %d\n", c->id);
+#endif
     int r;
     r = ((spinlock->locked) && (spinlock->cpu == nowcpu()));
     return r;

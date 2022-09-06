@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-05 17:49:16
+ * @LastEditTime: 2022-09-06 08:53:00
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -178,7 +178,7 @@ void sched()
     if (p->status == RUNNING)
         panic("proc is running");
     //? intrrupt enable ?
-    int enable = nowcpu()->sintr; // save intrrupt
+    int enable = nowcpu()->sintr;           // save intrrupt
     swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
     nowcpu()->sintr = enable;
 }
@@ -214,12 +214,10 @@ void wakeup(void *chan)
         return;
     for (p = proc; p < &proc[NPROC]; p++)
     {
-        if (p != nowproc())
-        {
-            acquirespinlock(&p->spinlock);
-            if (p->status == SLEEPING && p->chan == chan)
-                p->status = RUNABLE;
-            releasespinlock(&p->spinlock);
-        }
+        //! now proc?
+        acquirespinlock(&p->spinlock);
+        if (p->status == SLEEPING && p->chan == chan)
+            p->status = RUNABLE;
+        releasespinlock(&p->spinlock);
     }
 }

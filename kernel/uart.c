@@ -2,12 +2,16 @@
  * @Author: Outsider
  * @Date: 2022-07-08 18:04:42
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-19 14:39:30
+ * @LastEditTime: 2022-09-06 10:05:59
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/uart.c
  */
 #include "types.h"
 #include "uart.h"
+#include "lock.h"
+#include "defs.h"
+
+struct spinlock uartlock;
 
 void uartinit()
 {
@@ -27,6 +31,8 @@ void uartinit()
 
     // 开中断
     uart_write(UART_IER, uart_read(UART_IER) | (1 << 0));
+
+    initspinlock(&uartlock, "uart");
 }
 
 // 轮询处理数据
@@ -41,11 +47,10 @@ char uartputc(char c)
 // 发送字符串
 void uartputs(char *s)
 {
+    acquirespinlock(&uartlock);
     while (*s)
-    {
-        /* code */
         uartputc(*s++);
-    }
+    releasespinlock(&uartlock);
 }
 
 // 接收输入

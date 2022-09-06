@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-08 10:52:32
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 18:09:40
+ * @LastEditTime: 2022-09-06 10:53:53
  * @Description: In User Settings Edit
  * @FilePath: /los/initos/start.c
  */
@@ -14,7 +14,8 @@ extern void main(); // 定义在main.c
 void start()
 {
     uartinit();
-    uartputs("Hello Los!\n");
+    cpuinit();
+    // uartputs("Hello Los!\n");
 
     s_mstatus_xpp(RISCV_S); // 设置特权模式为 S-mode
 

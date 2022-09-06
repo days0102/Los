@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-10 22:25:45
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 09:30:13
+ * @LastEditTime: 2022-09-06 10:53:42
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/main.c
  */
@@ -16,6 +16,8 @@ void main()
 {
     if (r_tp() == 0)
     {
+        uartputs("Hello Los!\n");
+
         printf("start run main()\n");
 
         minit();    // 物理内存管理
@@ -29,7 +31,6 @@ void main()
 #endif
 
         procinit();
-        cpuinit();
 
         mmioinit();
 
