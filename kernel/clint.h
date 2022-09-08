@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-23 07:49:10
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-06 16:56:08
+ * @LastEditTime: 2022-09-08 10:43:27
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/clint.h
  */
@@ -19,4 +19,4 @@
 #define CLINT_MTIME (CLINT_BASE + 0xbff8)
 
 // 中断间隔
-#define CLINT_INTERVAL 1000000
+#define CLINT_INTERVAL 100000 //! bug (too small deadlock)
