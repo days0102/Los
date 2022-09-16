@@ -9,14 +9,20 @@ struct inode itable[NINODE];
 #define IBLOCK(inum, istart) ((inum) / IPB + istart)
 struct superblock sb;
 
+// init fs
 void fsinit()
 {
     struct buf *b;
     b = bget(SUPERBLOCK);
-    memmove(&sb, b->data, sizeof(struct superblock));
+    memmove(&sb, b->data, sizeof(struct superblock)); // init superblock
     brelse(b);
 }
 
+/**
+ * @description: inode allocation
+ * @param {uint8} type inode type
+ * @return {*} inode number
+ */
 int ialloc(uint8 type)
 {
     struct dinode *inode;

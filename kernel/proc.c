@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-06 16:53:09
+ * @LastEditTime: 2022-09-16 10:22:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -128,6 +128,9 @@ void userinit()
     p->status = RUNABLE;
 }
 
+/**
+ * 调度器
+ **/
 void schedule()
 {
     struct cpu *c = nowcpu();
@@ -161,17 +164,16 @@ void yield()
 {
     struct pcb *p = nowproc();
     if (p == 0 || p->status != RUNNING)
-    {
         panic("proc status error");
-    }
+    // 获取 spinlock, 修改 status
     acquirespinlock(&p->spinlock);
     p->status = RUNABLE;
-    sched();
-    releasespinlock(&p->spinlock);
+    sched();    // 切换到进程调度器
+    releasespinlock(&p->spinlock); // 释放在调度器获得的 spinlock
 }
 
 /**
- * @description:
+ * @description: 保存当前状态，跳转到进程调度器
  */
 void sched()
 {
@@ -181,9 +183,14 @@ void sched()
     //? intrrupt enable ?
     int enable = nowcpu()->sintr;           // save intrrupt
     swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
-    nowcpu()->sintr = enable;
+    nowcpu()->sintr = enable;               // resave intrrput
 }
 
+/**
+ * @description: 进程睡眠
+ * @param {void} *chan 通道
+ * @param {spinlock} *spinlock
+ */
 void sleep(void *chan, struct spinlock *spinlock)
 {
     struct pcb *p = nowproc();
@@ -208,6 +215,10 @@ void sleep(void *chan, struct spinlock *spinlock)
         acquirespinlock(spinlock);
 }
 
+/**
+ * @description: 唤醒睡眠进程
+ * @param {void} *chan 通道，唤醒所有通道为 chan 的进程
+ */
 void wakeup(void *chan)
 {
     struct pcb *p;
