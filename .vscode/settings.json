@@ -25,6 +25,7 @@
         "user.h": "c",
         "cmath": "c",
         "typeinfo": "c",
-        "lock.h": "c"
+        "lock.h": "c",
+        "cstdlib": "c"
     }
 }

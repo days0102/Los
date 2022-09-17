@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-04 16:45:25
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 15:28:19
+ * @LastEditTime: 2022-09-17 17:35:32
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.h
  */
@@ -18,3 +18,4 @@
 #define SYS_read 7
 #define SYS_recycle 8
 #define SYS_yeid 9
+#define SYS_exit 10

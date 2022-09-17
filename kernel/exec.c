@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-14 13:42:37
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-26 19:52:03
+ * @LastEditTime: 2022-09-17 17:02:18
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/exec.c
  */
@@ -13,7 +13,7 @@
 #include "fs.h"
 #include "vm.h"
 
-void exec(char *path)
+int exec(char *path)
 {
     struct pcb *p = nowproc();
     struct Elf32_Ehdr elf;
@@ -23,7 +23,7 @@ void exec(char *path)
     if (inode == 0 || inode->dinode.type != I_TYPE_FILE)
     {
         irelse(inode);
-        return;
+        return -1;
     }
 
     read_data(inode, (char *)&elf, 0, sizeof(struct Elf32_Ehdr));
@@ -63,4 +63,5 @@ void exec(char *path)
     // printpgt(p->pagetable);
 
     irelse(inode);
+    return 0;
 }

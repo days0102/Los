@@ -2,12 +2,13 @@
  * @Author: Outsider
  * @Date: 2022-09-02 14:52:08
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-02 15:04:32
+ * @LastEditTime: 2022-09-17 10:26:33
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/pci.h
  */
 #include "types.h"
 
+// 网卡驱动接收描述符
 struct receivedesc
 {
     uint64 addr;
@@ -18,6 +19,7 @@ struct receivedesc
     uint16 special;
 };
 
+// 网卡驱动发送描述符
 struct transmitdesc
 {
     uint64 addr;

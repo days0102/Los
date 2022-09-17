@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-04 21:45:34
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 15:32:00
+ * @LastEditTime: 2022-09-17 17:34:20
  * @Description: In User Settings Edit
  * @FilePath: /los/user/user.h
  */
@@ -28,3 +28,4 @@ int write(int fd, char *src, int size);
 int read(int fd, char *dst, int size);
 int recycle();
 void yeid();
+void exit(int x);

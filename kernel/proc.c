@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-18 09:44:55
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-16 10:22:39
+ * @LastEditTime: 2022-09-17 17:57:28
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/proc.c
  */
@@ -168,7 +168,7 @@ void yield()
     // 获取 spinlock, 修改 status
     acquirespinlock(&p->spinlock);
     p->status = RUNABLE;
-    sched();    // 切换到进程调度器
+    sched();                       // 切换到进程调度器
     releasespinlock(&p->spinlock); // 释放在调度器获得的 spinlock
 }
 
@@ -232,4 +232,18 @@ void wakeup(void *chan)
             p->status = RUNABLE;
         releasespinlock(&p->spinlock);
     }
+}
+
+//!
+void exit(int status)
+{
+    struct pcb *p = nowproc();
+    acquirespinlock(&p->spinlock);
+
+    p->cwd = 0;
+    vmunmap(p->pagetable, 0, p->size, 1);
+    vmunmap(p->pagetable, p->trapframe->sp, PGSIZE, 1);
+    p->status = UNUSED;
+    sched();
+    // not return 
 }

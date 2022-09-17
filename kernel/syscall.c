@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-02 16:44:07
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-05 20:06:10
+ * @LastEditTime: 2022-09-17 17:38:07
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/syscall.c
  */
@@ -60,10 +60,10 @@ uint32 sys_exec(void)
 {
     char path[MAXPATH];
     memset(path, 0, MAXPATH);
+    // printpgt(nowproc()->pagetable);
     argstr(0, path, MAXPATH);
 
-    exec(path);
-    return SYS_exec;
+    return exec(path);
 }
 
 uint32 sys_fork(void)
@@ -84,6 +84,14 @@ uint32 sys_yeid(void)
     return 0;
 }
 
+uint32 sys_exit(void)
+{
+    int status;
+    argint(0, &status);
+    exit(status);
+    return 0;
+}
+
 extern uint32 sys_open();
 extern uint32 sys_mknod();
 extern uint32 sys_dup();
@@ -99,6 +107,7 @@ static uint32 (*syscalls[])(void) = {
     [SYS_read] sys_read,
     [SYS_recycle] sys_recycle,
     [SYS_yeid] sys_yeid,
+    [SYS_exit] sys_exit,
 };
 
 void syscall()

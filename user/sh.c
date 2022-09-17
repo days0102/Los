@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-08-15 11:27:46
  * @LastEditors: Outsider
- * @LastEditTime: 2022-08-20 12:50:38
+ * @LastEditTime: 2022-09-17 18:59:46
  * @Description: In User Settings Edit
  * @FilePath: /los/user/sh.c
  */
@@ -30,6 +30,17 @@ void main()
     char cmd[16];
     while (getcmd(cmd, MAXCMD))
     {
-        printf("cmd :%s", cmd);
+        // printf("cmd :%s", cmd);
+
+        int pid = fork();
+        if (pid == 0)
+        {
+            printf("%d\n",exec(cmd));
+            // if (exec(cmd) < 0)
+            // {
+            //     printf("run %s fail\n", cmd);
+                exit(0);
+            // }
+        }
     }
 }

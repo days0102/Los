@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-12 09:17:23
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-06 14:33:35
+ * @LastEditTime: 2022-09-17 17:38:39
  * @Description: In User Settings Edit
  * @FilePath: /los/kernel/defs.h
  */
@@ -90,7 +90,7 @@ void vmmap(addr_t *pgt, addr_t va, addr_t pa, uint sz, uint mode);
 void mkstack(addr_t *pgt);
 void printpgt(addr_t *pgt);
 void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa);
-void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max);
+int copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max);
 void copyout(addr_t *pagetable, addr_t vaddr, char *buf, int max);
 pte_t *acquriepte(addr_t *pgt, addr_t va);
 
@@ -107,6 +107,7 @@ void yield();
 void sched();
 void sleep(void *chan, struct spinlock *spinlock);
 void wakeup(void *chan);
+void exit(int status);
 
 // string.c
 void *memset(void *, int, uint);
@@ -159,7 +160,7 @@ int add_dirent(struct inode *inode, char *name, uint32 dinum);
 struct inode *find_inode(uint32 inum, char *path);
 
 // exec.c
-void exec(char *path);
+int exec(char *path);
 // fork.c
 int fork();
 

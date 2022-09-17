@@ -2,7 +2,7 @@
  * @Author: Outsider
  * @Date: 2022-07-15 13:02:18
  * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 18:42:30
+ * @LastEditTime: 2022-09-17 17:52:31
  * @Description: virtual mem
  * @FilePath: /los/kernel/vm.c
  */
@@ -185,6 +185,8 @@ void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa)
                 break;
             start += PGSIZE;
         }
+        if (start == end)
+            break;
     }
 }
 
@@ -200,7 +202,7 @@ void pgtfree(addr_t *pagetable)
     pfree(pagetable);
 }
 
-void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max)
+int copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max)
 {
     pte_t *pte;
     addr_t pa;
@@ -223,8 +225,12 @@ void copyin(addr_t *pagetable, addr_t vaddr, char *buf, int max)
             start += PGSIZE;
         }
         else
-            error("unmap");
+        {
+            //! ummap
+            return cnt;
+        }
     }
+    return cnt;
 }
 
 void copyout(addr_t *pagetable, addr_t vaddr, char *buf, int max)
