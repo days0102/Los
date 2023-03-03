@@ -5,4 +5,6 @@
 
 *.asm
 
+.idea
+
 *.sym
