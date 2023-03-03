@@ -5,6 +5,11 @@ QEMU = qemu-system-riscv32# 32bit
 QFLAGS = -nographic -smp $(CPUS) -machine virt -bios none
 QFLAGS += -drive file=fs.img,if=none,format=raw,id=x0# file system
 QFLAGS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0#MMIO
+# qemu 虚拟网卡 
+# https://wiki.qemu.org/Documentation/Networking#How_to_create_a_network_backend?
+QFLAGS += -netdev user,id=net
+QFLAGS += -device e1000,netdev=net
+QFLAGS += -object filter-dump,id=net,netdev=net,file=net.dat
 
 CROSS_COMPILE = riscv64-unknown-elf-
 CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit 
