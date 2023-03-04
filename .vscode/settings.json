@@ -2,6 +2,7 @@
     "files.associations": {
         "*.m": "matlab",
         "*.pdf": "tex",
+        "*.flex": "lex",
         "*.tcc": "c",
         "swtch.h": "c",
         "uart.h": "c",
@@ -26,6 +27,7 @@
         "cmath": "c",
         "typeinfo": "c",
         "lock.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "pci.h": "c"
     }
 }

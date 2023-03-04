@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-07-10 22:25:45
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-11 19:54:10
- * @Description: In User Settings Edit
- * @FilePath: /los/kernel/main.c
+ * @Author       : Outsider
+ * @Date         : 2022-07-10 22:25:45
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-03-03 16:06:59
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/main.c
  */
 #include "riscv.h"
 #include "defs.h"
@@ -33,6 +33,7 @@ void main()
 #ifdef DEBUG
         printf("usertrap: %p\n", usertrap);
 #endif
+        pciinit();
 
         procinit();
 

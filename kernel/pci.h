@@ -2,15 +2,18 @@
  * @Author       : Outsider
  * @Date         : 2022-09-02 14:52:08
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-03-03 11:09:47
- * @Description  : 
- * 
+ * @LastEditTime : 2023-03-04 12:24:56
+ * @Description  :
+ *
  *  e1000
  *  refs : https://pdos.csail.mit.edu/6.828/2021/readings/8254x_GBe_SDM.pdf
- * 
+ *
  * @FilePath     : /los/kernel/pci.h
  */
 #include "types.h"
+
+#define PCIE_ECAN 0x30000000
+#define E1000_BASE 0x40000000
 
 // 网卡驱动接收描述符
 struct receivedesc

@@ -8,7 +8,7 @@ QFLAGS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0#MMIO
 # qemu 虚拟网卡 
 # https://wiki.qemu.org/Documentation/Networking#How_to_create_a_network_backend?
 QFLAGS += -netdev user,id=net
-QFLAGS += -device e1000,netdev=net
+QFLAGS += -device e1000,netdev=net,bus=pcie.0
 QFLAGS += -object filter-dump,id=net,netdev=net,file=net.dat
 
 CROSS_COMPILE = riscv64-unknown-elf-
@@ -16,6 +16,7 @@ CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit
 # CFLAGS = -nostdlib -fno-builtin -march=rv64ima -mabi=lp64 -g -Wall -mcmodel=medany # 64bit
 CFLAGS += -I.# 包含当前目录
 CFLAGS += -Wall# 显示警告
+CFLAGS += -Werror
 # CFLAGS +=  -Wno-main # 关闭 mian 函数警告
 CFLAGS += -ffreestanding#按独立环境编译;他隐含声明了`-fno-builtin'选项,而且对 main 函数没有特别要求.
 
@@ -68,6 +69,7 @@ SRCS_C = \
 	kernel/sysfile.c \
 	kernel/console.c \
 	kernel/lock.c \
+	kernel/pci.c \
 
 SRCS_USER = \
 	user/initproc.c \

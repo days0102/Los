@@ -15,6 +15,7 @@
 #include "proc.h"
 #include "clint.h"
 #include "mmio.h"
+#include "pci.h"
 
 addr_t *kpgt;
 
@@ -112,6 +113,9 @@ void kvminit()
 {
     kpgt = (addr_t *)pgtcreate();
 
+    /** 根据 virt 内存布局映射
+     *  ref : https://github.com/qemu/qemu/blob/v5.1.0/hw/riscv/virt.c#L54
+     **/
     // 映射 CLINT
     vmmap(kpgt, CLINT_BASE, CLINT_BASE, 0xc000, PTE_R | PTE_W);
 
@@ -123,6 +127,9 @@ void kvminit()
 
     // 映射 VIRTIO_MMIO
     vmmap(kpgt, VIRTIO_BASE, VIRTIO_BASE, PGSIZE, PTE_R | PTE_W);
+
+    // 映射 PCI_ECAM
+    vmmap(kpgt, PCIE_ECAN, PCIE_ECAN, 0x10000000, PTE_R | PTE_W);
 
     // 映射 内核 指令区
     vmmap(kpgt, (addr_t)textstart, (addr_t)textstart, (textend - textstart), PTE_R | PTE_X);

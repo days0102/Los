@@ -180,3 +180,6 @@ void initspinlock(struct spinlock *spinlock, char *name);
 void acquirespinlock(struct spinlock *spinlock);
 void releasespinlock(struct spinlock *spinlock);
 int checkspinlock(struct spinlock *spinlock);
+
+// pci.c
+void pciinit();
