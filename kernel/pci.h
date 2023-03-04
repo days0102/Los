@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-09-02 14:52:08
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-03-04 12:24:56
+ * @LastEditTime : 2023-03-04 15:00:30
  * @Description  :
  *
  *  e1000
@@ -13,28 +13,36 @@
 #include "types.h"
 
 #define PCIE_ECAN 0x30000000
-#define E1000_BASE 0x40000000
 
-// 网卡驱动接收描述符
-struct receivedesc
+// E1000 : https://pdos.csail.mit.edu/6.828/2021/readings/8254x_GBe_SDM.pdf
+struct PCIREG
 {
-    uint64 addr;     // 缓存区地址
-    uint16 len;      // 存进缓冲区的数据长度
-    uint16 checksum; // 数据检验和
-    uint8 status;    // 表明描述符是否被使用，以及引用的缓冲区是否是最后一个
-    uint8 errors;    // 坏包
-    uint16 special;  // 额外的信息(VLAN)
-};
-
-// 网卡驱动发送描述符
-struct transmitdesc
-{
-    uint64 addr;   // 缓冲区地址
-    uint16 len;    // 数据长度
-    uint8 cso;     // 检验和偏移 chechsum offset
-    uint8 cmd;     // command
-    uint8 sta : 4; // status
-    uint8 rsv : 4; // Reserve
-    uint8 css;     // 检验和起点 checksum start
-    uint16 special;
+    // 8254x_GBe_SDM (Table 4-1. Mandatory PCI Registers)
+    uint32 VendorID : 16;
+    uint32 DeviceID : 16;
+    uint32 Command : 16;
+    uint32 Status : 16;
+    uint32 RevisionID : 8;
+    uint32 ClassCode : 24; // 020000h
+    uint32 CacheLineSize : 8;
+    uint32 LatencyTimer : 8;
+    uint32 HeaderType : 8; // (00h)
+    uint32 BIST : 8;       // (00h)
+    uint32 BaseAddress0;
+    uint32 BaseAddress1;
+    uint32 BaseAddress2;
+    uint32 BaseAddress3;      //(unused)
+    uint32 BaseAddress4;      //(unused)
+    uint32 BaseAddress5;      //(unused)
+    uint32 CardbusCISPointer; // (not used)
+    uint32 SubsystemVendorID : 16;
+    uint32 SubsystemID : 16;
+    uint32 ExpansionROMBaseAddress;
+    uint32 Cap_Ptr : 16;
+    uint32 Reserved0 : 16;
+    uint32 Reserved1;
+    uint32 InterruptLine : 8;
+    uint32 InterruptPin : 8; //(01h)
+    uint32 Min_Grant : 8;    //(FFh)
+    uint32 Max_Latency : 8;  //(00h)
 };

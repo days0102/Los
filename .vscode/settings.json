@@ -28,6 +28,7 @@
         "typeinfo": "c",
         "lock.h": "c",
         "cstdlib": "c",
-        "pci.h": "c"
+        "pci.h": "c",
+        "eth.h": "c"
     }
 }

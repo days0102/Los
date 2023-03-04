@@ -16,6 +16,7 @@
 #include "clint.h"
 #include "mmio.h"
 #include "pci.h"
+#include "eth.h"
 
 addr_t *kpgt;
 
@@ -130,6 +131,9 @@ void kvminit()
 
     // 映射 PCI_ECAM
     vmmap(kpgt, PCIE_ECAN, PCIE_ECAN, 0x10000000, PTE_R | PTE_W);
+
+    // 网卡
+    vmmap(kpgt, E1000_BASE, E1000_BASE, 0x20000, PTE_R | PTE_W);
 
     // 映射 内核 指令区
     vmmap(kpgt, (addr_t)textstart, (addr_t)textstart, (textend - textstart), PTE_R | PTE_X);

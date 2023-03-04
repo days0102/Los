@@ -183,3 +183,6 @@ int checkspinlock(struct spinlock *spinlock);
 
 // pci.c
 void pciinit();
+
+// eth.c
+void ethinit(uint32 *addr);
