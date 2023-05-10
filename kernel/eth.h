@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2023-03-04 14:11:27
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-03-04 19:42:06
+ * @LastEditTime : 2023-03-04 20:05:40
  * @Description  :
  *
  * docs : https://pdos.csail.mit.edu/6.828/2021/readings/8254x_GBe_SDM.pdf
@@ -45,14 +45,22 @@
 #define E10000_RDBAL 0x02800 // Receive Descriptor Base Low R/W 306 Receive
 #define E10000_RDBAH 0x02804 // Receive Descriptor Base High R/W 306 Receive
 #define E10000_RDLEN 0x02808 // Receive Descriptor Length R/W 307 Receive
-#define E10000_RDH 0x02810   // Receive Descriptor Head R/W 307 Receive
-#define E10000_RDT 0x02818   // Receive Descriptor Tail R/W 308 Receive
-#define E10000_RDTR 0x02820  // Receive Delay Timer R/W 308 Receive
+
+/** 头指针和尾指针确定环的使用区和空闲区 */
+// 接收描述符的头指针
+#define E10000_RDH 0x02810 // Receive Descriptor Head R/W 307 Receive
+// 接收描述符的尾指针
+#define E10000_RDT 0x02818 // Receive Descriptor Tail R/W 308 Receive
+
+// 该寄存器用于延迟接收描述符环的中断通知。延迟中断通知有助于最大限度地提高单个中断所服务的接收数据包的数量。
+#define E10000_RDTR 0x02820 // Receive Delay Timer R/W 308 Receive
+//
 #define E10000_RADV 0x0282C  // Receive Interrupt Absolute Delay Timer
                              // (not Receive to the 82544GC/EI) R/W 309 applicable
 #define E10000_RSRPD 0x02C00 // Receive Small Packet Detect Interrupt
                              // (not Receive to the 82544GC/EI) R/W applicable
 
+// 该寄存器控制以太网控制器的所有传输功能。
 #define E1000_TCTL 0x00400      // Transmit Transmit Control
 #define E1000_TCTL_EN (1 << 1)  // Transmit Enable
 #define E1000_TCTL_PSP (1 << 3) // Pad Short Packets
@@ -66,7 +74,7 @@
 #define E1000_TDT 03818   //  Transmit Descriptor Tail R/W 318 Transmit
 #define E1000_TIDV 03820  //  Transmit Interrupt Delay Value R/W 318 Transmit
 
-// ************************
+// *********************************
 #define E1000_TXDMAC 0x03000   // TX DMA   TX DMA Control (applicable to the 82544GC/EI only) R/W 319
 #define E1000_TXDCTL 0x03828   // TX DMA   Transmit Descriptor Control R/W 319
 #define E1000_TADV 0x0282C     // TX DMA   Transmit Absolute Interrupt Delay Timer (not applicable to the 82544GC/EI) R/W 321
