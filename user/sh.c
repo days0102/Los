@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-08-15 11:27:46
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-17 18:59:46
- * @Description: In User Settings Edit
- * @FilePath: /los/user/sh.c
+ * @Author       : Outsider
+ * @Date         : 2022-08-15 11:27:46
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-05-10 16:49:50
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/user/sh.c
  */
 #include "user.h"
 
@@ -35,12 +35,17 @@ void main()
         int pid = fork();
         if (pid == 0)
         {
-            printf("%d\n",exec(cmd));
+            printf("exec\n");
+            printf("%d\n", exec(cmd));
             // if (exec(cmd) < 0)
             // {
             //     printf("run %s fail\n", cmd);
-                exit(0);
+            exit(0);
             // }
+        }
+        else
+        {
+            printf("e\n");
         }
     }
 }

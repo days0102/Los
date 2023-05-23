@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-07-10 22:25:45
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-03-03 16:06:59
+ * @LastEditTime : 2023-05-23 19:29:46
  * @Description  : In User Settings Edit
  * @FilePath     : /los/kernel/main.c
  */
@@ -16,11 +16,17 @@ void main()
 {
     if (r_tp() == 0)
     {
+        s_sstatus_intr(INTR_SIE);
+        w_sie(r_sie() | SSIE | STIE | SEIE); // 开S-mode中断
+        w_stvec((uint32)kvec);               // 设置 S-mode trap处理函数
+
         cpuinit();
         uartinit();
         printinit();
         // r_sstatus();
-        uartputs("Hello Los!\n");
+        // uartputs("!!!!\n");
+        // uartputs("Hello Los!\n");
+        printf("Hello Los!\n");
 
         printf("start run main()\n");
 
@@ -52,6 +58,8 @@ void main()
     {
         while (start)
             ;
+        s_sstatus_intr(INTR_SIE);
+        w_sie(r_sie() | SSIE | STIE | SEIE); // 开S-mode中断
         w_stvec((reg_t)kvec);
         kvmstart();
         plicinit();

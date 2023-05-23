@@ -17,6 +17,7 @@ CFLAGS = -nostdlib -fno-builtin -march=rv32ima -mabi=ilp32 -g -MD# 32bit
 CFLAGS += -I.# 包含当前目录
 CFLAGS += -Wall# 显示警告
 CFLAGS += -Werror
+# CFLAGS += -mcmodel=medany
 # CFLAGS +=  -Wno-main # 关闭 mian 函数警告
 CFLAGS += -ffreestanding#按独立环境编译;他隐含声明了`-fno-builtin'选项,而且对 main 函数没有特别要求.
 

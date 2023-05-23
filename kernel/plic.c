@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-07-14 15:33:00
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 18:38:30
- * @Description: In User Settings Edit
- * @FilePath: /los/kernel/plic.c
+ * @Author       : Outsider
+ * @Date         : 2022-07-14 15:33:00
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-05-23 17:12:59
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/plic.c
  */
 #include "plic.h"
 #include "types.h"
@@ -23,7 +23,6 @@ void plicinit()
     // *(uint32 *)PLIC_MPRIORITY(r_tp()) = 0;
     *(uint32 *)PLIC_SPRIORITY(r_tp()) = 0;
 
-    w_sie(r_sie() | SSIE | STIE | SEIE); // 开S-mode中断
 }
 
 // 读取claim寄存器，获取当前最高优先级中断源

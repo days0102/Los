@@ -557,3 +557,18 @@ static inline void w_mscratch(uint32 x)
                  :
                  : "r"(x));
 }
+
+// PMP 物理内存保护
+static inline void w_pmpaddr0(uint32 x)
+{
+    asm volatile("csrw pmpaddr0,%0"
+                 :
+                 : "r"(x));
+}
+
+static inline void w_pmpcfg0(uint32 x)
+{
+    asm volatile("csrw pmpcfg0,%0"
+                 :
+                 : "r"(x));
+}
