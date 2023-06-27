@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-08-15 18:29:54
- * @LastEditors: Outsider
- * @LastEditTime: 2022-08-22 09:04:55
- * @Description: In User Settings Edit
- * @FilePath: /los/kernel/fork.c
+ * @Author       : Outsider
+ * @Date         : 2022-08-15 18:29:54
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-05-27 19:57:36
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/fork.c
  */
 #include "types.h"
 #include "defs.h"
@@ -41,6 +41,8 @@ int fork()
     uvmcopy(p->pagetable, np->pagetable, p->size);
 
     memmove(np->trapframe, p->trapframe, sizeof(*np->trapframe));
+
+    memmove(np->file, p->file, sizeof(p->file)); // 复制打开的文件 todo ref++ | todo exec close
 
     np->trapframe->a0 = 0; // 子进程返回 0
 

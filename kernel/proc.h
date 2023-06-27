@@ -1,17 +1,17 @@
 /*
- * @Author: Outsider
- * @Date: 2022-07-18 09:35:47
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 19:41:08
- * @Description: In User Settings Edit
- * @FilePath: /los/kernel/proc.h
+ * @Author       : Outsider
+ * @Date         : 2022-07-18 09:35:47
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-05-27 20:19:55
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/proc.h
  */
 #include "types.h"
 #include "swtch.h"
 #include "file.h"
 #include "lock.h"
 
-#define NPROC 16
+#define NPROC 16 // 进程数量
 
 enum procstatus
 {
@@ -20,6 +20,7 @@ enum procstatus
 	RUNABLE,
 	RUNNING,
 	BLOCKED,
+	ZOMBIE,
 	SLEEPING
 };
 
@@ -78,6 +79,7 @@ struct pcb
 	uint32 size;
 	void *chan;
 	struct inode *cwd;
+	int estatus; // exit(status)
 	char name[PCBNAME];
 
 	struct spinlock spinlock;
@@ -85,6 +87,7 @@ struct pcb
 
 struct pcb proc[NPROC];
 
+// 记录每个核心的状态
 struct cpu
 {
 	uint id;
@@ -92,7 +95,7 @@ struct cpu
 	struct context context; // CPU 上下文(正在执行的上下文)
 
 	int nlock; // 自旋锁关中断深度
-	int sintr; // 加自旋锁前中断状态 status_intrrupt
+	int sintr; // 加自旋锁前中断状态 status_intrrupt（持有自旋锁时必须处于关中断）
 };
 
 #define NCPUS 8

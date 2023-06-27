@@ -2,8 +2,13 @@
  * @Author       : Outsider
  * @Date         : 2022-07-10 22:25:45
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-05-23 19:29:46
- * @Description  : In User Settings Edit
+ * @LastEditTime : 2023-05-26 14:57:11
+ * @Description  : 
+ * ***********************************
+ *          初始化内核
+ * 1.由0号核心初始化共享的设备和资源
+ * 2.每个核心初始化后进入调度器
+ * ***********************************
  * @FilePath     : /los/kernel/main.c
  */
 #include "riscv.h"
@@ -16,9 +21,9 @@ void main()
 {
     if (r_tp() == 0)
     {
+        w_stvec((uint32)kvec);               // 设置 S-mode trap处理函数
         s_sstatus_intr(INTR_SIE);
         w_sie(r_sie() | SSIE | STIE | SEIE); // 开S-mode中断
-        w_stvec((uint32)kvec);               // 设置 S-mode trap处理函数
 
         cpuinit();
         uartinit();
@@ -58,9 +63,9 @@ void main()
     {
         while (start)
             ;
+        w_stvec((reg_t)kvec);
         s_sstatus_intr(INTR_SIE);
         w_sie(r_sie() | SSIE | STIE | SEIE); // 开S-mode中断
-        w_stvec((reg_t)kvec);
         kvmstart();
         plicinit();
     }

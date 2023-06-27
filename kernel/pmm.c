@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-07-11 22:29:05
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-01 18:34:50
- * @Description: 物理内存管理 Physical Memory Management
- * @FilePath: /los/kernel/pmm.c
+ * @Author       : Outsider
+ * @Date         : 2022-07-11 22:29:05
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-05-27 11:45:07
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/pmm.c
  */
 #include "types.h"
 #include "defs.h"
@@ -24,6 +24,7 @@ struct
     struct spinlock lock;
 } mem;
 
+// 物理内存管理 - 空闲链表
 void minit()
 {
 #ifdef DEBUG

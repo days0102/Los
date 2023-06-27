@@ -7,7 +7,7 @@ QFLAGS += -drive file=fs.img,if=none,format=raw,id=x0# file system
 QFLAGS += -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0#MMIO
 # qemu 虚拟网卡 
 # https://wiki.qemu.org/Documentation/Networking#How_to_create_a_network_backend?
-QFLAGS += -netdev user,id=net
+QFLAGS += -netdev user,id=net,hostfwd=udp::6666-:666
 QFLAGS += -device e1000,netdev=net,bus=pcie.0
 QFLAGS += -object filter-dump,id=net,netdev=net,file=net.dat
 

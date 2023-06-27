@@ -21,6 +21,7 @@ void procinit()
     for (int i = 0; i < NPROC; i++)
     {
         p = &proc[i];
+        // 初始化内核栈，并用一个页作为保护页避免越界访问
         p->kernelstack = (addr_t)(KSTACK + (i)*2 * PGSIZE);
         initspinlock(&p->spinlock, "proc_spinlock");
     }
@@ -55,11 +56,13 @@ struct pcb *nowproc()
 
 uint pidalloc()
 {
+    // todo lock
     return nextpid++;
 }
 
 struct pcb *procalloc()
 {
+    // 寻找空闲 PCB，并初始化pcb
     struct pcb *p;
     for (p = proc; p < &proc[NPROC]; p++)
     {
@@ -129,7 +132,7 @@ void userinit()
 }
 
 /**
- * 调度器
+ * 调度器 - 时间片轮转
  **/
 void schedule()
 {
@@ -165,7 +168,7 @@ void yield()
     struct pcb *p = nowproc();
     if (p == 0 || p->status != RUNNING)
         panic("proc status error");
-    // 获取 spinlock, 修改 status
+    // 获取 spinlock, 修改 status，在调度器中释放
     acquirespinlock(&p->spinlock);
     p->status = RUNABLE;
     sched();                       // 切换到进程调度器
@@ -182,7 +185,7 @@ void sched()
         panic("proc is running");
     //? intrrupt enable ?
     int enable = nowcpu()->sintr;           // save intrrupt
-    swtch(&p->context, &nowcpu()->context); //跳转到cpu->context.ra ( schedule() )
+    swtch(&p->context, &nowcpu()->context); // 跳转到cpu->context.ra ( schedule() )
     nowcpu()->sintr = enable;               // resave intrrput
 }
 
@@ -242,8 +245,36 @@ void exit(int status)
 
     p->cwd = 0;
     vmunmap(p->pagetable, 0, p->size, 1);
-    vmunmap(p->pagetable, p->trapframe->sp, PGSIZE, 1);
-    p->status = UNUSED;
+    vmunmap(p->pagetable, USTACKBASE, PGSIZE, 1);
+    p->status = ZOMBIE;
+    p->estatus = status;
+    // wakeup(p->parent);
     sched();
-    // not return 
+    // not return
+}
+
+int wait(addr_t ret)
+{
+    struct pcb *p = nowproc();
+
+    int has = 1;
+    while (has)
+    {
+        has = 0;
+        for (size_t i = 0; i < NPROC; i++)
+        {
+            if (proc[i].parent == p)
+            {
+                has = 1;
+                if (proc[i].status == ZOMBIE)
+                {
+                    if (ret != 0)
+                        copyout(p->pagetable, ret, (char *)&(proc[i].estatus), 4);
+                    return proc[i].pid;
+                }
+            }
+        }
+        // sleep(&p, &(p->spinlock));
+    }
+    return -1;
 }

@@ -170,8 +170,11 @@ addr_t *pgtcreate()
     return pagetable;
 }
 
-void upgtinit(addr_t *pagtable)
+void upgtinit(addr_t *pagetable)
 {
+    addr_t stack = (addr_t)palloc();
+    vmmap(pagetable, USTACKBASE, stack, PGSIZE, PTE_R | PTE_W | PTE_U);
+    vmmap(pagetable, (uint32)uservec, (uint32)uservec, PGSIZE, PTE_R | PTE_X);
 }
 
 void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa)
@@ -196,8 +199,8 @@ void vmunmap(addr_t *pagetable, addr_t va, size_t size, int freepa)
                 break;
             start += PGSIZE;
         }
-        if (start == end)
-            break;
+        // if (start == end)
+        //     break;
     }
 }
 

@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2023-03-04 14:11:27
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-03-04 20:05:40
+ * @LastEditTime : 2023-05-25 17:52:41
  * @Description  :
  *
  * docs : https://pdos.csail.mit.edu/6.828/2021/readings/8254x_GBe_SDM.pdf
@@ -39,7 +39,9 @@
 #define E1000_IMS 0x000d0      // Interrupt Interrupt Mask Set/Read
 #define E1000_IMC 0x000d8      // Interrupt Interrupt Mask Clear
 
-#define E10000_RCTL 0x00100  // Receive Control R/W 300 Receive
+#define E1000_RCTL 0x00100     // Receive Control R/W 300 Receive
+#define E1000_RCTL_EN (1 << 1) // Receiver Enable
+
 #define E10000_FCRTL 0x02160 // Flow Control Receive Threshold Low R/W 304 Receive
 #define E10000_FCRTH 0x02168 // Flow Control Receive Threshold High R/W 305 Receive
 #define E10000_RDBAL 0x02800 // Receive Descriptor Base Low R/W 306 Receive
@@ -61,18 +63,19 @@
                              // (not Receive to the 82544GC/EI) R/W applicable
 
 // 该寄存器控制以太网控制器的所有传输功能。
-#define E1000_TCTL 0x00400      // Transmit Transmit Control
-#define E1000_TCTL_EN (1 << 1)  // Transmit Enable
-#define E1000_TCTL_PSP (1 << 3) // Pad Short Packets
+#define E1000_TCTL 0x00400            // Transmit Transmit Control
+#define E1000_TCTL_EN (1 << 1)        // Transmit Enable
+#define E1000_TCTL_PSP (1 << 3)       // Pad Short Packets
+#define E1000_TCTL_COLD (0x3ff << 12) // Collision Distance
 
-#define E1000_TIPG 00410  //  Transmit IPG R/W 312 Transmit
-#define E1000_AIFS 00458  //  Adaptive IFS Throttle - AIT R/W 314 Transmit
-#define E1000_TDBAL 03800 //  Transmit Descriptor Base Low R/W 315 Transmit
-#define E1000_TDBAH 03804 //  Transmit Descriptor Base High R/W 316 Transmit
-#define E1000_TDLEN 03808 //  Transmit Descriptor Length R/W 316 Transmit
-#define E1000_TDH 03810   //  Transmit Descriptor Head R/W 317 Transmit
-#define E1000_TDT 03818   //  Transmit Descriptor Tail R/W 318 Transmit
-#define E1000_TIDV 03820  //  Transmit Interrupt Delay Value R/W 318 Transmit
+#define E1000_TIPG 0x0410  //  Transmit IPG R/W 312 Transmit
+#define E1000_AIFS 0x0458  //  Adaptive IFS Throttle - AIT R/W 314 Transmit
+#define E1000_TDBAL 0x3800 //  Transmit Descriptor Base Low R/W 315 Transmit
+#define E1000_TDBAH 0x3804 //  Transmit Descriptor Base High R/W 316 Transmit
+#define E1000_TDLEN 0x3808 //  Transmit Descriptor Length R/W 316 Transmit
+#define E1000_TDH 0x3810   //  Transmit Descriptor Head R/W 317 Transmit
+#define E1000_TDT 0x3818   //  Transmit Descriptor Tail R/W 318 Transmit
+#define E1000_TIDV 0x3820  //  Transmit Interrupt Delay Value R/W 318 Transmit
 
 // *********************************
 #define E1000_TXDMAC 0x03000   // TX DMA   TX DMA Control (applicable to the 82544GC/EI only) R/W 319
@@ -210,12 +213,21 @@ struct receivedesc
 // 网卡驱动发送描述符
 struct transmitdesc
 {
-    uint64 addr;   // 缓冲区地址
-    uint16 len;    // 数据长度
-    uint8 cso;     // 检验和偏移 chechsum offset
-    uint8 cmd;     // command
-    uint8 sta : 4; // status
-    uint8 rsv : 4; // Reserve
-    uint8 css;     // 检验和起点 checksum start
+    uint64 addr;            // 缓冲区地址
+    uint16 len;             // 数据长度
+    uint8 cso;              // 检验和偏移 chechsum offset
+    uint8 cmd;              // command
+#define TD_CMD_RS (1 << 3)  /** Report Status                                                                    \
+                             * 设置后，以太网控制器需要上报状态信息。                         \
+                             * 这种能力可以被在内存中检查传输描述符的软件使用，          \
+                             * 以确定哪些描述符已经完成，哪些数据包已经在传输中被缓冲 \
+                             * FIFO。软件通过查看描述符状态字节并检查描述符完成(DD)位*/
+#define TD_CMD_EOP (1 << 0) /** End Of Packet                                                                                                        \
+                             * 当设置时，表示构成数据包的最后一个描述符。一个或多个描述符可以用来组成一个包。 \
+                             */
+    uint8 sta : 4;          // status
+#define TD_STA_DD (1 << 0)  // 指示描述符已经完成，
+    uint8 rsv : 4;          // Reserve
+    uint8 css;              // 检验和起点 checksum start
     uint16 special;
 };

@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-08-14 13:42:37
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-17 17:02:18
- * @Description: In User Settings Edit
- * @FilePath: /los/kernel/exec.c
+ * @Author       : Outsider
+ * @Date         : 2022-08-14 13:42:37
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-05-27 20:45:41
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/exec.c
  */
 #include "types.h"
 #include "proc.h"
@@ -18,6 +18,12 @@ int exec(char *path)
     struct pcb *p = nowproc();
     struct Elf32_Ehdr elf;
     struct Elf32_Phdr phdr;
+
+    // int len = strlen(path) - 1;
+    // while (path[len] == '\n')
+    // {
+    //     path[len--] = 0;
+    // }
 
     struct inode *inode = find_inode(-1, path);
     if (inode == 0 || inode->dinode.type != I_TYPE_FILE)

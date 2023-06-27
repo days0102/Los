@@ -2,8 +2,13 @@
  * @Author       : Outsider
  * @Date         : 2022-07-08 10:52:32
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-05-23 20:05:58
- * @Description  : In User Settings Edit
+ * @LastEditTime : 2023-05-26 10:32:48
+ * @Description  :
+ *************************************
+ *      设置CSR寄存器
+ *1.设置 mepc为 main(),MPP为 S-mode
+ *2.mret后跳转到 main(),并切换为 S-mode
+ *************************************
  * @FilePath     : /los/initos/start.c
  */
 #include "kernel/defs.h"
@@ -19,11 +24,11 @@ void start()
 
     w_mideleg((uint32)0xffff); // 16项中断委托给S-mode
     w_medeleg((uint32)0xffff); // 16项异常委托给S-mode
-    w_sie(r_sie() | SEIE | STIE | SSIE);
 
-    // s_sstatus_intr(~INTR_SIE); // S-mode 开全局中断
-
-    w_stvec((uint32)kvec); // 设置 S-mode trap处理函数
+    // 以下放在main()中统一启动中断
+    //  w_sie(r_sie() | SEIE | STIE | SSIE);
+    //  s_sstatus_intr(INTR_SIE); // S-mode 开全局中断
+    //  w_stvec((uint32)kvec); // 设置 S-mode trap处理函数
 
     w_pmpaddr0(0xffffffff); // 物理内存保护
     w_pmpcfg0(0xf);

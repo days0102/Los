@@ -3,7 +3,15 @@
  * @Date: 2022-08-07 15:58:24
  * @LastEditors: Outsider
  * @LastEditTime: 2022-09-06 15:27:39
- * @Description: In User Settings Edit
+ * @Description:
+ * **********************************
+ *  MMIO 磁盘处理 
+ * virtio设备是虚拟外设
+ * 实现virtio驱动程序
+ * 1.读取设备号等信息
+ * 2.配置特征位
+ * 3.为缓存区分配物理内存
+ * **********************************
  * @FilePath: /los/kernel/mmio.c
  */
 #include "types.h"
@@ -27,12 +35,29 @@ struct disk
      * @description:
      * virtq_desc描述一个缓冲区
      * desc 为缓冲区链表
+     * 描述符表用来指向I/O传输请求的信息
+     * 即是驱动程序与设备进行交互的缓冲区（buffer）
      */
     struct virtq_desc *desc;
 
     // 可用环形缓冲区
+    /**
+     * 可用环中的条目是一个描述符链的头部描述符的索引值，
+     * 并有头尾指针表示其可用条目范围，形成一个环形队列。
+     * 它仅由驱动程序写入，并由设备读出。
+    */
     struct virtq_avail *avail;
+
     // 已用环形缓冲区
+    /**
+     * 已用环中的条目也一个是描述符链的头部描述符的索引值，
+     * 并有头尾指针表示其已用条目的范围，形成一个环形队列。
+     * 这个描述符是Device完成相应I/O处理后，将可用环中的
+     * 对应“I/O操作的返回结果”的描述符索引值移入到已用环中，
+     * 并通过轮询或中断机制来通知virtio驱动程序，并让
+     * virtio驱动程序读取已用环中的这个描述符，从而进行对
+     * 设备完成I/O操作后的进一步处理。
+    */
     struct virtq_used *used;
 
     struct virtio_blk_req req[DNUM];
@@ -94,6 +119,10 @@ void mmioinit()
 
     mmio_write(MMIO_GusetPAGESIZE, PGSIZE);
 
+    /**
+     * virtio设备会有多个 VirtioQueue
+     * QueueSel告诉驱动后续的操作在哪个 queue上操作
+    */
     mmio_write(MMIO_QueueSel, 0); // 选择[0]队列作为 disk IO队列
     if (mmio_read(MMIO_QueueNumMax) < DNUM)
         panic("mmio : QueueNumMax");

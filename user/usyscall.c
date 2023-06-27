@@ -99,3 +99,9 @@ void exit(int x)
     asm volatile("li a7,10");
     asm volatile("ecall");
 }
+
+void wait(void *x)
+{
+    asm volatile("li a7,11");
+    asm volatile("ecall");
+}

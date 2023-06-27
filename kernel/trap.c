@@ -67,10 +67,12 @@ void ptf(struct trapframe *tf, int hart)
 void usertrapret()
 {
     struct pcb *p = nowproc();
-    // 关闭中断, 保证顺利返回用户态
+    /* 关闭中断, 保证顺利返回用户态
+       U模式下S模式默认中断使能
+    */
     s_sstatus_intr(~INTR_SIE);
     s_sstatus_xpp(RISCV_U);
-    s_sstatus_intr(INTR_SPIE);
+    s_sstatus_intr(INTR_SPIE); // 用户态中断使能，sret->SIE=SPIE
     w_stvec((uint32)usertrap);
     addr_t satp = (SATP_SV32 | (addr_t)(p->pagetable) >> 12);
     // ptf(p->trapframe, 1);

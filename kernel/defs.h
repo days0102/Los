@@ -108,6 +108,7 @@ void sched();
 void sleep(void *chan, struct spinlock *spinlock);
 void wakeup(void *chan);
 void exit(int status);
+int wait(addr_t ret);
 
 // string.c
 void *memset(void *, int, uint);

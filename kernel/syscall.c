@@ -92,6 +92,14 @@ uint32 sys_exit(void)
     return 0;
 }
 
+uint32 sys_wait(void)
+{
+    int status;
+    argint(0, &status);
+    wait(status);
+    return 0;
+}
+
 extern uint32 sys_open();
 extern uint32 sys_mknod();
 extern uint32 sys_dup();

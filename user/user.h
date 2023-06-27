@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-08-04 21:45:34
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-17 17:34:20
- * @Description: In User Settings Edit
- * @FilePath: /los/user/user.h
+ * @Author       : Outsider
+ * @Date         : 2022-08-04 21:45:34
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-05-27 20:12:45
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/user/user.h
  */
 #include "kernel/types.h"
 
@@ -29,3 +29,4 @@ int read(int fd, char *dst, int size);
 int recycle();
 void yeid();
 void exit(int x);
+void wait(void *x);
