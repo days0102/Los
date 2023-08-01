@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-07-23 07:49:10
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-05-26 10:03:05
+ * @LastEditTime : 2023-08-01 10:12:53
  * @Description  : In User Settings Edit
  * @FilePath     : /los/kernel/clint.h
  */
@@ -26,4 +26,4 @@
  *  的特权模式出错，在设置和访问 csr 时出现
  *  Illegal instruction(非法指令)
  **/
-#define CLINT_INTERVAL 100000 // 中断间隔
+#define CLINT_INTERVAL 1000000 // 中断间隔

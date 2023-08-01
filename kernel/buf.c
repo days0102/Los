@@ -26,7 +26,6 @@ void bufinit()
         bcache.next->prev = b;
         bcache.next = b;
         b->ref = 0;
-        b->vaild = 0;
     }
 }
 
@@ -50,30 +49,52 @@ void bufread(struct buf *b)
 
 struct buf *bget(int bno)
 {
+    if (bno == 0)
+    {
+        panic("buffer get 0 block(boot)");
+    }
+    // Add LRU replace
     struct buf *b = bcache.next;
     while (b != &bcache)
     {
-        if (b->bno == bno && b->vaild == 1)
+        if (b->bno == bno)
         {
             b->ref++;
+
+            b->prev->next = b->next;
+            b->next->prev = b->prev;
+
+            b->next = bcache.next;
+            b->prev = &bcache;
+            b->next->prev = b;
+            bcache.next = b;
+
             return b;
         }
         b = b->next;
     }
-    if (b == &bcache)
+    b = bcache.prev;
+    while (b != &bcache)
     {
-        b = bcache.prev;
-        while (b->ref != 0) //! b==&bcache
+        if (b->ref == 0)
         {
-            b = b->prev;
+            b->ref = 1; // [fixed] 先引用，避免被引用时又被其它进程引用
+            if (b->dirty == 1)
+                bufio(b, 1);
+            b->bno = bno;
+            b->dirty = 0;
+            bufio(b, 0);
+
+            b->prev->next = b->next;
+            b->next->prev = b->prev;
+
+            b->next = bcache.next;
+            b->prev = &bcache;
+            b->next->prev = b;
+            bcache.next = b;
+
+            return b;
         }
-        if (b->vaild == 1)
-            bufio(b, 1); //# 不一定要写(如果数据没修改)
-        b->bno = bno;
-        bufio(b, 0);
-        b->vaild = 1;
-        b->ref = 1;
-        return b;
     }
     return 0;
 }
@@ -82,7 +103,7 @@ void brelse(struct buf *b)
 {
     if (b == 0)
         panic("relse null buffer");
-    if (b->vaild == 0)
+    if (b->ref == 0)
         panic("relse invaild buffer");
     b->ref--;
     if (b->dirty == 1)
@@ -96,7 +117,7 @@ uint bufauto()
     int cnt = 0;
     while (b != &bcache)
     {
-        if (b->vaild == 1 && b->dirty == 1)
+        if (b->dirty == 1)
         {
             bufwrite(b);
             bufread(b);

@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-08-15 11:27:46
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-06-27 21:07:09
+ * @LastEditTime : 2023-08-01 11:17:27
  * @Description  : In User Settings Edit
  * @FilePath     : /los/user/sh.c
  */
@@ -20,7 +20,7 @@ int getcmd(char *buf, int maxx)
             break;
         b++;
     }
-    *(++b) = 0;
+    *(b++) = 0; // 清除 \n
     return (b - buf);
 }
 
@@ -40,11 +40,11 @@ void main()
             // if (exec(cmd) < 0)
             // {
             //     printf("run %s fail\n", cmd);
-            printf("exec fail\n");
+            printf("exec %s fail\n", cmd);
             exit(0);
             // }
         }
         // printf("dd");
-        // wait(0);
+        wait(0);
     }
 }

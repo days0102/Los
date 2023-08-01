@@ -129,6 +129,9 @@ void clintinit();
 
 // time.c
 void timerinit();
+void updateclock();
+extern uint64 clock_tick;
+extern struct spinlock clock_lock;
 
 // syscall.c
 void syscall();

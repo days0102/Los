@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-08-04 21:45:34
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-05-27 20:12:45
+ * @LastEditTime : 2023-07-31 11:32:15
  * @Description  : In User Settings Edit
  * @FilePath     : /los/user/user.h
  */
@@ -30,3 +30,4 @@ int recycle();
 void yeid();
 void exit(int x);
 void wait(void *x);
+void sleep(uint32 n);

@@ -4,7 +4,7 @@
 #include "proc.h"
 
 #define NINODE 200
-struct inode itable[NINODE];
+struct inode itable[NINODE]; // todo [concurrenty]
 
 #define IBLOCK(inum, istart) ((inum) / IPB + istart)
 struct superblock sb;
@@ -329,12 +329,20 @@ struct inode *iget(uint32 inum)
 void irelse(struct inode *inode)
 {
     if (inode == 0)
+    {
+        // null name -> null inode
+        // return;
+        // todo
         panic("relse null inode");
+    }
     if (inode->vaild == 0)
         panic("relse invaild inode");
     inode->ref--;
     if (inode->dirty == 1)
+    {
         write_dinode(inode->inum, &inode->dinode);
+        inode->dirty = 0;
+    }
 }
 
 char *parse_path(char *path, char *name)
@@ -364,7 +372,10 @@ struct inode *read_inode(char *path)
     if (*path == '/')
         inode = find_inode(0, 0);
     else
-        inode = nowproc()->cwd; //#
+    {
+        inode = iget(nowproc()->cwd->inum);
+        // inode = nowproc()->cwd; // bug no ref++
+    }
     while (*path != 0 && (path = parse_path(path, name)) != 0)
     {
         if (inode->dinode.type == I_TYPE_DIR)

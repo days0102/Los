@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-08-14 13:42:37
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-07-07 18:45:26
+ * @LastEditTime : 2023-08-01 11:16:26
  * @Description  : In User Settings Edit
  * @FilePath     : /los/kernel/exec.c
  */
@@ -24,6 +24,10 @@ int exec(char *path)
     // {
     //     path[len--] = 0;
     // }
+    if (*path == 0)
+    {
+        return -1;
+    }
 
     struct inode *inode = find_inode(-1, path);
     if (inode == 0 || inode->dinode.type != I_TYPE_FILE)

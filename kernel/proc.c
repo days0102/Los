@@ -237,22 +237,24 @@ void wakeup(void *chan)
     }
 }
 
-//!
+// todo
 void exit(int status)
 {
     struct pcb *p = nowproc();
-    acquirespinlock(&p->spinlock);
 
+    wakeup(p->parent);
+
+    acquirespinlock(&p->spinlock);
     p->cwd = 0;
     vmunmap(p->pagetable, 0, p->size, 1);
     vmunmap(p->pagetable, USTACKBASE, PGSIZE, 1);
     p->status = ZOMBIE;
     p->estatus = status;
-    // wakeup(p->parent);
     sched();
     // not return
 }
 
+// todo
 int wait(addr_t ret)
 {
     struct pcb *p = nowproc();
@@ -270,11 +272,12 @@ int wait(addr_t ret)
                 {
                     if (ret != 0)
                         copyout(p->pagetable, ret, (char *)&(proc[i].estatus), 4);
+                    proc[i].status = UNUSED;
                     return proc[i].pid;
                 }
             }
         }
-        // sleep(&p, &(p->spinlock));
+        sleep(p, 0);
     }
     return -1;
 }

@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-08-13 08:39:08
- * @LastEditors: Outsider
- * @LastEditTime: 2022-08-23 16:38:38
- * @Description: In User Settings Edit
- * @FilePath: /los/kernel/fs.h
+ * @Author       : Outsider
+ * @Date         : 2022-08-13 08:39:08
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-07-31 10:56:27
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/fs.h
  */
 #include "types.h"
 #include "buf.h"
@@ -65,7 +65,7 @@ struct inode
 {
     uint8 vaild;
     uint8 dirty;
-    uint32 ref;
+    uint8 ref;
     uint32 inum;
 
     struct dinode dinode;

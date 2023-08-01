@@ -1,10 +1,10 @@
 /*
- * @Author: Outsider
- * @Date: 2022-08-04 16:45:25
- * @LastEditors: Outsider
- * @LastEditTime: 2022-09-17 17:35:32
- * @Description: In User Settings Edit
- * @FilePath: /los/kernel/syscall.h
+ * @Author       : Outsider
+ * @Date         : 2022-08-04 16:45:25
+ * @LastEditors  : Outsider
+ * @LastEditTime : 2023-07-31 11:34:08
+ * @Description  : In User Settings Edit
+ * @FilePath     : /los/kernel/syscall.h
  */
 #include "types.h"
 
@@ -19,3 +19,5 @@
 #define SYS_recycle 8
 #define SYS_yeid 9
 #define SYS_exit 10
+#define SYS_wait 11
+#define SYS_sleep 12

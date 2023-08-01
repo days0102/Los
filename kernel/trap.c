@@ -105,9 +105,15 @@ void forkret()
 void timerintr()
 {
     w_sip(r_sip() & ~2); // 清除中断
+    if (r_tp() == 0)
+    {
+        updateclock(); // 更新时钟
+    }
     struct pcb *p = nowproc();
     if (p != 0 && p->status == RUNNING)
+    {
         yield();
+    }
 }
 
 void trapvec()

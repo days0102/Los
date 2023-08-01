@@ -77,6 +77,7 @@ SRCS_USER = \
 	user/initproc.c \
 	user/sh.c \
 	user/sysrecycle.c \
+	user/mem_test.c \
 
 OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)

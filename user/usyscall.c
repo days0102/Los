@@ -105,3 +105,13 @@ void wait(void *x)
     asm volatile("li a7,11");
     asm volatile("ecall");
 }
+
+int sleep(int n)
+{
+    asm volatile("li a7,12");
+    asm volatile("ecall");
+    int x;
+    asm volatile("mv %0,a0"
+                 : "=r"(x));
+    return x;
+}

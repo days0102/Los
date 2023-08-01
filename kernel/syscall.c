@@ -100,6 +100,20 @@ uint32 sys_wait(void)
     return 0;
 }
 
+uint32 sys_sleep(void)
+{
+    int n;
+    argint(0, &n);
+    acquirespinlock(&clock_lock);
+    uint64 start_tick = clock_tick;
+    while (clock_tick - start_tick < n)
+    {
+        sleep(&clock_tick, &clock_lock);
+    }
+    releasespinlock(&clock_lock);
+    return 0;
+}
+
 extern uint32 sys_open();
 extern uint32 sys_mknod();
 extern uint32 sys_dup();
@@ -116,6 +130,8 @@ static uint32 (*syscalls[])(void) = {
     [SYS_recycle] sys_recycle,
     [SYS_yeid] sys_yeid,
     [SYS_exit] sys_exit,
+    [SYS_wait] sys_wait,
+    [SYS_sleep] sys_sleep,
 };
 
 void syscall()
