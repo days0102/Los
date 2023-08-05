@@ -147,10 +147,10 @@ void kvminit()
     // 映射空闲内存区
     vmmap(kpgt, (addr_t)mstart, (addr_t)mstart, mend - mstart, PTE_W | PTE_R);
 
-    mkstack(kpgt);
-
     // 映射 usertrap
     vmmap(kpgt, USERVEC, (uint32)usertrap, PGSIZE, PTE_R | PTE_X);
+
+    mkstack(kpgt);
 
     // printpgt(pgt);
 }
@@ -162,6 +162,21 @@ void kvmstart()
     sfence_vma();                               // 刷新页表
 }
 
+// 创建页表并初始化
+addr_t *upgt()
+{
+    // 分配页表
+    addr_t *pagetable = (addr_t *)palloc();
+    memset(pagetable, 0, PGSIZE);
+
+    addr_t stack = (addr_t)palloc();
+    vmmap(pagetable, USTACKBASE, stack, PGSIZE, PTE_R | PTE_W | PTE_U);
+    vmmap(pagetable, (uint32)uservec, (uint32)uservec, PGSIZE, PTE_R | PTE_X);
+
+    return pagetable;
+}
+
+// return a new pagetable
 addr_t *pgtcreate()
 {
     // 分配页表

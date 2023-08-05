@@ -83,7 +83,7 @@ OBJS = $(SRCS_ASM:.S=.o)
 OBJS += $(SRCS_C:.c=.o)
 
 # 用户进程的依赖文件
-ULIB = user/usyscall.o user/printf.o
+ULIB = user/usyscall.o user/printf.o user/thread.o
 UPROC= $(SRCS_USER:%.c=%.elf)
 
 # LDFLAGS = -z max-page-size=4096
