@@ -27,6 +27,9 @@ struct inode;
 // lock.h
 struct spinlock;
 
+// buddy.h
+struct page;
+
 // uart.c
 void uartinit();
 char uartputc(char c);
@@ -190,3 +193,10 @@ void pciinit();
 
 // eth.c
 void ethinit(uint32 *addr);
+
+// buddy.c
+void buddy_init();
+void buddy_merge(struct page *page, int order);
+void buddy_free(void *addr, int order, int merge);
+void *buddy_alloc(int order);
+void buddy_test();

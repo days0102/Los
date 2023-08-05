@@ -2,8 +2,8 @@
  * @Author       : Outsider
  * @Date         : 2022-07-10 22:25:45
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-05-26 14:57:11
- * @Description  : 
+ * @LastEditTime : 2023-08-05 20:19:35
+ * @Description  :
  * ***********************************
  *          初始化内核
  * 1.由0号核心初始化共享的设备和资源
@@ -21,7 +21,7 @@ void main()
 {
     if (r_tp() == 0)
     {
-        w_stvec((uint32)kvec);               // 设置 S-mode trap处理函数
+        w_stvec((uint32)kvec); // 设置 S-mode trap处理函数
         s_sstatus_intr(INTR_SIE);
         w_sie(r_sie() | SSIE | STIE | SEIE); // 开S-mode中断
 
@@ -34,6 +34,9 @@ void main()
         printf("Hello Los!\n");
 
         printf("start run main()\n");
+
+        buddy_init();
+        buddy_test();
 
         minit();    // 物理内存管理
         plicinit(); // PLIC 中断处理

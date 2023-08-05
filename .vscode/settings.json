@@ -30,6 +30,7 @@
         "cstdlib": "c",
         "pci.h": "c",
         "eth.h": "c",
-        "elf.h": "c"
+        "elf.h": "c",
+        "buddy.h": "c"
     }
 }

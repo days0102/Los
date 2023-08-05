@@ -72,6 +72,7 @@ SRCS_C = \
 	kernel/lock.c \
 	kernel/pci.c \
 	kernel/eth.c \
+	kernel/buddy.c \
 
 SRCS_USER = \
 	user/initproc.c \
