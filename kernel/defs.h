@@ -62,6 +62,7 @@ void usertrapret();
 void minit();
 void *palloc();
 void pfree(void *pa);
+void pmm_test();
 
 // kernel.ld
 extern uint8 textstart[];

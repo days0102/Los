@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-07-11 22:29:05
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-05-27 11:45:07
+ * @LastEditTime : 2023-08-05 21:07:52
  * @Description  : In User Settings Edit
  * @FilePath     : /los/kernel/pmm.c
  */
@@ -41,6 +41,7 @@ void minit()
     printf("stack:%p\n", stacks);
 #endif
     initspinlock(&mem.lock, "mem_lock");
+    mem.freelist = 0; // init
 
     char *p = (char *)mstart;
     struct pmp *m;
@@ -71,4 +72,56 @@ void pfree(void *addr)
     p->next = mem.freelist;
     mem.freelist = p;
     releasespinlock(&mem.lock);
+}
+
+void pmm_test()
+{
+    mem.freelist = 0;
+    char *p = (char *)mstart;
+    struct pmp *m;
+    int tol = 0;
+    for (; p + PGSIZE <= (char *)mend; p += PGSIZE)
+    {
+        tol++;
+        m = (struct pmp *)p;
+        m->next = mem.freelist;
+        mem.freelist = m;
+    }
+
+    void *arr[1000];
+    for (int i = 0; i < 100; i++)
+    {
+        arr[i] = palloc();
+    }
+    for (int i = 0; i < 100; i += 3)
+    {
+        pfree(arr[i]);
+    }
+    for (int i = 1; i < 100; i += 3)
+    {
+        pfree(arr[i]);
+    }
+    struct pmp *pmp = mem.freelist;
+    int r = 0;
+    while (pmp)
+    {
+        r++;
+        pmp = pmp->next;
+    }
+    // printf("%d %d %d\n", tol - r, r, tol);
+    assert(tol - r == 100 / 3);
+    for (int i = 2; i < 100; i += 3)
+    {
+        pfree(arr[i]);
+    }
+    r = 0;
+    pmp = mem.freelist;
+    while (pmp)
+    {
+        r++;
+        pmp = pmp->next;
+    }
+    assert(tol == r);
+
+    printf("totol %d pages test ok\n", tol);
 }

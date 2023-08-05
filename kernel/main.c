@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-07-10 22:25:45
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-08-05 20:19:35
+ * @LastEditTime : 2023-08-05 20:49:59
  * @Description  :
  * ***********************************
  *          初始化内核
@@ -38,7 +38,9 @@ void main()
         buddy_init();
         buddy_test();
 
-        minit();    // 物理内存管理
+        minit(); // 物理内存管理
+        pmm_test();
+
         plicinit(); // PLIC 中断处理
 
         kvminit(); // 启动虚拟内存
