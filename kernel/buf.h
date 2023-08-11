@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-08-10 17:28:02
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-07-31 22:11:03
+ * @LastEditTime : 2023-08-08 20:45:37
  * @Description  : In User Settings Edit
  * @FilePath     : /los/kernel/buf.h
  */
@@ -23,3 +23,8 @@ struct buf
     struct buf *prev;  // prev pointer
     struct buf *next;  // next pointer
 };
+
+#define BUF_INTERVAL 100
+int buf_init;
+uint64 buf_time;
+uint64 buf_interval;

@@ -154,6 +154,7 @@ void bufinit(void);
 struct buf *bget(int bno);
 void brelse(struct buf *b);
 uint bufauto();
+void buftime();
 
 // fs.c
 void fsinit();

@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2022-07-24 11:03:29
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-07-31 11:40:50
+ * @LastEditTime : 2023-08-08 20:48:45
  * @Description  :
  * ***********************************
  *         初始化时钟中断参数
@@ -63,5 +63,6 @@ void updateclock()
     acquirespinlock(&clock_lock);
     clock_tick++;
     wakeup(&clock_tick);
+    buftime();
     releasespinlock(&clock_lock);
 }

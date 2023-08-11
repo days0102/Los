@@ -27,6 +27,9 @@ void bufinit()
         bcache.next = b;
         b->ref = 0;
     }
+    buf_interval = BUF_INTERVAL;
+    buf_time = 0;
+    buf_init = 1; // concurent
 }
 
 #define BUFWRIE 1 // buf write into disk
@@ -106,9 +109,9 @@ void brelse(struct buf *b)
     if (b->ref == 0)
         panic("relse invaild buffer");
     b->ref--;
-    if (b->dirty == 1)
-        bufio(b, 1);
-    b->dirty = 0;
+    // if (b->dirty == 1)
+    //     bufio(b, 1);
+    // b->dirty = 0;
 }
 
 uint bufauto()
@@ -127,4 +130,23 @@ uint bufauto()
         b = b->next;
     }
     return cnt;
+}
+
+void buftime()
+{
+    if (buf_init && clock_tick - buf_time > buf_interval)
+    {
+        struct buf *b = bcache.next;
+        while (b != &bcache)
+        {
+            if (b->dirty == 1)
+            {
+                bufio(b, 1);
+                b->dirty = 0;
+                printf("b write %d bno\n", b->bno);
+            }
+            b = b->next;
+        }
+        buf_time = clock_tick;
+    }
 }
