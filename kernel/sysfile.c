@@ -26,7 +26,21 @@ int fdalloc(struct file *file)
     }
     return -1;
 }
-
+struct inode *su_create(char *name, int type, int major, int minor)
+{
+    struct inode *inode = find_inode(-1, name);
+    if (inode->dinode.type != I_TYPE_DIR)
+        return 0;
+    uint32 inum = ialloc(type);
+    if (inum == (uint32)-1)
+        return 0;
+    add_dirent(inode, name, inum);
+    irelse(inode);
+    inode = iget(inum);
+    inode->dinode.major = major;
+    inode->dinode.minor = minor;
+    return inode;
+}
 struct inode *create(char *name, int type, int major, int minor)
 {
     struct inode *inode = find_inode(-1, name);
