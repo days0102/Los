@@ -2,7 +2,7 @@
  * @Author       : Outsider
  * @Date         : 2023-08-05 15:15:45
  * @LastEditors  : Outsider
- * @LastEditTime : 2023-08-05 20:19:31
+ * @LastEditTime : 2023-10-14 11:32:53
  * @Description  : In User Settings Edit
  * @FilePath     : /los/kernel/buddy.c
  */
@@ -10,68 +10,96 @@
 #include "vm.h"
 #include "buddy.h"
 
-void buddy_merge(struct page *page, int order)
+// todo [buddy lock]
+
+struct page *header;
+void *base_addr;
+
+struct page *addr_page(void *addr)
 {
-    page->order = order + 1;
-    buddy_free(page, page->order, 1);
+    return header + (addr - base_addr) / PGSIZE;
 }
 
-void buddy_free(void *addr, int order, int merge)
+void buddy_merge(struct page *lhs, struct page *rhs)
 {
-    struct page *page = (struct page *)addr;
+    assert(lhs->order == rhs->order);
+    assert(lhs + (1 << lhs->order) == rhs);
+    lhs->order++;
+    memset(rhs, 0, sizeof(struct page));
+    buddy_free(lhs->addr, 1);
+}
+
+void buddy_free(void *addr, int merge)
+{
+    struct page *hp = addr_page(addr);
+
+    hp->addr = addr;
+    int order = hp->order;
+
     struct page *head = &buddy.free_list[order];
     struct page *p = head->next;
-    while (p != head && p < page)
+    while (p != head && p->addr < addr)
     {
         p = p->next;
     }
 
-    page->next = p;
-    page->prev = p->prev;
-    p->prev->next = page;
-    p->prev = page;
-
-    page->order = order;
+    hp->next = p;
+    hp->prev = p->prev;
+    p->prev->next = hp;
+    p->prev = hp;
 
     if (merge && order + 1 < BUDDY_MAX_ORDER)
     {
-        char *prev = (char *)page->prev;
-        char *next = (char *)page->next;
+        struct page *prev = (struct page *)hp->prev;
+        struct page *next = (struct page *)hp->next;
 
-        if (prev + ((1 << order) * PGSIZE) == (char *)page)
+        if (prev->addr + (PGSIZE * (1 << order)) == hp->addr)
         {
-            page->prev->prev->next = page->next;
-            page->next->prev = page->prev->prev;
-            buddy_merge(page->prev, order);
+            hp->prev->prev->next = hp->next;
+            hp->next->prev = hp->prev->prev;
+            buddy_merge(prev, hp);
         }
-        else if ((char *)page + ((1 << order) * PGSIZE) == next)
+        else if ((void *)hp->addr + (PGSIZE * (1 << order)) == next->addr)
         {
-            buddy_merge(page, order);
+            hp->prev->next = hp->next->next;
+            hp->next->next->prev = hp->prev;
+            buddy_merge(hp, next);
         }
     }
 }
 
 void buddy_init()
 {
+    initspinlock(&buddy.lock, "buddy");
     for (uint i = 0; i < BUDDY_MAX_ORDER; i++)
     {
         buddy.free_list[i].next = buddy.free_list[i].prev = &buddy.free_list[i];
+        initspinlock(&(buddy.locks[i]), "buddy");
     }
 
-    char *start = (char *)mstart;
-    struct page *page;
+    int page_num = ((char *)mend - (char *)mstart) / PGSIZE;
+    header = (struct page *)mstart;
+    memset(header, 0, page_num * sizeof(struct page));
+
+    char *start = (char *)mstart + PALIGN_UP(page_num * sizeof(struct page), PGSIZE);
+    base_addr = start;
+    // char *start = (char *)mstart;
     for (; start + PGSIZE <= (char *)mend; start += PGSIZE)
     {
-        page = (struct page *)start;
-        buddy_free(page, 0, 1);
+        buddy_free(start, 1);
     }
 }
 
-void buddy_split(struct page *page, int order)
+void buddy_split(struct page *p)
 {
-    struct page *np = (struct page *)((char *)(page) + (1 << order) * PGSIZE);
-    buddy_free(page, order, 0);
-    buddy_free(np, order, 0);
+    p->prev->next = p->next;
+    p->next->prev = p->prev;
+    assert(p->order != 0);
+    p->order--;
+    struct page *np = addr_page(p->addr + PGSIZE * (1 << p->order));
+    np->order = p->order;
+    buddy_free(p->addr, 0);
+    buddy_free(p->addr + PGSIZE * (1 << p->order), 0);
 }
 
 void *buddy_alloc(int order)
@@ -80,14 +108,14 @@ void *buddy_alloc(int order)
     struct page *page = head->next;
     if (page == head)
     {
-        struct page *pp = (struct page *)buddy_alloc(order + 1);
-        buddy_split(pp, order);
+        struct page *pp = addr_page(buddy_alloc(order + 1));
+        buddy_split(pp);
     }
     page = head->next;
     head->next->next->prev = head;
     head->next = head->next->next;
-    memset((void *)page, 0, PGSIZE);
-    return page;
+    memset((void *)page->addr, 0, PGSIZE);
+    return page->addr;
 }
 
 void buddy_test()
@@ -104,15 +132,15 @@ void buddy_test()
     }
     for (int i = 0; i < 100; i += 2)
     {
-        buddy_free(arr0[i], 0, 1);
+        buddy_free(arr0[i], 1);
     }
     for (int i = 0; i < 50; i++)
     {
-        buddy_free(arr1[i], 1, 1);
+        buddy_free(arr1[i], 1);
     }
     for (int i = 1; i < 100; i += 2)
     {
-        buddy_free(arr0[i], 0, 1);
+        buddy_free(arr0[i], 1);
     }
     printf("buddy test ok\n");
 }

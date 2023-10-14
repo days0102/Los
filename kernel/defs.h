@@ -197,7 +197,9 @@ void ethinit(uint32 *addr);
 
 // buddy.c
 void buddy_init();
-void buddy_merge(struct page *page, int order);
-void buddy_free(void *addr, int order, int merge);
+void buddy_merge(struct page *lhs, struct page *rhs);
+void buddy_free(void *addr, int merge);
 void *buddy_alloc(int order);
 void buddy_test();
+
+// util.c
